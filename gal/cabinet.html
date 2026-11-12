@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="uk"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Кабінет клієнта — Global Auto Logistic</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>:root{
+  --bg:#0A100F; --bg2:#0F1715; --card:#142020; --card2:#182625; --line:rgba(255,255,255,.08); --line2:rgba(255,255,255,.14);
+  --tx:#F3F4F6; --mut:#8A9894; --acc:#CED858; --acc2:#F3FC7A; --teal:#2D8377; --ok:#8BE3A6; --warn:#F3B95F; --bad:#F06F6F;
+  --green:#2D3C3A; --green2:#475F50; --r:20px; --ease:cubic-bezier(.2,.8,.2,1);
+  --fh:'Unbounded',system-ui,sans-serif; --fb:'Manrope',system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--tx);font-family:var(--fb);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+button,input,select,textarea{font:inherit;color:inherit}
+::selection{background:var(--acc);color:#000}
+::-webkit-scrollbar{width:8px;height:8px}::-webkit-scrollbar-thumb{background:var(--line2);border-radius:9px}
+h1,h2,h3{font-family:var(--fh);font-weight:800;letter-spacing:-.02em;line-height:1.08}
+.grad{background:linear-gradient(90deg,var(--acc),var(--acc2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.mut{color:var(--mut)}
+.eyebrow{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--acc);font-weight:700}
+.logo{display:flex;align-items:center;gap:10px;font-family:var(--fh);font-weight:800;font-size:14px}
+.logo-mark{width:34px;height:34px;border-radius:10px;background:conic-gradient(from 210deg,var(--acc),var(--acc2),var(--acc));display:grid;place-items:center;color:#000;font-size:11px;box-shadow:0 0 22px rgba(206,216,88,.35);flex:none}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 20px;border-radius:999px;font-weight:700;font-size:14px;border:0;cursor:pointer;transition:transform .25s var(--ease),background .25s,box-shadow .25s;white-space:nowrap}
+.btn:active{transform:scale(.97)}
+.btn-acc{background:var(--acc);color:#0a0a0a;box-shadow:0 8px 30px -10px rgba(206,216,88,.7)}
+.btn-acc:hover{background:var(--acc2)}
+.btn-ghost{background:rgba(255,255,255,.05);border:1px solid var(--line2)}
+.btn-ghost:hover{background:rgba(255,255,255,.1)}
+.btn-sm{padding:8px 14px;font-size:13px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:20px}
+.badge{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;font-size:12px;font-weight:700;background:rgba(255,255,255,.06);border:1px solid var(--line2);white-space:nowrap}
+.badge i{width:7px;height:7px;border-radius:50%;background:currentColor}
+.b-ok{color:var(--ok);background:rgba(139,227,166,.1);border-color:rgba(139,227,166,.25)}
+.b-acc{color:var(--acc);background:rgba(206,216,88,.1);border-color:rgba(206,216,88,.3)}
+.b-teal{color:#5FC7B6;background:rgba(45,131,119,.15);border-color:rgba(45,131,119,.4)}
+.b-warn{color:var(--warn);background:rgba(243,185,95,.1);border-color:rgba(243,185,95,.3)}
+.b-bad{color:var(--bad);background:rgba(240,111,111,.1);border-color:rgba(240,111,111,.3)}
+.field label{display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);margin-bottom:7px;font-weight:600}
+.inp,.field input,.field select,.field textarea{width:100%;background:var(--bg2);border:1px solid var(--line2);border-radius:12px;padding:11px 14px;outline:none;transition:.2s;font-weight:600}
+.inp:focus,.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--acc);box-shadow:0 0 0 4px rgba(206,216,88,.12)}
+input[type=range]{width:100%;appearance:none;height:6px;border-radius:9px;background:linear-gradient(90deg,var(--acc) var(--p,50%),var(--line2) var(--p,50%));outline:none}
+input[type=range]::-webkit-slider-thumb{appearance:none;width:20px;height:20px;border-radius:50%;background:#fff;border:5px solid var(--acc);cursor:grab}
+input[type=range]::-moz-range-thumb{width:12px;height:12px;border-radius:50%;background:#fff;border:5px solid var(--acc)}
+.range-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}
+.range-row b{font-size:14px}
+/* app shell */
+.app{display:grid;grid-template-columns:240px 1fr;min-height:100vh}
+.side{position:sticky;top:0;height:100vh;padding:22px 16px;border-right:1px solid var(--line);background:var(--bg2);display:flex;flex-direction:column;gap:6px}
+.side .logo{padding:0 8px 22px}
+.nav-i{display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:12px;color:var(--mut);cursor:pointer;font-weight:600;font-size:14px;transition:.2s;border:0;background:none;width:100%;text-align:left}
+.nav-i:hover{background:rgba(255,255,255,.04);color:var(--tx)}
+.nav-i.on{background:rgba(206,216,88,.1);color:var(--acc)}
+.nav-i .ic{width:20px;text-align:center}
+.nav-i .cnt{margin-left:auto;background:var(--acc);color:#000;font-size:11px;font-weight:800;padding:1px 7px;border-radius:999px}
+.side .bottom{margin-top:auto;padding:14px;border-radius:16px;background:var(--card);border:1px solid var(--line);font-size:13px}
+.main{padding:26px clamp(16px,3vw,40px) 60px;min-width:0}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:26px;flex-wrap:wrap}
+.topbar h1{font-size:clamp(22px,2.6vw,32px)}
+.avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--green2),var(--teal));display:grid;place-items:center;font-weight:800;font-size:14px;flex:none}
+.view{display:none;animation:vin .5s var(--ease)}
+.view.on{display:block}
+@keyframes vin{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.grid{display:grid;gap:16px}
+.kpi{position:relative;overflow:hidden}
+.kpi small{color:var(--mut);font-size:12px;text-transform:uppercase;letter-spacing:.08em}
+.kpi b{display:block;font-family:var(--fh);font-size:28px;margin:6px 0 2px}
+.kpi .d{font-size:12px;font-weight:700}
+.up{color:var(--ok)}.down{color:var(--bad)}
+.toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,120px);background:var(--card2);border:1px solid rgba(206,216,88,.35);padding:13px 20px;border-radius:14px;z-index:300;transition:transform .45s var(--ease);font-weight:600;box-shadow:0 20px 50px rgba(0,0,0,.5)}
+.toast.show{transform:translate(-50%,0)}
+.demo-tag{position:fixed;right:14px;bottom:14px;z-index:200;font-size:11px;padding:6px 11px;border-radius:999px;background:rgba(243,252,122,.08);border:1px solid rgba(243,252,122,.3);color:var(--acc2)}
+.mnav{display:none}
+@media (max-width:900px){
+  .app{grid-template-columns:1fr}
+  .side{display:none}
+  .mnav{display:flex;position:fixed;bottom:0;left:0;right:0;z-index:100;background:rgba(15,23,21,.92);backdrop-filter:blur(14px);border-top:1px solid var(--line2);justify-content:space-around;padding:8px 4px calc(8px + env(safe-area-inset-bottom))}
+  .mnav button{background:none;border:0;color:var(--mut);font-size:10px;display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 6px;cursor:pointer}
+  .mnav button span{font-size:19px}
+  .mnav button.on{color:var(--acc)}
+  .main{padding-bottom:100px}
+  .demo-tag{bottom:76px}
+}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+@media (max-width:900px){.grid[style*="grid-template-columns"]:not(.keep){grid-template-columns:1fr!important}}
+@media (max-width:600px){.kpi b{font-size:21px}.card{padding:16px}}
+
+
+.carsw{display:flex;gap:10px;flex-wrap:wrap}
+.carsw button{display:flex;align-items:center;gap:10px;padding:8px 14px 8px 8px;border-radius:14px;border:1px solid var(--line2);background:var(--card);cursor:pointer;font-weight:600;font-size:13px;transition:.2s}
+.carsw button svg{width:60px}
+.carsw button.on{border-color:var(--acc);background:rgba(206,216,88,.08)}
+.hero-car{display:grid;grid-template-columns:1.2fr 1fr;gap:16px}
+.hc-img{position:relative;border-radius:24px;overflow:hidden;background:radial-gradient(70% 70% at 50% 65%,rgba(206,216,88,.18),transparent 70%),linear-gradient(160deg,#18241f,#0d1514);border:1px solid var(--line);display:grid;place-items:center;min-height:300px}
+.hc-img svg{width:80%;filter:drop-shadow(0 24px 24px rgba(0,0,0,.6));animation:drive 1s var(--ease)}
+@keyframes drive{from{transform:translateX(-60px);opacity:0}to{transform:none;opacity:1}}
+.hc-img .top{position:absolute;top:16px;left:16px;right:16px;display:flex;justify-content:space-between}
+.hc-img .eta{position:absolute;bottom:16px;left:16px;right:16px;display:flex;justify-content:space-between;align-items:end;padding:14px 16px;border-radius:16px;background:rgba(10,18,16,.8);backdrop-filter:blur(10px);border:1px solid var(--line2)}
+.eta b{font-family:var(--fh);font-size:22px;color:var(--acc)}
+.ring{width:130px;height:130px;position:relative;flex:none}
+.ring svg{transform:rotate(-90deg)}
+.ring b{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--fh);font-size:24px}
+.route{position:relative;height:150px;margin:10px 0 0}
+.route svg{width:100%;height:100%}
+.tl{display:grid;gap:2px}
+.tl-i{display:grid;grid-template-columns:36px 1fr auto;gap:14px;align-items:center;padding:12px 10px;border-radius:14px;opacity:.4}
+.tl-i.done,.tl-i.now{opacity:1}
+.tl-i .c{width:36px;height:36px;border-radius:50%;border:2px solid var(--line2);display:grid;place-items:center;font-size:13px;font-weight:800}
+.tl-i.done .c{background:var(--ok);border-color:var(--ok);color:#000}
+.tl-i.now{background:rgba(206,216,88,.07)}
+.tl-i.now .c{border-color:var(--acc);color:var(--acc);animation:ring 1.6s infinite}
+@keyframes ring{0%{box-shadow:0 0 0 0 rgba(206,216,88,.6)}100%{box-shadow:0 0 0 14px rgba(206,216,88,0)}}
+.tl-i small{color:var(--mut);font-size:12px;display:block}
+.tl-i .ph{font-size:11px;color:var(--acc);cursor:pointer}
+.gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px}
+.ph-i{aspect-ratio:1.3;border-radius:16px;overflow:hidden;position:relative;cursor:pointer;border:1px solid var(--line);display:grid;place-items:center;transition:transform .3s var(--ease)}
+.ph-i:hover{transform:translateY(-3px);border-color:var(--line2)}
+.ph-i svg{width:84%}
+.ph-i span{position:absolute;left:10px;bottom:8px;font-size:11px;color:var(--mut);background:rgba(0,0,0,.45);padding:3px 8px;border-radius:7px}
+.ph-i .play{position:absolute;width:46px;height:46px;border-radius:50%;background:var(--acc);color:#000;display:grid;place-items:center;font-size:16px}
+.lb{position:fixed;inset:0;z-index:250;background:rgba(0,0,0,.85);display:none;place-items:center;padding:20px}
+.lb.on{display:grid;animation:vin .3s}
+.lb .in{width:min(900px,100%);aspect-ratio:1.6;border-radius:22px;display:grid;place-items:center;position:relative;border:1px solid var(--line2)}
+.lb .in svg{width:80%}
+.lb .cap{position:absolute;bottom:16px;left:16px;font-size:13px;color:var(--mut)}
+.pay-row{display:grid;grid-template-columns:1fr auto auto;gap:14px;align-items:center;padding:14px 0;border-bottom:1px dashed var(--line)}
+.pay-row:last-child{border:0}
+.doc{display:flex;align-items:center;gap:14px;padding:14px;border-radius:14px;border:1px solid var(--line);background:var(--bg2);transition:.2s}
+.doc:hover{border-color:var(--line2)}
+.doc .ic{width:42px;height:42px;border-radius:12px;background:rgba(206,216,88,.1);display:grid;place-items:center;color:var(--acc);font-size:11px;font-weight:800;flex:none}
+.doc .meta{flex:1;min-width:0}
+.doc .meta b{display:block;font-size:14px}
+.doc .meta small{color:var(--mut);font-size:12px}
+.chat{display:grid;grid-template-rows:auto 1fr auto;height:calc(100vh - 140px);min-height:460px;padding:0;overflow:hidden}
+.chat-h{display:flex;gap:12px;align-items:center;padding:16px 20px;border-bottom:1px solid var(--line)}
+.msgs{overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:10px}
+.m{max-width:75%;padding:11px 15px;border-radius:16px;font-size:14px;animation:vin .35s var(--ease)}
+.m small{display:block;font-size:10px;color:var(--mut);margin-top:4px}
+.m.them{background:var(--bg2);border:1px solid var(--line);border-bottom-left-radius:4px}
+.m.me{align-self:flex-end;background:var(--acc);color:#0a0a0a;border-bottom-right-radius:4px}
+.m.me small{color:rgba(0,0,0,.55)}
+.m .att{display:inline-block;margin-top:8px;border-radius:10px;background:linear-gradient(160deg,#1c2a22,#0d1514);padding:6px}
+.m .att svg{width:200px;display:block}
+.typing{display:none;align-self:flex-start;padding:12px 16px;border-radius:16px;background:var(--bg2);border:1px solid var(--line)}
+.typing i{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--mut);margin:0 2px;animation:bl 1s infinite}
+.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+@keyframes bl{50%{opacity:.2;transform:translateY(-3px)}}
+.chat-f{display:flex;gap:10px;padding:14px;border-top:1px solid var(--line)}
+.chat-f input{flex:1;border-radius:999px}
+.quick{display:flex;gap:8px;flex-wrap:wrap;padding:0 20px 10px}
+.quick button{padding:7px 12px;border-radius:999px;border:1px solid var(--line2);background:none;cursor:pointer;font-size:12px;color:var(--mut)}
+.quick button:hover{color:var(--tx);border-color:var(--acc)}
+.mgr{display:flex;align-items:center;gap:12px}
+.notif{display:flex;gap:12px;padding:12px 0;border-bottom:1px dashed var(--line);font-size:14px}
+.notif:last-child{border:0}
+.notif .t{color:var(--mut);font-size:12px;margin-left:auto;white-space:nowrap}
+@media (max-width:1000px){.hero-car{grid-template-columns:1fr}}
+</style></head><body>
+
+
+
+<div class="app">
+  <aside class="side">
+    <div class="logo"><span class="logo-mark">GAL</span>Мій кабінет</div>
+    <button class="nav-i on" data-view="home"><span class="ic">◉</span>Огляд</button>
+    <button class="nav-i" data-view="track"><span class="ic">⟶</span>Трекінг</button>
+    <button class="nav-i" data-view="media"><span class="ic">▣</span>Фото і відео<span class="cnt">4</span></button>
+    <button class="nav-i" data-view="pay"><span class="ic">₴</span>Оплати</button>
+    <button class="nav-i" data-view="docs"><span class="ic">▤</span>Документи</button>
+    <button class="nav-i" data-view="chat"><span class="ic">✉</span>Менеджер<span class="cnt" id="chatCnt">1</span></button>
+    <div class="bottom"><div class="mgr"><div class="avatar">ОК</div><div><b>Ольга К.</b><div class="mut" style="font-size:12px">ваш менеджер · онлайн</div></div></div>
+      <button class="btn btn-ghost btn-sm" style="width:100%;margin-top:12px" data-view="chat">Написати</button></div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div><div class="eyebrow">Global Auto Logistic</div><h1 id="hello">Вітаємо, Андрію 👋</h1></div>
+      <div class="carsw" id="carsw"></div>
+    </div>
+
+    <!-- HOME -->
+    <section class="view on" id="v-home">
+      <div class="hero-car">
+        <div class="hc-img" id="hcImg"></div>
+        <div class="card" style="display:flex;flex-direction:column;gap:18px">
+          <div style="display:flex;gap:20px;align-items:center">
+            <div class="ring"><svg width="130" height="130"><circle cx="65" cy="65" r="56" stroke="rgba(255,255,255,.08)" stroke-width="10" fill="none"/><circle id="ringC" cx="65" cy="65" r="56" stroke="url(#rg)" stroke-width="10" fill="none" stroke-linecap="round" stroke-dasharray="352" stroke-dashoffset="352" style="transition:stroke-dashoffset 1.4s var(--ease)"/><defs><linearGradient id="rg"><stop offset="0" stop-color="#2D8377"/><stop offset="1" stop-color="#CED858"/></linearGradient></defs></svg><b id="ringT">0%</b></div>
+            <div><small class="mut">Шлях до Львова</small><h3 id="hcName" style="font-size:20px;margin:4px 0"></h3><div id="hcStatus"></div></div>
+          </div>
+          <div class="grid keep" style="grid-template-columns:1fr 1fr">
+            <div class="card kpi" style="background:var(--bg2)"><small>Сплачено</small><b id="kPaid">$0</b><span class="d mut" id="kPaidOf"></span></div>
+            <div class="card kpi" style="background:var(--bg2)"><small>Наступний платіж</small><b id="kNext">—</b><span class="d" style="color:var(--warn)" id="kNextD"></span></div>
+          </div>
+          <div><b style="font-size:14px">Останні оновлення</b><div id="notifs" style="margin-top:6px"></div></div>
+        </div>
+      </div>
+      <div class="card" style="margin-top:16px">
+        <div style="display:flex;justify-content:space-between;align-items:center"><b>Маршрут</b><span class="badge b-teal" id="routeBadge"></span></div>
+        <div class="route" id="route"></div>
+      </div>
+    </section>
+
+    <!-- TRACK -->
+    <section class="view" id="v-track">
+      <div class="grid" style="grid-template-columns:1.2fr 1fr">
+        <div class="card"><b>Етапи доставки</b><div class="tl" id="tl" style="margin-top:12px"></div></div>
+        <div class="grid" style="align-content:start">
+          <div class="card"><b>Контейнер і судно</b>
+            <div class="grid" style="grid-template-columns:1fr 1fr;margin-top:14px;gap:10px" id="ship"></div></div>
+          <div class="card"><b>VIN-звіт</b><p class="mut" style="font-size:13px;margin:8px 0 14px">Історія пробігу, ДТП і страхових виплат, яку менеджер перевірив перед ставкою.</p>
+            <button class="btn btn-ghost btn-sm" onclick="toast('Звіт відкриється у PDF (демо)')">Відкрити звіт</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MEDIA -->
+    <section class="view" id="v-media">
+      <div class="topbar" style="margin-bottom:16px"><h2 style="font-size:20px">Фото й відео з кожного етапу</h2><span class="mut" style="font-size:13px">Нові матеріали з'являються автоматично</span></div>
+      <div class="gal" id="gal"></div>
+    </section>
+
+    <!-- PAY -->
+    <section class="view" id="v-pay">
+      <div class="grid" style="grid-template-columns:1fr 1.3fr">
+        <div class="card">
+          <small class="mut">Загальна сума під ключ</small>
+          <div style="font-family:var(--fh);font-size:38px;margin:6px 0" id="pTotal"></div>
+          <div style="height:12px;border-radius:9px;background:var(--line2);overflow:hidden;margin:14px 0 8px"><i id="pBar" style="display:block;height:100%;width:0;background:linear-gradient(90deg,var(--teal),var(--acc));transition:width 1.2s var(--ease)"></i></div>
+          <div style="display:flex;justify-content:space-between;font-size:13px" class="mut"><span id="pPaid"></span><span id="pLeft"></span></div>
+          <button class="btn btn-acc" style="width:100%;margin-top:20px" id="payBtn">Сплатити наступний платіж</button>
+          <p class="mut" style="font-size:11px;margin-top:10px">Демо: оплата не проводиться.</p>
+        </div>
+        <div class="card"><b>Графік платежів</b><div id="pRows" style="margin-top:6px"></div></div>
+      </div>
+    </section>
+
+    <!-- DOCS -->
+    <section class="view" id="v-docs">
+      <div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(300px,1fr))" id="docs"></div>
+    </section>
+
+    <!-- CHAT -->
+    <section class="view" id="v-chat">
+      <div class="card chat">
+        <div class="chat-h"><div class="avatar">ОК</div><div><b>Ольга Ковальчук</b><div style="font-size:12px;color:var(--ok)">● онлайн · відповідає за ~5 хв</div></div></div>
+        <div class="msgs" id="msgs"><div class="typing" id="typing"><i></i><i></i><i></i></div></div>
+        <div>
+          <div class="quick" id="quick"><button>Де зараз моє авто?</button><button>Коли наступна оплата?</button><button>Можна додаткові фото?</button></div>
+          <form class="chat-f" id="chatF"><input class="inp" id="chatIn" placeholder="Напишіть повідомлення…" autocomplete="off"><button class="btn btn-acc">➤</button></form>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<nav class="mnav">
+  <button class="on" data-view="home"><span>◉</span>Огляд</button><button data-view="track"><span>⟶</span>Трекінг</button><button data-view="media"><span>▣</span>Фото</button><button data-view="pay"><span>₴</span>Оплати</button><button data-view="chat"><span>✉</span>Чат</button>
+</nav>
+<div class="lb" id="lb"><div class="in" id="lbIn"></div></div>
+<a class="demo-tag" href="hub.html">ПРОТОТИП · демо-дані · усі продукти →</a>
+
+<script>
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const fmt=n=>'$'+Math.round(n).toLocaleString('uk-UA').replace(/[  ,]/g,' ');
+function setFill(r){r.style.setProperty('--p',((r.value-r.min)/(r.max-r.min)*100)+'%')}
+function toast(msg){let t=$('#toast');if(!t){t=document.createElement('div');t.id='toast';t.className='toast';document.body.appendChild(t)}
+  t.textContent=msg;t.classList.add('show');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('show'),2600)}
+function countUp(el,to,dur=1200,pre='',suf=''){const st=performance.now();(function f(t){const p=Math.min(1,(t-st)/dur),v=to*(1-Math.pow(1-p,4));
+  el.textContent=pre+Math.round(v).toLocaleString('uk-UA').replace(/[  ,]/g,' ')+suf;if(p<1)requestAnimationFrame(f)})(st)}
+/* tabs for app shells: buttons with data-view */
+function initViews(){const go=v=>{$$('[data-view]').forEach(b=>b.classList.toggle('on',b.dataset.view===v));$$('.view').forEach(x=>x.classList.toggle('on',x.id==='v-'+v));scrollTo(0,0);if(window.onView)onView(v)};
+  $$('[data-view]').forEach(b=>b.addEventListener('click',()=>go(b.dataset.view)));return go}
+/* stylised car side view */
+function car(type,color,uid=''){
+  const id='g'+color.replace('#','')+type+uid;
+  const bodies={
+    suv:'M20 92 L28 70 Q34 58 52 56 L92 52 Q112 30 140 26 L232 24 Q258 26 276 48 L300 56 Q324 60 330 74 L334 92 Z',
+    sedan:'M16 92 L22 76 Q28 66 46 64 L96 58 Q124 34 160 32 L222 32 Q252 34 274 56 L316 62 Q334 66 336 80 L336 92 Z',
+    coupe:'M16 92 L20 78 Q26 68 46 66 L110 60 Q150 34 196 34 L230 36 Q262 42 286 62 L322 68 Q336 72 336 84 L336 92 Z'};
+  const glass={suv:'M100 54 Q118 34 142 32 L180 32 L180 54 Z M188 32 L230 32 Q252 34 266 52 L188 54Z',
+    sedan:'M106 60 Q130 40 160 38 L190 38 L190 60Z M198 38 L222 38 Q246 40 262 58 L198 60Z',
+    coupe:'M122 60 Q154 40 196 40 L212 40 L212 62Z M220 41 L232 42 Q256 48 272 62 L220 62Z'};
+  return `<svg viewBox="0 0 352 120" class="carsvg"><defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${color}"/><stop offset="1" stop-color="#0b1110"/></linearGradient></defs>
+  <ellipse cx="176" cy="108" rx="160" ry="8" fill="rgba(0,0,0,.6)"/>
+  <path d="${bodies[type]}" fill="url(#${id})" stroke="rgba(255,255,255,.18)"/>
+  <path d="${glass[type]}" fill="rgba(160,220,200,.18)"/>
+  <path d="M30 80 H330" stroke="rgba(255,255,255,.15)"/><rect x="318" y="70" width="14" height="5" rx="2" fill="#F3FC7A"/><rect x="18" y="72" width="10" height="5" rx="2" fill="#FF3030"/>
+  <g fill="#0a0a0a" stroke="#3a4644" stroke-width="5"><circle cx="86" cy="92" r="19"/><circle cx="270" cy="92" r="19"/></g>
+  <g fill="#8A9894"><circle cx="86" cy="92" r="6"/><circle cx="270" cy="92" r="6"/></g></svg>`;
+}
+const GAL_APPS=[['index.html','Сайт'],['cabinet.html','Кабінет клієнта'],['crm.html','CRM'],['monitor.html','Монітор лотів'],['driver.html','Водій'],['repair.html','Оцінка ремонту'],['landing.html','Лендинги'],['hub.html','Усі продукти']];
+
+
+const STEPS=['Викуплено на аукціоні','Доставка в порт США','Завантажено в контейнер','В морі','Порт ЄС','Автовоз до Львова','Розмитнення','Видача з номерами'];
+const MY=[
+ {name:'Tesla Model Y LR · 2023',t:'suv',c:'#d9dde5',step:3,pct:52,eta:'12 днів',where:'Атлантика',port:'Клайпеда',cont:'MSCU 447120-3',vessel:'MSC Aurora',lot:'Copart #44512873',vin:'7SAYGDEE5PF•••••',total:31900,
+  dates:['14.10','18.10','24.10','зараз','≈ 12.11','≈ 16.11','≈ 19.11','≈ 22.11'],
+  pays:[['Депозит на аукціон','02.10',1500,1],['Оплата лота','15.10',20300,1],['Доставка США + море','26.10',2400,1],['Розмитнення','≈ 18.11',6300,0],['Послуги та видача','≈ 22.11',1400,0]],
+  notifs:[['🚢','Судно MSC Aurora пройшло 52% шляху','2 год'],['📸','Додано 12 фото з завантаження контейнера','2 дні'],['✅','Оплату за доставку отримано','16 днів']]},
+ {name:'Toyota RAV4 Hybrid · 2022',t:'suv',c:'#b23a2a',step:5,pct:84,eta:'4 дні',where:'Польща → Львів',port:'Бремерхафен',cont:'HLXU 812004-1',vessel:'Hapag Elbe',lot:'IAAI #40177250',vin:'2T3RWRFV1NW•••••',total:27400,
+  dates:['20.09','23.09','29.09','01.10','03.11','зараз','≈ 15.11','≈ 17.11'],
+  pays:[['Депозит на аукціон','15.09',1000,1],['Оплата лота','21.09',15900,1],['Доставка США + море','30.09',2200,1],['Розмитнення','08.11',5900,1],['Послуги та видача','≈ 17.11',2400,0]],
+  notifs:[['🚛','Автовоз перетнув кордон у Шегинях','40 хв'],['📸','Фото після розвантаження в Бремерхафені','8 днів'],['✅','Розмитнення сплачено','3 дні']]}
+];
+let me=MY[0];
+const go=initViews();
+$('#carsw').innerHTML=MY.map((c,i)=>`<button class="${i?'':'on'}" data-i="${i}">${car(c.t,c.c,'s'+i)}<span>${c.name}</span></button>`).join('');
+$$('#carsw button').forEach(b=>b.onclick=()=>{$$('#carsw button').forEach(x=>x.classList.remove('on'));b.classList.add('on');me=MY[+b.dataset.i];render()});
+
+function render(){
+  const c=me;
+  $('#hcImg').innerHTML=`<div class="top"><span class="badge b-acc"><i></i>${STEPS[c.step]}</span><span class="badge">${c.lot}</span></div>${car(c.t,c.c,'h')}
+    <div class="eta"><div><small class="mut">Орієнтовно у Львові через</small><br><b>${c.eta}</b></div><div style="text-align:right"><small class="mut">Зараз</small><br><b style="color:var(--tx);font-size:15px;font-family:var(--fb)">${c.where}</b></div></div>`;
+  $('#hcName').textContent=c.name;
+  $('#hcStatus').innerHTML=`<span class="badge b-teal"><i></i>${c.where}</span>`;
+  $('#ringC').style.strokeDashoffset=352;$('#ringT').textContent='0%';
+  requestAnimationFrame(()=>setTimeout(()=>{$('#ringC').style.strokeDashoffset=352*(1-c.pct/100);countUp($('#ringT'),c.pct,1400,'','%')},60));
+  const paid=c.pays.filter(p=>p[3]).reduce((s,p)=>s+p[2],0), next=c.pays.find(p=>!p[3]);
+  countUp($('#kPaid'),paid,1000,'$');$('#kPaidOf').textContent='з '+fmt(c.total);
+  $('#kNext').textContent=next?fmt(next[2]):'—';$('#kNextD').textContent=next?next[0]+' · '+next[1]:'усе сплачено';
+  $('#notifs').innerHTML=c.notifs.map(n=>`<div class="notif"><span>${n[0]}</span><span>${n[1]}</span><span class="t">${n[2]}</span></div>`).join('');
+  $('#routeBadge').innerHTML=`<i></i>${c.port} → Львів`;
+  // route svg
+  const pts=[[40,110],[200,70],[420,50],[640,40],[820,70],[940,95]];
+  const labels=['Аукціон','Порт США','Атлантика','Порт ЄС','Кордон','Львів'];
+  const d='M'+pts.map(p=>p.join(' ')).join(' L');
+  const prog=c.pct/100;
+  $('#route').innerHTML=`<svg viewBox="0 0 980 150" preserveAspectRatio="none"><path d="${d}" stroke="rgba(255,255,255,.12)" stroke-width="3" fill="none" stroke-dasharray="6 8"/>
+    <path id="rp" d="${d}" stroke="url(#rg2)" stroke-width="4" fill="none" stroke-linecap="round"/><defs><linearGradient id="rg2"><stop offset="0" stop-color="#2D8377"/><stop offset="1" stop-color="#CED858"/></linearGradient></defs>
+    ${pts.map((p,i)=>`<circle cx="${p[0]}" cy="${p[1]}" r="6" fill="${i/(pts.length-1)<=prog?'#CED858':'#2a3533'}"/><text x="${p[0]}" y="${p[1]+26}" fill="#8A9894" font-size="12" text-anchor="middle" font-family="Manrope, sans-serif">${labels[i]}</text>`).join('')}
+    <circle id="rdot" r="10" fill="#F3FC7A"><animate attributeName="r" values="8;12;8" dur="1.5s" repeatCount="indefinite"/></circle></svg>`;
+  const rp=$('#rp'),L=rp.getTotalLength();rp.style.strokeDasharray=L;rp.style.strokeDashoffset=L;
+  rp.getBoundingClientRect();rp.style.transition='stroke-dashoffset 1.6s cubic-bezier(.2,.8,.2,1)';rp.style.strokeDashoffset=L*(1-prog);
+  const st=performance.now();(function f(t){const p=Math.min(1,(t-st)/1600),e=1-Math.pow(1-p,3),pt=rp.getPointAtLength(L*prog*e);$('#rdot').setAttribute('cx',pt.x);$('#rdot').setAttribute('cy',pt.y);if(p<1)requestAnimationFrame(f)})(st);
+  // timeline
+  $('#tl').innerHTML=STEPS.map((s,i)=>`<div class="tl-i ${i<c.step?'done':i===c.step?'now':''}"><div class="c">${i<c.step?'✓':i+1}</div><div><b>${s}</b>${i<=c.step&&i<5?`<small>Фото-звіт · <span class="ph" data-view-go="media">переглянути</span></small>`:''}</div><small>${c.dates[i]}</small></div>`).join('');
+  $$('[data-view-go]').forEach(x=>x.onclick=()=>go(x.dataset.viewGo));
+  $('#ship').innerHTML=[['Контейнер',c.cont],['Судно',c.vessel],['Порт ЄС',c.port],['VIN',c.vin]].map(r=>`<div style="padding:12px;border-radius:12px;background:var(--bg2)"><small class="mut" style="font-size:11px;text-transform:uppercase;letter-spacing:.06em">${r[0]}</small><div style="font-weight:700;font-size:14px;margin-top:3px">${r[1]}</div></div>`).join('');
+  // media
+  const bgs=['linear-gradient(160deg,#2a2a1c,#0d1514)','linear-gradient(160deg,#152a2c,#0d1514)','linear-gradient(160deg,#1f2622,#0a0f0e)','radial-gradient(70% 70% at 50% 60%,rgba(206,216,88,.22),#0d1514)'];
+  const caps=['Аукціон · огляд','Аукціон · салон','Евакуатор','Порт США','Контейнер','Контейнер · кріплення','Порт ЄС','Автовоз'];
+  const n=Math.min(caps.length,c.step*2+1);
+  $('#gal').innerHTML=caps.slice(0,n).map((cp,i)=>`<div class="ph-i" data-i="${i}" style="background:${bgs[i%4]}">${car(c.t,c.c,'m'+i)}${i===2||i===5?'<div class="play">▶</div>':''}<span>${cp}</span></div>`).join('');
+  $$('.ph-i').forEach(p=>p.onclick=()=>{$('#lbIn').style.background=p.style.background;$('#lbIn').innerHTML=car(c.t,c.c,'lb')+`<div class="cap">${caps[+p.dataset.i]} · ${c.name}</div>`;$('#lb').classList.add('on')});
+  // pays
+  $('#pTotal').textContent=fmt(c.total);
+  setTimeout(()=>$('#pBar').style.width=(paid/c.total*100)+'%',100);
+  $('#pPaid').textContent='Сплачено '+fmt(paid);$('#pLeft').textContent='Залишок '+fmt(c.total-paid);
+  $('#pRows').innerHTML=c.pays.map(p=>`<div class="pay-row"><div><b style="font-size:14px">${p[0]}</b><div class="mut" style="font-size:12px">${p[1]}</div></div><b>${fmt(p[2])}</b>${p[3]?'<span class="badge b-ok"><i></i>Сплачено</span>':'<span class="badge b-warn"><i></i>Очікує</span>'}</div>`).join('');
+  $('#payBtn').style.display=next?'':'none';
+  // docs
+  const docs=[['PDF','Договір доручення','підписано 01.10',1],['PDF','Інвойс аукціону',c.lot,1],['PDF','VIN-звіт (Carfax)',c.vin,1],['PDF','Bill of Lading',c.cont,c.step>=2],['PDF','Митна декларація','після розмитнення',c.step>=6],['PDF','Сертифікат відповідності','після сертифікації',c.step>=6]];
+  $('#docs').innerHTML=docs.map(d=>`<div class="doc"><div class="ic">${d[0]}</div><div class="meta"><b>${d[1]}</b><small>${d[2]}</small></div>${d[3]?`<button class="btn btn-ghost btn-sm" onclick="toast('Завантаження: ${d[1]} (демо)')">↓</button>`:'<span class="badge">Згодом</span>'}</div>`).join('');
+}
+$('#lb').onclick=()=>$('#lb').classList.remove('on');
+$('#payBtn').onclick=()=>toast('Перенаправлення на оплату карткою… (демо)');
+
+/* chat */
+const msgs=$('#msgs');
+function addMsg(txt,who,att){const m=document.createElement('div');m.className='m '+who;
+  m.innerHTML=txt+(att?`<div class="att">${car(me.t,me.c,'c'+Date.now())}</div>`:'')+`<small>${new Date().toLocaleTimeString('uk-UA',{hour:'2-digit',minute:'2-digit'})}</small>`;
+  msgs.insertBefore(m,$('#typing'));msgs.scrollTop=msgs.scrollHeight}
+addMsg('Добрий день, Андрію! Ваше авто вже в морі, все за графіком. Надіслала фото з кріплення в контейнері 👇','them',1);
+const RE=[[/де|зараз|авто/i,()=>`Зараз: ${me.where}. Орієнтовно у Львові через ${me.eta}. Позицію судна видно у «Трекінгу».`],
+  [/оплат|плат|гроші/i,()=>{const n=me.pays.find(p=>!p[3]);return n?`Наступний платіж: ${n[0]}, ${fmt(n[2])}, ${n[1]}. Нагадаю за 2 дні.`:'Усе сплачено, дякуємо!'}],
+  [/фото|відео/i,()=>'Так, попрошу склад зробити додаткові фото. Будуть у розділі «Фото і відео» протягом доби.']];
+function reply(t){$('#typing').style.display='block';msgs.scrollTop=msgs.scrollHeight;
+  setTimeout(()=>{$('#typing').style.display='none';const r=RE.find(x=>x[0].test(t));addMsg(r?r[1]():'Прийняла! Уточню і відпишу протягом 15 хвилин.','them')},1300)}
+$('#chatF').onsubmit=e=>{e.preventDefault();const v=$('#chatIn').value.trim();if(!v)return;addMsg(v.replace(/</g,'&lt;'),'me');$('#chatIn').value='';reply(v)};
+$$('#quick button').forEach(b=>b.onclick=()=>{addMsg(b.textContent,'me');reply(b.textContent)});
+window.onView=v=>{if(v==='chat')$('#chatCnt').style.display='none'};
+render();
+</script>
+
+</body></html>

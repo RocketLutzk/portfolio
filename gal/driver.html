@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="uk"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Застосунок водія — Global Auto Logistic</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>:root{
+  --bg:#0A100F; --bg2:#0F1715; --card:#142020; --card2:#182625; --line:rgba(255,255,255,.08); --line2:rgba(255,255,255,.14);
+  --tx:#F3F4F6; --mut:#8A9894; --acc:#CED858; --acc2:#F3FC7A; --teal:#2D8377; --ok:#8BE3A6; --warn:#F3B95F; --bad:#F06F6F;
+  --green:#2D3C3A; --green2:#475F50; --r:20px; --ease:cubic-bezier(.2,.8,.2,1);
+  --fh:'Unbounded',system-ui,sans-serif; --fb:'Manrope',system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--tx);font-family:var(--fb);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+button,input,select,textarea{font:inherit;color:inherit}
+::selection{background:var(--acc);color:#000}
+::-webkit-scrollbar{width:8px;height:8px}::-webkit-scrollbar-thumb{background:var(--line2);border-radius:9px}
+h1,h2,h3{font-family:var(--fh);font-weight:800;letter-spacing:-.02em;line-height:1.08}
+.grad{background:linear-gradient(90deg,var(--acc),var(--acc2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.mut{color:var(--mut)}
+.eyebrow{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--acc);font-weight:700}
+.logo{display:flex;align-items:center;gap:10px;font-family:var(--fh);font-weight:800;font-size:14px}
+.logo-mark{width:34px;height:34px;border-radius:10px;background:conic-gradient(from 210deg,var(--acc),var(--acc2),var(--acc));display:grid;place-items:center;color:#000;font-size:11px;box-shadow:0 0 22px rgba(206,216,88,.35);flex:none}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 20px;border-radius:999px;font-weight:700;font-size:14px;border:0;cursor:pointer;transition:transform .25s var(--ease),background .25s,box-shadow .25s;white-space:nowrap}
+.btn:active{transform:scale(.97)}
+.btn-acc{background:var(--acc);color:#0a0a0a;box-shadow:0 8px 30px -10px rgba(206,216,88,.7)}
+.btn-acc:hover{background:var(--acc2)}
+.btn-ghost{background:rgba(255,255,255,.05);border:1px solid var(--line2)}
+.btn-ghost:hover{background:rgba(255,255,255,.1)}
+.btn-sm{padding:8px 14px;font-size:13px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:20px}
+.badge{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;font-size:12px;font-weight:700;background:rgba(255,255,255,.06);border:1px solid var(--line2);white-space:nowrap}
+.badge i{width:7px;height:7px;border-radius:50%;background:currentColor}
+.b-ok{color:var(--ok);background:rgba(139,227,166,.1);border-color:rgba(139,227,166,.25)}
+.b-acc{color:var(--acc);background:rgba(206,216,88,.1);border-color:rgba(206,216,88,.3)}
+.b-teal{color:#5FC7B6;background:rgba(45,131,119,.15);border-color:rgba(45,131,119,.4)}
+.b-warn{color:var(--warn);background:rgba(243,185,95,.1);border-color:rgba(243,185,95,.3)}
+.b-bad{color:var(--bad);background:rgba(240,111,111,.1);border-color:rgba(240,111,111,.3)}
+.field label{display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);margin-bottom:7px;font-weight:600}
+.inp,.field input,.field select,.field textarea{width:100%;background:var(--bg2);border:1px solid var(--line2);border-radius:12px;padding:11px 14px;outline:none;transition:.2s;font-weight:600}
+.inp:focus,.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--acc);box-shadow:0 0 0 4px rgba(206,216,88,.12)}
+input[type=range]{width:100%;appearance:none;height:6px;border-radius:9px;background:linear-gradient(90deg,var(--acc) var(--p,50%),var(--line2) var(--p,50%));outline:none}
+input[type=range]::-webkit-slider-thumb{appearance:none;width:20px;height:20px;border-radius:50%;background:#fff;border:5px solid var(--acc);cursor:grab}
+input[type=range]::-moz-range-thumb{width:12px;height:12px;border-radius:50%;background:#fff;border:5px solid var(--acc)}
+.range-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}
+.range-row b{font-size:14px}
+/* app shell */
+.app{display:grid;grid-template-columns:240px 1fr;min-height:100vh}
+.side{position:sticky;top:0;height:100vh;padding:22px 16px;border-right:1px solid var(--line);background:var(--bg2);display:flex;flex-direction:column;gap:6px}
+.side .logo{padding:0 8px 22px}
+.nav-i{display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:12px;color:var(--mut);cursor:pointer;font-weight:600;font-size:14px;transition:.2s;border:0;background:none;width:100%;text-align:left}
+.nav-i:hover{background:rgba(255,255,255,.04);color:var(--tx)}
+.nav-i.on{background:rgba(206,216,88,.1);color:var(--acc)}
+.nav-i .ic{width:20px;text-align:center}
+.nav-i .cnt{margin-left:auto;background:var(--acc);color:#000;font-size:11px;font-weight:800;padding:1px 7px;border-radius:999px}
+.side .bottom{margin-top:auto;padding:14px;border-radius:16px;background:var(--card);border:1px solid var(--line);font-size:13px}
+.main{padding:26px clamp(16px,3vw,40px) 60px;min-width:0}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:26px;flex-wrap:wrap}
+.topbar h1{font-size:clamp(22px,2.6vw,32px)}
+.avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--green2),var(--teal));display:grid;place-items:center;font-weight:800;font-size:14px;flex:none}
+.view{display:none;animation:vin .5s var(--ease)}
+.view.on{display:block}
+@keyframes vin{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.grid{display:grid;gap:16px}
+.kpi{position:relative;overflow:hidden}
+.kpi small{color:var(--mut);font-size:12px;text-transform:uppercase;letter-spacing:.08em}
+.kpi b{display:block;font-family:var(--fh);font-size:28px;margin:6px 0 2px}
+.kpi .d{font-size:12px;font-weight:700}
+.up{color:var(--ok)}.down{color:var(--bad)}
+.toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,120px);background:var(--card2);border:1px solid rgba(206,216,88,.35);padding:13px 20px;border-radius:14px;z-index:300;transition:transform .45s var(--ease);font-weight:600;box-shadow:0 20px 50px rgba(0,0,0,.5)}
+.toast.show{transform:translate(-50%,0)}
+.demo-tag{position:fixed;right:14px;bottom:14px;z-index:200;font-size:11px;padding:6px 11px;border-radius:999px;background:rgba(243,252,122,.08);border:1px solid rgba(243,252,122,.3);color:var(--acc2)}
+.mnav{display:none}
+@media (max-width:900px){
+  .app{grid-template-columns:1fr}
+  .side{display:none}
+  .mnav{display:flex;position:fixed;bottom:0;left:0;right:0;z-index:100;background:rgba(15,23,21,.92);backdrop-filter:blur(14px);border-top:1px solid var(--line2);justify-content:space-around;padding:8px 4px calc(8px + env(safe-area-inset-bottom))}
+  .mnav button{background:none;border:0;color:var(--mut);font-size:10px;display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 6px;cursor:pointer}
+  .mnav button span{font-size:19px}
+  .mnav button.on{color:var(--acc)}
+  .main{padding-bottom:100px}
+  .demo-tag{bottom:76px}
+}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+@media (max-width:900px){.grid[style*="grid-template-columns"]:not(.keep){grid-template-columns:1fr!important}}
+@media (max-width:600px){.kpi b{font-size:21px}.card{padding:16px}}
+
+
+body{background:radial-gradient(60% 60% at 70% 30%,rgba(206,216,88,.10),transparent 70%),var(--bg)}
+.stage{min-height:100vh;display:grid;grid-template-columns:1fr auto;gap:60px;align-items:center;max-width:1200px;margin:0 auto;padding:40px}
+.pitch h1{font-size:clamp(34px,4.5vw,58px);margin:16px 0}
+.pitch p{color:var(--mut);font-size:17px;max-width:460px}
+.pitch ul{list-style:none;margin-top:26px;display:grid;gap:12px}
+.pitch li{display:flex;gap:12px;align-items:center;font-weight:600}
+.pitch li span{width:34px;height:34px;border-radius:10px;background:rgba(206,216,88,.12);display:grid;place-items:center;color:var(--acc)}
+.phone{width:390px;height:800px;border-radius:54px;padding:12px;background:linear-gradient(145deg,#2b3836,#0e1514);box-shadow:0 40px 100px rgba(0,0,0,.7),inset 0 0 0 2px rgba(255,255,255,.08);position:relative}
+.screen{width:100%;height:100%;border-radius:43px;overflow:hidden;background:var(--bg);position:relative;display:flex;flex-direction:column}
+.notch{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:110px;height:30px;border-radius:20px;background:#000;z-index:20}
+.sbar{display:flex;justify-content:space-between;padding:16px 28px 6px;font-size:13px;font-weight:700}
+.scr{flex:1;overflow-y:auto;padding:10px 18px 100px;display:none;animation:vin .4s var(--ease)}
+.scr.on{display:block}
+.tabs{position:absolute;bottom:0;left:0;right:0;display:flex;justify-content:space-around;padding:10px 10px 26px;background:rgba(15,23,21,.95);backdrop-filter:blur(12px);border-top:1px solid var(--line2);z-index:10}
+.tabs button{background:none;border:0;color:var(--mut);font-size:11px;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;font-weight:600}
+.tabs button span{font-size:20px}
+.tabs button.on{color:var(--acc)}
+.h{font-family:var(--fh);font-size:22px;margin:6px 0 14px}
+.trip{border-radius:22px;padding:18px;background:linear-gradient(150deg,#1f2e25,var(--card));border:1px solid rgba(206,216,88,.25)}
+.trip .rt{display:flex;justify-content:space-between;align-items:center;margin:12px 0}
+.trip .rt b{font-family:var(--fh);font-size:18px}
+.trip .line{flex:1;height:2px;margin:0 12px;background:repeating-linear-gradient(90deg,var(--acc) 0 6px,transparent 6px 11px);position:relative}
+.trip .line::after{content:"🚛";position:absolute;top:-13px;left:var(--tp,0%);transform:translateX(-50%) scaleX(-1);transition:left 1s var(--ease)}
+.mini{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.mini div{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:11px;text-align:center}
+.mini b{display:block;font-family:var(--fh);font-size:17px}
+.mini small{color:var(--mut);font-size:11px}
+.big{width:100%;padding:18px;border-radius:18px;font-size:16px;margin-top:14px}
+.steps{margin-top:16px}
+.st{display:flex;gap:12px;align-items:center;padding:10px 0;font-size:14px;opacity:.45}
+.st.done,.st.now{opacity:1}
+.st i{width:24px;height:24px;border-radius:50%;border:2px solid var(--line2);display:grid;place-items:center;font-style:normal;font-size:12px;flex:none}
+.st.done i{background:var(--ok);border-color:var(--ok);color:#000}
+.st.now i{border-color:var(--acc);background:rgba(206,216,88,.15)}
+.st small{margin-left:auto;color:var(--mut);font-size:12px}
+.vc{display:flex;gap:12px;align-items:center;padding:10px;border-radius:16px;background:var(--card);border:1px solid var(--line);margin-bottom:8px;cursor:pointer;transition:.2s}
+.vc:active{transform:scale(.98)}
+.vc .im{width:74px;height:48px;border-radius:10px;background:var(--bg2);display:grid;place-items:center;flex:none}
+.vc .im svg{width:92%}
+.vc b{font-size:14px;display:block}
+.vc small{color:var(--mut);font-size:11px;font-family:ui-monospace,monospace}
+.vc .badge{margin-left:auto;font-size:10px;padding:3px 8px}
+.sheet{position:absolute;inset:0;background:var(--bg);z-index:15;transform:translateY(100%);transition:transform .45s var(--ease);overflow-y:auto;padding:52px 18px 40px}
+.sheet.on{transform:none}
+.back{background:var(--card);border:1px solid var(--line2);border-radius:999px;padding:8px 14px;cursor:pointer;font-weight:700;font-size:13px}
+.scan{position:relative;margin-top:14px;height:120px;border-radius:18px;background:#05080a;border:1px solid var(--line2);overflow:hidden;display:grid;place-items:center;font-family:ui-monospace,monospace;letter-spacing:.12em;font-size:15px}
+.scan .ln{position:absolute;left:10%;right:10%;height:2px;background:var(--acc);box-shadow:0 0 16px var(--acc);top:20%;display:none}
+.scan.run .ln{display:block;animation:scan 1.2s ease-in-out 2 alternate}
+@keyframes scan{to{top:80%}}
+.scan .cn{position:absolute;width:22px;height:22px;border:3px solid var(--acc)}
+.slots{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.slot{aspect-ratio:1.35;border-radius:14px;border:2px dashed var(--line2);display:grid;place-items:center;text-align:center;font-size:12px;color:var(--mut);cursor:pointer;position:relative;overflow:hidden;background-size:cover;background-position:center}
+.slot.has{border-style:solid;border-color:var(--ok)}
+.slot.has::after{content:"✓";position:absolute;top:6px;right:6px;width:22px;height:22px;border-radius:50%;background:var(--ok);color:#000;display:grid;place-items:center;font-weight:800}
+.slot input{display:none}
+.slot .lbl{position:absolute;bottom:6px;left:6px;font-size:10px;background:rgba(0,0,0,.55);padding:2px 7px;border-radius:6px;color:#fff}
+.map{position:relative;height:330px;border-radius:22px;overflow:hidden;background:#0c1312;border:1px solid var(--line)}
+.map svg{width:100%;height:100%}
+.ping{display:flex;gap:10px;padding:12px;border-radius:14px;background:var(--card);border:1px solid var(--line);margin-top:10px;font-size:13px;align-items:center}
+@media (max-width:900px){
+  .stage{display:block;padding:0}
+  .pitch{display:none}
+  .phone{width:100%;height:100vh;height:100dvh;border-radius:0;padding:0;box-shadow:none;background:none}
+  .screen{border-radius:0}
+  .notch{display:none}
+  .demo-tag{bottom:96px;right:auto;left:14px}
+}
+</style></head><body>
+
+
+
+<div class="stage">
+  <div class="pitch">
+    <div class="logo"><span class="logo-mark">GAL</span>Global Auto Logistic</div>
+    <h1>Застосунок для <span class="grad">водіїв автовозів</span></h1>
+    <p>Водій фіксує кожне авто при завантаженні й вивантаженні, а клієнт одразу бачить фото і статус у своєму кабінеті.</p>
+    <ul>
+      <li><span>⌁</span>Сканування VIN камерою</li>
+      <li><span>▣</span>Фото з 4 сторін + пошкодження</li>
+      <li><span>⟶</span>GPS-трекінг рейсу для клієнтів</li>
+      <li><span>!</span>Повідомлення про затримку в 1 тап</li>
+    </ul>
+  </div>
+  <div class="phone"><div class="screen">
+    <div class="notch"></div>
+    <div class="sbar"><span id="clock">9:41</span><span>📶 🔋</span></div>
+
+    <!-- TRIP -->
+    <div class="scr on" id="s-trip">
+      <div class="mut" style="font-size:13px">Доброго ранку, Василю</div>
+      <div class="h">Рейс #LV-2611</div>
+      <div class="trip">
+        <div style="display:flex;justify-content:space-between;font-size:12px" class="mut"><span>Автовоз BC 4471 KM</span><span id="tripSt" style="color:var(--acc);font-weight:700"></span></div>
+        <div class="rt"><b>Клайпеда</b><div class="line" id="tline"></div><b>Львів</b></div>
+        <div style="display:flex;justify-content:space-between;font-size:12px" class="mut"><span>Виїзд 11.11, 08:00</span><span>ETA 13.11, 14:00</span></div>
+      </div>
+      <div class="mini"><div><b>8</b><small>авто</small></div><div><b id="km">1 120</b><small>км лишилось</small></div><div><b id="chk">0/8</b><small>перевірено</small></div></div>
+      <button class="btn btn-acc big" id="mainBtn"></button>
+      <button class="btn btn-ghost btn-sm" id="demoAll" style="width:100%;margin-top:8px">Демо: позначити всі авто перевіреними</button>
+      <div class="steps" id="steps"></div>
+    </div>
+
+    <!-- CARS -->
+    <div class="scr" id="s-cars">
+      <div class="h">Авто в рейсі</div>
+      <div id="cars"></div>
+    </div>
+
+    <!-- MAP -->
+    <div class="scr" id="s-map">
+      <div class="h">Маршрут</div>
+      <div class="map" id="map"></div>
+      <div class="ping"><span style="font-size:20px">📍</span><div><b id="nextStop">Каунас</b><div class="mut" style="font-size:12px">наступна точка · <span id="nextKm"></span></div></div><span class="badge b-ok" style="margin-left:auto"><i></i>GPS</span></div>
+      <div class="ping"><span style="font-size:20px">🚦</span><div><b>Шегині</b><div class="mut" style="font-size:12px">черга на кордоні ≈ 3 год</div></div></div>
+      <button class="btn btn-ghost big" id="delay">⚠ Повідомити про затримку</button>
+    </div>
+
+    <div class="sheet" id="sheet"></div>
+
+    <nav class="tabs">
+      <button class="on" data-s="trip"><span>⛟</span>Рейс</button>
+      <button data-s="cars"><span>▤</span>Авто</button>
+      <button data-s="map"><span>⌖</span>Карта</button>
+    </nav>
+  </div></div>
+</div>
+<a class="demo-tag" href="hub.html">ПРОТОТИП · демо-дані · усі продукти →</a>
+
+<script>
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const fmt=n=>'$'+Math.round(n).toLocaleString('uk-UA').replace(/[  ,]/g,' ');
+function setFill(r){r.style.setProperty('--p',((r.value-r.min)/(r.max-r.min)*100)+'%')}
+function toast(msg){let t=$('#toast');if(!t){t=document.createElement('div');t.id='toast';t.className='toast';document.body.appendChild(t)}
+  t.textContent=msg;t.classList.add('show');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('show'),2600)}
+function countUp(el,to,dur=1200,pre='',suf=''){const st=performance.now();(function f(t){const p=Math.min(1,(t-st)/dur),v=to*(1-Math.pow(1-p,4));
+  el.textContent=pre+Math.round(v).toLocaleString('uk-UA').replace(/[  ,]/g,' ')+suf;if(p<1)requestAnimationFrame(f)})(st)}
+/* tabs for app shells: buttons with data-view */
+function initViews(){const go=v=>{$$('[data-view]').forEach(b=>b.classList.toggle('on',b.dataset.view===v));$$('.view').forEach(x=>x.classList.toggle('on',x.id==='v-'+v));scrollTo(0,0);if(window.onView)onView(v)};
+  $$('[data-view]').forEach(b=>b.addEventListener('click',()=>go(b.dataset.view)));return go}
+/* stylised car side view */
+function car(type,color,uid=''){
+  const id='g'+color.replace('#','')+type+uid;
+  const bodies={
+    suv:'M20 92 L28 70 Q34 58 52 56 L92 52 Q112 30 140 26 L232 24 Q258 26 276 48 L300 56 Q324 60 330 74 L334 92 Z',
+    sedan:'M16 92 L22 76 Q28 66 46 64 L96 58 Q124 34 160 32 L222 32 Q252 34 274 56 L316 62 Q334 66 336 80 L336 92 Z',
+    coupe:'M16 92 L20 78 Q26 68 46 66 L110 60 Q150 34 196 34 L230 36 Q262 42 286 62 L322 68 Q336 72 336 84 L336 92 Z'};
+  const glass={suv:'M100 54 Q118 34 142 32 L180 32 L180 54 Z M188 32 L230 32 Q252 34 266 52 L188 54Z',
+    sedan:'M106 60 Q130 40 160 38 L190 38 L190 60Z M198 38 L222 38 Q246 40 262 58 L198 60Z',
+    coupe:'M122 60 Q154 40 196 40 L212 40 L212 62Z M220 41 L232 42 Q256 48 272 62 L220 62Z'};
+  return `<svg viewBox="0 0 352 120" class="carsvg"><defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${color}"/><stop offset="1" stop-color="#0b1110"/></linearGradient></defs>
+  <ellipse cx="176" cy="108" rx="160" ry="8" fill="rgba(0,0,0,.6)"/>
+  <path d="${bodies[type]}" fill="url(#${id})" stroke="rgba(255,255,255,.18)"/>
+  <path d="${glass[type]}" fill="rgba(160,220,200,.18)"/>
+  <path d="M30 80 H330" stroke="rgba(255,255,255,.15)"/><rect x="318" y="70" width="14" height="5" rx="2" fill="#F3FC7A"/><rect x="18" y="72" width="10" height="5" rx="2" fill="#FF3030"/>
+  <g fill="#0a0a0a" stroke="#3a4644" stroke-width="5"><circle cx="86" cy="92" r="19"/><circle cx="270" cy="92" r="19"/></g>
+  <g fill="#8A9894"><circle cx="86" cy="92" r="6"/><circle cx="270" cy="92" r="6"/></g></svg>`;
+}
+const GAL_APPS=[['index.html','Сайт'],['cabinet.html','Кабінет клієнта'],['crm.html','CRM'],['monitor.html','Монітор лотів'],['driver.html','Водій'],['repair.html','Оцінка ремонту'],['landing.html','Лендинги'],['hub.html','Усі продукти']];
+
+
+const CARS=[['Tesla Model Y','7SAYGDEE5PF','suv','#d9dde5','А. Мельник'],['Toyota RAV4','2T3RWRFV1NW','suv','#b23a2a','О. Шевчук'],['BMW X5','5UXCR6C05M9','suv','#1f3b73','І. Бондар'],['Kia EV6','KNDC4DLC2P5','coupe','#5a6a7a','Ю. Ткачук'],['Honda Accord','1HGCV1F34MA','sedan','#e9e9ea','В. Романюк'],['Audi Q7','WA1LXAF79LD','suv','#3a3d46','Н. Кравець'],['VW Tiguan','3VV2B7AX5NM','suv','#2c3b55','С. Олійник'],['Ford Mach-E','3FMTK3SU1NM','coupe','#2e7d5b','М. Левицька']]
+ .map((c,i)=>({i,n:c[0],vin:c[1]+String(100000+i*7919).slice(-6),t:c[2],c:c[3],cl:c[4],vinOk:false,ph:{},st:'wait'}));
+const PH=['Перед','Зад','Лівий бік','Правий бік','Пошкодження','Салон'];
+const STAGES=[['Завантаження в порту','Почати завантаження'],['В дорозі','Завантажено, вирушаю'],['Кордон Шегині','Прибув на кордон'],['Розвантаження у Львові','Прибув до Львова'],['Рейс завершено','']];
+let stage=0;
+$('#clock').textContent=new Date().toLocaleTimeString('uk-UA',{hour:'2-digit',minute:'2-digit'});
+$$('.tabs button').forEach(b=>b.onclick=()=>{$$('.tabs button').forEach(x=>x.classList.toggle('on',x===b));$$('.scr').forEach(s=>s.classList.toggle('on',s.id==='s-'+b.dataset.s));$('#sheet').classList.remove('on');if(b.dataset.s==='map')drawMap()});
+function trip(){
+  const done=CARS.filter(c=>c.st==='ok').length;
+  $('#chk').textContent=done+'/8';
+  $('#tripSt').textContent=STAGES[stage][0];
+  $('#tline').style.setProperty('--tp',[0,30,70,100,100][stage]+'%');
+  $('#km').textContent=[1120,780,310,0,0][stage].toLocaleString('uk-UA');
+  const b=$('#mainBtn');
+  if(stage===0&&done<8){b.textContent=`Перевірте авто (${done}/8)`;b.className='btn btn-ghost big'}
+  else if(stage<4){b.textContent=STAGES[stage+1][1]||'';b.className='btn btn-acc big'}
+  else {b.textContent='✓ Рейс завершено';b.className='btn btn-ghost big'}
+  $('#demoAll').style.display=stage===0&&done<8?'':'none';
+  $('#steps').innerHTML=STAGES.slice(0,4).map((s,i)=>`<div class="st ${i<stage?'done':i===stage?'now':''}"><i>${i<stage?'✓':i+1}</i>${s[0]}<small>${['08:00','10:40','≈ 12.11','≈ 13.11'][i]}</small></div>`).join('');
+}
+$('#mainBtn').onclick=()=>{
+  if(stage===0&&CARS.some(c=>c.st!=='ok')){$$('.tabs button')[1].click();toast('Спершу перевірте всі 8 авто');return}
+  if(stage<4){stage++;trip();toast(stage===4?'Рейс завершено. Клієнти отримали сповіщення':`Статус «${STAGES[stage][0]}» → клієнти бачать у кабінеті`)}
+};
+function cars(){
+  $('#cars').innerHTML=CARS.map(c=>`<div class="vc" data-i="${c.i}"><div class="im">${car(c.t,c.c,'d'+c.i)}</div><div><b>${c.n}</b><small>${c.vin}</small><div class="mut" style="font-size:11px">${c.cl}</div></div>
+   ${c.st==='ok'?'<span class="badge b-ok">Готово</span>':Object.keys(c.ph).length||c.vinOk?'<span class="badge b-warn">У процесі</span>':'<span class="badge">Не перевірено</span>'}</div>`).join('');
+  $$('.vc').forEach(v=>v.onclick=()=>openCar(+v.dataset.i));
+}
+function openCar(i){
+  const c=CARS[i];
+  const sh=$('#sheet');
+  sh.innerHTML=`<button class="back" id="bk">← Назад</button>
+   <div class="h" style="margin-top:14px">${c.n}</div><div class="mut" style="font-size:13px">Клієнт: ${c.cl}</div>
+   <b style="display:block;margin-top:18px;font-size:14px">1. Скан VIN</b>
+   <div class="scan" id="scan"><span class="cn" style="top:10px;left:10px;border-right:0;border-bottom:0"></span><span class="cn" style="top:10px;right:10px;border-left:0;border-bottom:0"></span><span class="cn" style="bottom:10px;left:10px;border-right:0;border-top:0"></span><span class="cn" style="bottom:10px;right:10px;border-left:0;border-top:0"></span><div class="ln"></div><span id="vtx">${c.vinOk?c.vin+' ✓':'Наведіть камеру на VIN'}</span></div>
+   ${c.vinOk?'':'<button class="btn btn-ghost" style="width:100%;margin-top:8px" id="scanB">Сканувати</button>'}
+   <b style="display:block;margin-top:20px;font-size:14px">2. Фото (мін. 4)</b>
+   <div class="slots">${PH.map((p,k)=>`<label class="slot ${c.ph[k]?'has':''}" style="${c.ph[k]?`background-image:url(${c.ph[k]})`:''}">${c.ph[k]?`<span class="lbl">${p}</span>`:`<span>📷<br>${p}</span>`}<input type="file" accept="image/*" capture="environment" data-k="${k}"></label>`).join('')}</div>
+   <p class="mut" style="font-size:11px;margin-top:6px">Тап по слоту відкриває камеру телефона.</p><button class="btn btn-ghost btn-sm" id="demoPh" style="margin-top:6px">Демо: заповнити 4 фото</button>
+   <div class="field" style="margin-top:16px"><label>Примітка</label><textarea rows="2" placeholder="Напр. подряпина на задньому бампері"></textarea></div>
+   <button class="btn btn-acc big" id="conf">Підтвердити завантаження</button>`;
+  sh.classList.add('on');
+  $('#bk').onclick=()=>{sh.classList.remove('on');cars();trip()};
+  const sb=$('#scanB');if(sb)sb.onclick=()=>{$('#scan').classList.add('run');$('#vtx').textContent='Сканування…';sb.disabled=true;
+    setTimeout(()=>{c.vinOk=true;$('#scan').classList.remove('run');$('#vtx').innerHTML=`${c.vin} <span style="color:var(--ok)">✓ збігається</span>`;sb.remove()},2500)};
+  $$('.slot').forEach(sl=>{const inp=sl.querySelector('input');
+    inp.onchange=()=>{const f=inp.files[0];if(f){c.ph[inp.dataset.k]=URL.createObjectURL(f);openCar(i)}}});
+  $('#demoPh').onclick=()=>{[0,1,2,3].forEach(k=>{if(!c.ph[k])demoShot(c,k,true)});openCar(i)};
+  $('#conf').onclick=()=>{const n=Object.keys(c.ph).length;if(!c.vinOk){toast('Спершу проскануйте VIN');return}if(n<4){toast(`Потрібно ще ${4-n} фото`);return}
+    c.st='ok';sh.classList.remove('on');cars();trip();toast(`${c.n}: фото надіслано клієнту ${c.cl}`)};
+}
+function demoShot(c,k,quiet){ // генерує «фото» з SVG для демо
+  const svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 352 240"><rect width="352" height="240" fill="#1a2624"/>${car(c.t,c.c,'p').replace(/^<svg[^>]*>/,'<g transform="translate(0,60)">').replace('</svg>','</g>')}</svg>`;
+  c.ph[k]='data:image/svg+xml;base64,'+btoa(unescape(encodeURIComponent(svg)));if(!quiet)openCar(c.i)}
+/* map */
+const PTS=[[60,40,'Клайпеда'],[110,95,'Каунас'],[150,180,'Варшава'],[230,250,'Люблін'],[270,285,'Шегині'],[295,305,'Львів']];
+function drawMap(){
+  const prog=[0,.3,.72,1,1][stage];
+  const d='M'+PTS.map(p=>p[0]+' '+p[1]).join(' L');
+  $('#map').innerHTML=`<svg viewBox="0 0 360 330"><defs><pattern id="gp" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M20 0H0V20" fill="none" stroke="rgba(255,255,255,.04)"/></pattern></defs><rect width="360" height="330" fill="url(#gp)"/>
+   <path d="M0 210 Q90 190 170 215 T360 230" stroke="rgba(255,255,255,.08)" stroke-width="1.5" fill="none" stroke-dasharray="4 4"/><text x="300" y="222" fill="#8A9894" font-size="9" font-family="Manrope,sans-serif">кордон</text>
+   <path d="${d}" stroke="rgba(255,255,255,.15)" stroke-width="4" fill="none" stroke-linecap="round"/><path id="mp" d="${d}" stroke="#CED858" stroke-width="4" fill="none" stroke-linecap="round"/>
+   ${PTS.map(p=>`<circle cx="${p[0]}" cy="${p[1]}" r="5" fill="#0c1312" stroke="#CED858" stroke-width="2"/><text x="${p[0]+10}" y="${p[1]+4}" fill="#F3F4F6" font-size="11" font-weight="700" font-family="Manrope,sans-serif">${p[2]}</text>`).join('')}
+   <g id="trk"><circle r="14" fill="rgba(206,216,88,.25)"><animate attributeName="r" values="10;18;10" dur="1.6s" repeatCount="indefinite"/></circle><circle r="7" fill="#F3FC7A"/></g></svg>`;
+  const mp=$('#mp'),L=mp.getTotalLength();mp.style.strokeDasharray=L;mp.style.strokeDashoffset=L*(1-prog);
+  const pt=mp.getPointAtLength(L*Math.max(.01,prog));$('#trk').setAttribute('transform',`translate(${pt.x},${pt.y})`);
+  const ni=[1,2,4,5,5][stage];$('#nextStop').textContent=PTS[ni][2];$('#nextKm').textContent=['≈ 220 км','≈ 300 км','≈ 120 км','на місці','на місці'][stage];
+}
+$('#demoAll').onclick=()=>{CARS.forEach(c=>{c.vinOk=true;[0,1,2,3].forEach(k=>{if(!c.ph[k])demoShot(c,k,true)});c.st='ok'});cars();trip();toast('Усі 8 авто перевірено')};
+$('#delay').onclick=()=>toast('Логіста і клієнтів повідомлено про затримку');
+cars();trip();
+</script>
+
+</body></html>

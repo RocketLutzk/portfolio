@@ -13,6 +13,7 @@ Portfolio of a web developer and digital marketer from Lviv, Ukraine: websites, 
 | Аркада | Сайт бренду напоїв з адмінкою | [Демо](https://claude.ai/artifact/2sXWzdhUBNz7gLMAdkKZGf) · [Код](https://github.com/RocketLutzk/hetman) |
 | Аркада 3D | WebGL-промосторінка | [Демо](https://claude.ai/artifact/SwyB31B3BsgLms7wjJQ1JF) |
 | Мідний контур | ERP для виробництва | [Демо](https://claude.ai/artifact/95bcBuQyrPSfmb3RDvmXH3) |
+| Global Auto Logistic | Екосистема з 7 продуктів для пригону авто: сайт, CRM, кабінет, водій, монітор лотів, оцінка ремонту, лендинги | [Хаб](https://rocketlutzk.github.io/portfolio/gal/hub.html) |
 | Eko Modda | Інтернет-магазин меблів | [Демо](https://claude.ai/artifact/BzQTmbmc4JA8dkgGUfNoeS) |
 | RMauto | Сайт автомайданчика | [Демо](https://claude.ai/artifact/L6jLRaWzT8SNTtYSfSMG2f) · [Код](https://github.com/RocketLutzk/rmauto) |
 | Леоплит | Каталог плит із картою розкрою | [Демо](https://claude.ai/artifact/87kZ7mvwhDW6Xx4QkbR5jW) |
@@ -32,6 +33,7 @@ Portfolio of a web developer and digital marketer from Lviv, Ukraine: websites, 
 - `case.html` — презентації проєктів (стрілки ← → або свайп)
 - `projects.js` — дані всіх проєктів (тексти UA/EN, посилання)
 - `mock.css` — стилі мініатюр
+- `gal/` — прототипи Global Auto Logistic (вхід: `gal/hub.html`)
 
 ## Контакти
 

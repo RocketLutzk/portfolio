@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="uk"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Монітор лотів — Global Auto Logistic</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>:root{
+  --bg:#0A100F; --bg2:#0F1715; --card:#142020; --card2:#182625; --line:rgba(255,255,255,.08); --line2:rgba(255,255,255,.14);
+  --tx:#F3F4F6; --mut:#8A9894; --acc:#CED858; --acc2:#F3FC7A; --teal:#2D8377; --ok:#8BE3A6; --warn:#F3B95F; --bad:#F06F6F;
+  --green:#2D3C3A; --green2:#475F50; --r:20px; --ease:cubic-bezier(.2,.8,.2,1);
+  --fh:'Unbounded',system-ui,sans-serif; --fb:'Manrope',system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--tx);font-family:var(--fb);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+button,input,select,textarea{font:inherit;color:inherit}
+::selection{background:var(--acc);color:#000}
+::-webkit-scrollbar{width:8px;height:8px}::-webkit-scrollbar-thumb{background:var(--line2);border-radius:9px}
+h1,h2,h3{font-family:var(--fh);font-weight:800;letter-spacing:-.02em;line-height:1.08}
+.grad{background:linear-gradient(90deg,var(--acc),var(--acc2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.mut{color:var(--mut)}
+.eyebrow{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--acc);font-weight:700}
+.logo{display:flex;align-items:center;gap:10px;font-family:var(--fh);font-weight:800;font-size:14px}
+.logo-mark{width:34px;height:34px;border-radius:10px;background:conic-gradient(from 210deg,var(--acc),var(--acc2),var(--acc));display:grid;place-items:center;color:#000;font-size:11px;box-shadow:0 0 22px rgba(206,216,88,.35);flex:none}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 20px;border-radius:999px;font-weight:700;font-size:14px;border:0;cursor:pointer;transition:transform .25s var(--ease),background .25s,box-shadow .25s;white-space:nowrap}
+.btn:active{transform:scale(.97)}
+.btn-acc{background:var(--acc);color:#0a0a0a;box-shadow:0 8px 30px -10px rgba(206,216,88,.7)}
+.btn-acc:hover{background:var(--acc2)}
+.btn-ghost{background:rgba(255,255,255,.05);border:1px solid var(--line2)}
+.btn-ghost:hover{background:rgba(255,255,255,.1)}
+.btn-sm{padding:8px 14px;font-size:13px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:20px}
+.badge{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;font-size:12px;font-weight:700;background:rgba(255,255,255,.06);border:1px solid var(--line2);white-space:nowrap}
+.badge i{width:7px;height:7px;border-radius:50%;background:currentColor}
+.b-ok{color:var(--ok);background:rgba(139,227,166,.1);border-color:rgba(139,227,166,.25)}
+.b-acc{color:var(--acc);background:rgba(206,216,88,.1);border-color:rgba(206,216,88,.3)}
+.b-teal{color:#5FC7B6;background:rgba(45,131,119,.15);border-color:rgba(45,131,119,.4)}
+.b-warn{color:var(--warn);background:rgba(243,185,95,.1);border-color:rgba(243,185,95,.3)}
+.b-bad{color:var(--bad);background:rgba(240,111,111,.1);border-color:rgba(240,111,111,.3)}
+.field label{display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);margin-bottom:7px;font-weight:600}
+.inp,.field input,.field select,.field textarea{width:100%;background:var(--bg2);border:1px solid var(--line2);border-radius:12px;padding:11px 14px;outline:none;transition:.2s;font-weight:600}
+.inp:focus,.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--acc);box-shadow:0 0 0 4px rgba(206,216,88,.12)}
+input[type=range]{width:100%;appearance:none;height:6px;border-radius:9px;background:linear-gradient(90deg,var(--acc) var(--p,50%),var(--line2) var(--p,50%));outline:none}
+input[type=range]::-webkit-slider-thumb{appearance:none;width:20px;height:20px;border-radius:50%;background:#fff;border:5px solid var(--acc);cursor:grab}
+input[type=range]::-moz-range-thumb{width:12px;height:12px;border-radius:50%;background:#fff;border:5px solid var(--acc)}
+.range-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}
+.range-row b{font-size:14px}
+/* app shell */
+.app{display:grid;grid-template-columns:240px 1fr;min-height:100vh}
+.side{position:sticky;top:0;height:100vh;padding:22px 16px;border-right:1px solid var(--line);background:var(--bg2);display:flex;flex-direction:column;gap:6px}
+.side .logo{padding:0 8px 22px}
+.nav-i{display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:12px;color:var(--mut);cursor:pointer;font-weight:600;font-size:14px;transition:.2s;border:0;background:none;width:100%;text-align:left}
+.nav-i:hover{background:rgba(255,255,255,.04);color:var(--tx)}
+.nav-i.on{background:rgba(206,216,88,.1);color:var(--acc)}
+.nav-i .ic{width:20px;text-align:center}
+.nav-i .cnt{margin-left:auto;background:var(--acc);color:#000;font-size:11px;font-weight:800;padding:1px 7px;border-radius:999px}
+.side .bottom{margin-top:auto;padding:14px;border-radius:16px;background:var(--card);border:1px solid var(--line);font-size:13px}
+.main{padding:26px clamp(16px,3vw,40px) 60px;min-width:0}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:26px;flex-wrap:wrap}
+.topbar h1{font-size:clamp(22px,2.6vw,32px)}
+.avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--green2),var(--teal));display:grid;place-items:center;font-weight:800;font-size:14px;flex:none}
+.view{display:none;animation:vin .5s var(--ease)}
+.view.on{display:block}
+@keyframes vin{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.grid{display:grid;gap:16px}
+.kpi{position:relative;overflow:hidden}
+.kpi small{color:var(--mut);font-size:12px;text-transform:uppercase;letter-spacing:.08em}
+.kpi b{display:block;font-family:var(--fh);font-size:28px;margin:6px 0 2px}
+.kpi .d{font-size:12px;font-weight:700}
+.up{color:var(--ok)}.down{color:var(--bad)}
+.toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,120px);background:var(--card2);border:1px solid rgba(206,216,88,.35);padding:13px 20px;border-radius:14px;z-index:300;transition:transform .45s var(--ease);font-weight:600;box-shadow:0 20px 50px rgba(0,0,0,.5)}
+.toast.show{transform:translate(-50%,0)}
+.demo-tag{position:fixed;right:14px;bottom:14px;z-index:200;font-size:11px;padding:6px 11px;border-radius:999px;background:rgba(243,252,122,.08);border:1px solid rgba(243,252,122,.3);color:var(--acc2)}
+.mnav{display:none}
+@media (max-width:900px){
+  .app{grid-template-columns:1fr}
+  .side{display:none}
+  .mnav{display:flex;position:fixed;bottom:0;left:0;right:0;z-index:100;background:rgba(15,23,21,.92);backdrop-filter:blur(14px);border-top:1px solid var(--line2);justify-content:space-around;padding:8px 4px calc(8px + env(safe-area-inset-bottom))}
+  .mnav button{background:none;border:0;color:var(--mut);font-size:10px;display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 6px;cursor:pointer}
+  .mnav button span{font-size:19px}
+  .mnav button.on{color:var(--acc)}
+  .main{padding-bottom:100px}
+  .demo-tag{bottom:76px}
+}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+@media (max-width:900px){.grid[style*="grid-template-columns"]:not(.keep){grid-template-columns:1fr!important}}
+@media (max-width:600px){.kpi b{font-size:21px}.card{padding:16px}}
+
+
+.mon{display:grid;grid-template-columns:290px 1fr;gap:20px;align-items:start}
+.flt{position:sticky;top:20px;display:grid;gap:18px}
+.flt h4{font-family:var(--fh);font-size:13px;font-weight:600;margin-bottom:10px}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tag{padding:7px 11px;border-radius:999px;border:1px solid var(--line2);background:none;cursor:pointer;font-size:12px;font-weight:600;color:var(--mut);transition:.2s}
+.tag.on{background:var(--acc);border-color:var(--acc);color:#0a0a0a}
+.sw{display:flex;justify-content:space-between;align-items:center;font-size:13px;padding:6px 0;cursor:pointer}
+.sw i{width:38px;height:22px;border-radius:999px;background:var(--line2);position:relative;transition:.25s;flex:none}
+.sw i::after{content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:.25s var(--ease)}
+.sw.on i{background:var(--acc)}
+.sw.on i::after{left:19px;background:#0a0a0a}
+.searches{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:18px}
+.srch{flex:none;display:flex;align-items:center;gap:10px;padding:9px 14px;border-radius:14px;border:1px solid var(--line2);background:var(--card);cursor:pointer;font-size:13px;font-weight:600;transition:.2s}
+.srch.on{border-color:var(--acc);background:rgba(206,216,88,.08)}
+.srch small{color:var(--mut);font-weight:500}
+.srch .n{background:var(--acc);color:#000;border-radius:999px;font-size:11px;padding:1px 7px;font-weight:800}
+.stats{grid-template-columns:repeat(4,1fr);margin-bottom:16px}
+.live{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:700;color:var(--ok)}
+.live i{width:8px;height:8px;border-radius:50%;background:var(--ok);animation:pl 1.6s infinite}
+@keyframes pl{0%{box-shadow:0 0 0 0 rgba(139,227,166,.7)}70%{box-shadow:0 0 0 9px rgba(139,227,166,0)}}
+.lot{display:grid;grid-template-columns:170px 1fr 170px 150px;gap:18px;align-items:center;padding:14px;border-radius:18px;background:var(--card);border:1px solid var(--line);margin-bottom:10px;transition:border-color .3s,background .6s}
+.lot:hover{border-color:var(--line2)}
+.lot.new{animation:slideIn .7s var(--ease);background:rgba(206,216,88,.08);border-color:rgba(206,216,88,.4)}
+@keyframes slideIn{from{opacity:0;transform:translateY(-24px) scale(.98)}to{opacity:1;transform:none}}
+.lot .ph{aspect-ratio:1.5;border-radius:12px;background:linear-gradient(160deg,#1a2624,#0d1514);display:grid;place-items:center;position:relative}
+.lot .ph svg{width:90%}
+.lot .ph .nb{position:absolute;top:6px;left:6px;font-size:10px;font-weight:800;background:var(--acc);color:#000;padding:2px 7px;border-radius:6px}
+.lot h3{font-family:var(--fb);font-weight:800;font-size:16px;letter-spacing:0}
+.lot .meta{display:flex;flex-wrap:wrap;gap:6px 12px;color:var(--mut);font-size:12px;margin-top:6px}
+.lot .tg{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+.price small{display:block;color:var(--mut);font-size:11px;text-transform:uppercase;letter-spacing:.06em}
+.price b{font-size:18px;font-family:var(--fh)}
+.price .tk{color:var(--acc)}
+.timer{font-variant-numeric:tabular-nums;font-weight:700;font-size:13px}
+.timer.urg{color:var(--bad)}
+.act{display:grid;gap:8px;justify-items:end}
+.match{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--mut)}
+.match svg{transform:rotate(-90deg)}
+.match b{color:var(--tx);font-size:14px}
+.empty{padding:40px;text-align:center;color:var(--mut);border:1px dashed var(--line2);border-radius:18px}
+.modal{position:fixed;inset:0;z-index:160;background:rgba(3,6,5,.7);display:none;place-items:center;padding:20px}
+.modal.on{display:grid;animation:vin .3s}
+.modal .box{width:min(460px,100%);background:var(--bg);border:1px solid var(--line2);border-radius:24px;padding:26px}
+@media (max-width:1200px){.lot{grid-template-columns:140px 1fr 150px}.act{grid-column:1/-1;grid-auto-flow:column;justify-content:space-between;justify-items:start}}
+@media (min-width:901px){.fbtn{display:none}}
+@media (max-width:900px){.flt{display:none}.flt.open{display:grid}.mon{grid-template-columns:1fr}.flt{position:relative;top:0}.stats{grid-template-columns:1fr 1fr}.lot{grid-template-columns:110px 1fr}.lot .price{grid-column:1/-1;display:flex;justify-content:space-between}}
+</style></head><body>
+
+
+
+<div class="main" style="max-width:1500px;margin:0 auto">
+  <div class="topbar">
+    <div style="display:flex;gap:14px;align-items:center"><span class="logo-mark">GAL</span><div><div class="eyebrow">Global Auto Logistic</div><h1>Монітор лотів</h1></div></div>
+    <div style="display:flex;gap:14px;align-items:center"><span class="live"><i></i>Copart · IAAI · Manheim — онлайн</span><button class="btn btn-acc" id="saveSearch">Зберегти пошук для клієнта</button></div>
+  </div>
+  <div class="searches" id="searches"></div>
+  <div class="mon">
+    <button class="btn btn-ghost fbtn" id="fbtn">⚙ Фільтри</button>
+    <aside class="card flt" id="flt">
+      <div><h4>Марка</h4><div class="tags" id="fBrand"></div></div>
+      <div><div class="range-row"><h4 style="margin:0">Рік від</h4><b id="yV"></b></div><input type="range" id="fY" min="2015" max="2025" value="2019"></div>
+      <div><div class="range-row"><h4 style="margin:0">Під ключ до</h4><b id="bV"></b></div><input type="range" id="fB" min="10000" max="70000" step="1000" value="45000"></div>
+      <div><div class="range-row"><h4 style="margin:0">Пробіг до</h4><b id="mV"></b></div><input type="range" id="fM" min="10000" max="150000" step="5000" value="90000"></div>
+      <div><h4>Пальне</h4><div class="tags" id="fFuel"></div></div>
+      <div><h4>Аукціон</h4><div class="tags" id="fAuc"></div></div>
+      <div>
+        <div class="sw on" data-k="run">Тільки Run &amp; Drive<i></i></div>
+        <div class="sw" data-k="clean">Тільки Clean title<i></i></div>
+        <div class="sw on" data-k="nofire">Без води й вогню<i></i></div>
+      </div>
+      <button class="btn btn-ghost btn-sm" id="reset">Скинути фільтри</button>
+    </aside>
+    <div>
+      <div class="grid stats" id="stats"></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;gap:10px;flex-wrap:wrap">
+        <b id="foundT"></b>
+        <select class="inp" id="sort" style="width:auto"><option value="new">Спершу нові</option><option value="end">Скоро завершуються</option><option value="cheap">Найдешевші під ключ</option><option value="match">Найкращий збіг</option></select>
+      </div>
+      <div id="feed"></div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="bidM"><div class="box">
+  <h3 style="font-size:20px" id="bidT"></h3><p class="mut" style="font-size:13px;margin:6px 0 18px" id="bidS"></p>
+  <div class="range-row"><span class="mut" style="font-size:12px">Максимальна ставка</span><b id="mbV"></b></div><input type="range" id="mb" min="1000" max="60000" step="100">
+  <div class="card" style="background:var(--bg2);margin-top:18px;display:flex;justify-content:space-between"><span class="mut">Буде під ключ у Львові ≈</span><b id="mbTk" style="color:var(--acc)"></b></div>
+  <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:18px"><button class="btn btn-ghost" id="bidX">Скасувати</button><button class="btn btn-acc" id="bidOk">Поставити автоставку</button></div>
+</div></div>
+<a class="demo-tag" href="hub.html">ПРОТОТИП · демо-дані · усі продукти →</a>
+
+<script>
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const fmt=n=>'$'+Math.round(n).toLocaleString('uk-UA').replace(/[  ,]/g,' ');
+function setFill(r){r.style.setProperty('--p',((r.value-r.min)/(r.max-r.min)*100)+'%')}
+function toast(msg){let t=$('#toast');if(!t){t=document.createElement('div');t.id='toast';t.className='toast';document.body.appendChild(t)}
+  t.textContent=msg;t.classList.add('show');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('show'),2600)}
+function countUp(el,to,dur=1200,pre='',suf=''){const st=performance.now();(function f(t){const p=Math.min(1,(t-st)/dur),v=to*(1-Math.pow(1-p,4));
+  el.textContent=pre+Math.round(v).toLocaleString('uk-UA').replace(/[  ,]/g,' ')+suf;if(p<1)requestAnimationFrame(f)})(st)}
+/* tabs for app shells: buttons with data-view */
+function initViews(){const go=v=>{$$('[data-view]').forEach(b=>b.classList.toggle('on',b.dataset.view===v));$$('.view').forEach(x=>x.classList.toggle('on',x.id==='v-'+v));scrollTo(0,0);if(window.onView)onView(v)};
+  $$('[data-view]').forEach(b=>b.addEventListener('click',()=>go(b.dataset.view)));return go}
+/* stylised car side view */
+function car(type,color,uid=''){
+  const id='g'+color.replace('#','')+type+uid;
+  const bodies={
+    suv:'M20 92 L28 70 Q34 58 52 56 L92 52 Q112 30 140 26 L232 24 Q258 26 276 48 L300 56 Q324 60 330 74 L334 92 Z',
+    sedan:'M16 92 L22 76 Q28 66 46 64 L96 58 Q124 34 160 32 L222 32 Q252 34 274 56 L316 62 Q334 66 336 80 L336 92 Z',
+    coupe:'M16 92 L20 78 Q26 68 46 66 L110 60 Q150 34 196 34 L230 36 Q262 42 286 62 L322 68 Q336 72 336 84 L336 92 Z'};
+  const glass={suv:'M100 54 Q118 34 142 32 L180 32 L180 54 Z M188 32 L230 32 Q252 34 266 52 L188 54Z',
+    sedan:'M106 60 Q130 40 160 38 L190 38 L190 60Z M198 38 L222 38 Q246 40 262 58 L198 60Z',
+    coupe:'M122 60 Q154 40 196 40 L212 40 L212 62Z M220 41 L232 42 Q256 48 272 62 L220 62Z'};
+  return `<svg viewBox="0 0 352 120" class="carsvg"><defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${color}"/><stop offset="1" stop-color="#0b1110"/></linearGradient></defs>
+  <ellipse cx="176" cy="108" rx="160" ry="8" fill="rgba(0,0,0,.6)"/>
+  <path d="${bodies[type]}" fill="url(#${id})" stroke="rgba(255,255,255,.18)"/>
+  <path d="${glass[type]}" fill="rgba(160,220,200,.18)"/>
+  <path d="M30 80 H330" stroke="rgba(255,255,255,.15)"/><rect x="318" y="70" width="14" height="5" rx="2" fill="#F3FC7A"/><rect x="18" y="72" width="10" height="5" rx="2" fill="#FF3030"/>
+  <g fill="#0a0a0a" stroke="#3a4644" stroke-width="5"><circle cx="86" cy="92" r="19"/><circle cx="270" cy="92" r="19"/></g>
+  <g fill="#8A9894"><circle cx="86" cy="92" r="6"/><circle cx="270" cy="92" r="6"/></g></svg>`;
+}
+const GAL_APPS=[['index.html','Сайт'],['cabinet.html','Кабінет клієнта'],['crm.html','CRM'],['monitor.html','Монітор лотів'],['driver.html','Водій'],['repair.html','Оцінка ремонту'],['landing.html','Лендинги'],['hub.html','Усі продукти']];
+
+
+const MODELS=[['Tesla','Model Y','suv','ev',0,75],['Tesla','Model 3','sedan','ev',0,60],['Toyota','RAV4 Hybrid','suv','hybrid',2.5,0],['Toyota','Camry','sedan','petrol',2.5,0],['BMW','X5','suv','petrol',3,0],['BMW','330i','sedan','petrol',2,0],['Audi','Q5','suv','petrol',2,0],['Kia','EV6','coupe','ev',0,77],['Ford','Mach-E','coupe','ev',0,88],['Honda','CR-V','suv','petrol',1.5,0],['Mazda','CX-5','suv','petrol',2.5,0],['Hyundai','Tucson','suv','petrol',2.5,0],['Jeep','Grand Cherokee','suv','petrol',3.6,0],['VW','Tiguan','suv','petrol',2,0],['Lexus','RX 350','suv','petrol',3.5,0],['Porsche','Macan','coupe','petrol',2,0]];
+const COLS=['#d9dde5','#1f3b73','#b23a2a','#3a3d46','#e9e9ea','#2e7d5b','#111317','#5a6a7a','#c8b27a','#6b2c2c'];
+const LOCS=['Fontana, CA','Houston, TX','Newark, NJ','Atlanta, GA','Miami, FL','Chicago, IL','Dallas, TX','Seattle, WA','Savannah, GA','Baltimore, MD'];
+const DMG=['Передня частина','Задня частина','Бік','Дрібні подряпини','Град','Ходова','Тільки фари'];
+const AUC=['Copart','IAAI','Manheim'];
+const BRANDS=[...new Set(MODELS.map(m=>m[0]))];
+const F={brands:new Set(),fuel:new Set(),auc:new Set(AUC),run:true,clean:false,nofire:true};
+let uid=0;const r=(a,b)=>a+Math.random()*(b-a),pk=a=>a[Math.floor(Math.random()*a.length)];
+function est(l){ // орієнтовно під ключ
+  const fee=l.bid<10000?720:l.bid*.06+80, log=({CA:950,WA:950,TX:650,IL:650}[l.loc.slice(-2)]||450)+1150+800;
+  const cv=l.bid+fee+log-800, age=Math.max(1,Math.min(15,2026-l.y));
+  const exc=(l.fuel==='ev'?l.kwh:(l.vol*1000<=3000?50:100)*l.vol*age)*1.16, duty=l.fuel==='ev'?0:cv*.1, vat=(cv+duty+exc)*.2;
+  return l.bid+fee+log+duty+exc+vat+1250+l.rep}
+function makeLot(fresh){const m=pk(MODELS),y=Math.round(r(2016,2025));const base={Tesla:21000,Toyota:14000,BMW:19000,Audi:16000,Kia:17000,Ford:16000,Honda:12000,Mazda:11000,Hyundai:11000,Jeep:13000,VW:11000,Lexus:20000,Porsche:28000}[m[0]];
+  const l={id:++uid,b:m[0],m:m[1],t:m[2],fuel:m[3],vol:m[4],kwh:m[5],y,c:pk(COLS),loc:pk(LOCS),auc:pk(AUC),dmg:pk(DMG),mi:Math.round(r(8,120))*1000,
+    bid:Math.round(base*(.55+(y-2016)*.07)*r(.75,1.15)/100)*100,ends:Date.now()+r(8,600)*60000,run:Math.random()>.2,clean:Math.random()>.75,fire:Math.random()>.9,rep:Math.round(r(3,25))*100,lot:Math.floor(r(30000000,46000000)),fresh,at:Date.now()};
+  l.tk=est(l);return l}
+let lots=Array.from({length:22},()=>makeLot(false));
+[0,4,9].forEach((i,k)=>{const l=lots[i];Object.assign(l,{b:'Tesla',m:'Model Y',t:'suv',fuel:'ev',vol:0,kwh:75,y:2022+k%2,bid:15800+k*900,run:true,fire:false,mi:22000+k*9000});l.tk=est(l)});
+/* saved searches */
+const SAVED=[{n:'Андрій М.',d:'Tesla Model Y · до $32k',f:{brands:['Tesla'],fuel:['ev'],b:32000,y:2021}},{n:'Олена Ш.',d:'RAV4 / CR-V · до $28k',f:{brands:['Toyota','Honda'],fuel:[],b:28000,y:2020}},{n:'Ігор Б.',d:'BMW / Audi · до $45k',f:{brands:['BMW','Audi'],fuel:[],b:45000,y:2019}},{n:'Усі лоти',d:'без фільтрів',f:{brands:[],fuel:[],b:70000,y:2015}}];
+function renderSaved(a=3){$('#searches').innerHTML=SAVED.map((s,i)=>`<div class="srch ${i===a?'on':''}" data-i="${i}"><div><div>${s.n}</div><small>${s.d}</small></div><span class="n" id="sn${i}">0</span></div>`).join('');
+  $$('.srch').forEach(el=>el.onclick=()=>{const s=SAVED[+el.dataset.i];F.brands=new Set(s.f.brands);F.fuel=new Set(s.f.fuel);$('#fB').value=s.f.b;$('#fY').value=s.f.y;renderSaved(+el.dataset.i);syncTags();render()})}
+function tags(id,items,set,label=x=>x){$('#'+id).innerHTML=items.map(x=>`<button class="tag" data-v="${x}">${label(x)}</button>`).join('');
+  $$('#'+id+' .tag').forEach(t=>t.onclick=()=>{const v=t.dataset.v;set.has(v)?set.delete(v):set.add(v);syncTags();render()})}
+function syncTags(){[['fBrand',F.brands],['fFuel',F.fuel],['fAuc',F.auc]].forEach(([id,s])=>$$('#'+id+' .tag').forEach(t=>t.classList.toggle('on',s.has(t.dataset.v))))}
+tags('fBrand',BRANDS,F.brands);tags('fFuel',['petrol','hybrid','ev'],F.fuel,x=>({petrol:'Бензин',hybrid:'Гібрид',ev:'Електро'})[x]);tags('fAuc',AUC,F.auc);
+$$('.sw').forEach(s=>s.onclick=()=>{F[s.dataset.k]=!F[s.dataset.k];s.classList.toggle('on',F[s.dataset.k]);render()});
+['fY','fB','fM','sort'].forEach(i=>$('#'+i).addEventListener('input',render));
+$('#reset').onclick=()=>{F.brands.clear();F.fuel.clear();AUC.forEach(a=>F.auc.add(a));$('#fB').value=70000;$('#fY').value=2015;$('#fM').value=150000;syncTags();render()};
+function ok(l,f=F,b=+$('#fB').value,y=+$('#fY').value){return (!f.brands.size||f.brands.has(l.b))&&(!f.fuel.size||f.fuel.has(l.fuel))&&f.auc.has(l.auc)&&l.y>=y&&l.tk<=b&&l.mi<=+$('#fM').value&&(!f.run||l.run)&&(!f.clean||l.clean)&&(!f.nofire||!l.fire)}
+function match(l){const b=+$('#fB').value;let s=60+Math.min(25,(b-l.tk)/b*100)+(l.clean?8:0)+(l.y-2018)*1.5-(l.mi/20000);return Math.max(40,Math.min(99,Math.round(s)))}
+function tleft(ms){if(ms<=0)return 'Завершено';const m=Math.floor(ms/60000),h=Math.floor(m/60);return h?`${h} год ${m%60} хв`:`${m} хв ${Math.floor(ms/1000)%60} с`}
+function render(){
+  $('#yV').textContent=$('#fY').value;$('#bV').textContent=fmt($('#fB').value);$('#mV').textContent=(+$('#fM').value/1000)+' тис. миль';
+  ['fY','fB','fM'].forEach(i=>setFill($('#'+i)));
+  const so=$('#sort').value;
+  let L=lots.filter(l=>ok(l));
+  L.sort({new:(a,b)=>b.at-a.at,end:(a,b)=>a.ends-b.ends,cheap:(a,b)=>a.tk-b.tk,match:(a,b)=>match(b)-match(a)}[so]);
+  $('#foundT').textContent=`Знайдено ${L.length} лотів`;
+  const soon=L.filter(l=>l.ends-Date.now()<2*3600000).length, avg=L.length?L.reduce((s,l)=>s+(l.tk*1.27-l.tk),0)/L.length:0;
+  $('#stats').innerHTML=[['Під фільтр',L.length],['Нові за годину',lots.filter(l=>l.fresh).length],['Торги < 2 год',soon],['Сер. економія',fmt(avg)]].map(x=>`<div class="card kpi"><small>${x[0]}</small><b>${x[1]}</b></div>`).join('');
+  $('#feed').innerHTML=L.length?L.map(l=>{const ms=match(l),C=2*Math.PI*15;return `<div class="lot ${l.fresh&&Date.now()-l.at<4000?'new':''}" data-id="${l.id}">
+    <div class="ph">${car(l.t,l.c,'l'+l.id)}${l.fresh?'<span class="nb">NEW</span>':''}</div>
+    <div><h3>${l.y} ${l.b} ${l.m}</h3><div class="meta"><span>${l.auc} #${l.lot}</span><span>📍 ${l.loc}</span><span>${(l.mi/1000).toFixed(0)} тис. миль</span></div>
+      <div class="tg"><span class="badge ${l.dmg==='Дрібні подряпини'||l.dmg==='Тільки фари'?'b-ok':'b-warn'}">${l.dmg}</span>${l.run?'<span class="badge b-teal">Run &amp; Drive</span>':'<span class="badge b-bad">Не заводиться</span>'}${l.clean?'<span class="badge b-ok">Clean</span>':'<span class="badge">Salvage</span>'}</div></div>
+    <div class="price"><div><small>Поточна ставка</small><b>${fmt(l.bid)}</b></div><div style="margin-top:6px"><small>Під ключ ≈</small><b class="tk">${fmt(l.tk)}</b></div></div>
+    <div class="act"><div class="match"><svg width="36" height="36"><circle cx="18" cy="18" r="15" stroke="rgba(255,255,255,.1)" stroke-width="4" fill="none"/><circle cx="18" cy="18" r="15" stroke="${ms>80?'#CED858':'#2D8377'}" stroke-width="4" fill="none" stroke-dasharray="${C}" stroke-dashoffset="${C*(1-ms/100)}" stroke-linecap="round"/></svg><div><b>${ms}%</b><br>збіг</div></div>
+      <span class="timer" data-end="${l.ends}">${tleft(l.ends-Date.now())}</span>
+      <div style="display:flex;gap:6px"><button class="btn btn-ghost btn-sm" data-send="${l.id}">Клієнту</button><button class="btn btn-acc btn-sm" data-bid="${l.id}">Ставка</button></div></div></div>`}).join(''):'<div class="empty">Під ці фільтри поки немає лотів. Монітор повідомить, щойно з’явиться.</div>';
+  $$('[data-send]').forEach(b=>b.onclick=()=>{const l=lots.find(x=>x.id==b.dataset.send);toast(`Лот ${l.b} ${l.m} надіслано клієнту в Telegram`)});
+  $$('[data-bid]').forEach(b=>b.onclick=()=>openBid(+b.dataset.bid));
+  SAVED.forEach((s,i)=>{const fs={...F,brands:new Set(s.f.brands),fuel:new Set(s.f.fuel)};$('#sn'+i).textContent=lots.filter(l=>ok(l,fs,s.f.b,s.f.y)).length});
+}
+setInterval(()=>$$('.timer').forEach(t=>{const ms=+t.dataset.end-Date.now();t.textContent=tleft(ms);t.classList.toggle('urg',ms<15*60000)}),1000);
+/* live feed */
+setInterval(()=>{const l=makeLot(true);lots.unshift(l);lots=lots.slice(0,40);render();if(ok(l))toast(`🔔 Новий лот під фільтр: ${l.y} ${l.b} ${l.m} · ≈ ${fmt(l.tk)} під ключ`)},7000);
+/* bid modal */
+let bl=null;
+function openBid(id){bl=lots.find(x=>x.id===id);$('#bidT').textContent=`${bl.y} ${bl.b} ${bl.m}`;$('#bidS').textContent=`${bl.auc} #${bl.lot} · поточна ставка ${fmt(bl.bid)}`;
+  $('#mb').min=bl.bid+100;$('#mb').max=bl.bid*1.6;$('#mb').value=Math.round(bl.bid*1.15/100)*100;upB();$('#bidM').classList.add('on')}
+function upB(){const v=+$('#mb').value;$('#mbV').textContent=fmt(v);setFill($('#mb'));$('#mbTk').textContent=fmt(est({...bl,bid:v}))}
+$('#mb').oninput=upB;$('#bidX').onclick=()=>$('#bidM').classList.remove('on');
+$('#bidOk').onclick=()=>{$('#bidM').classList.remove('on');toast(`Автоставку до ${$('#mbV').textContent} встановлено (демо)`)};
+$('#saveSearch').onclick=()=>toast('Пошук збережено. Клієнт отримуватиме нові лоти в Telegram');
+$('#fbtn').onclick=()=>$('#flt').classList.toggle('open');
+renderSaved();syncTags();render();
+</script>
+
+</body></html>

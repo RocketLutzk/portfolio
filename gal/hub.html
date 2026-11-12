@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="uk"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Цифрова екосистема — Global Auto Logistic</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>:root{
+  --bg:#0A100F; --bg2:#0F1715; --card:#142020; --card2:#182625; --line:rgba(255,255,255,.08); --line2:rgba(255,255,255,.14);
+  --tx:#F3F4F6; --mut:#8A9894; --acc:#CED858; --acc2:#F3FC7A; --teal:#2D8377; --ok:#8BE3A6; --warn:#F3B95F; --bad:#F06F6F;
+  --green:#2D3C3A; --green2:#475F50; --r:20px; --ease:cubic-bezier(.2,.8,.2,1);
+  --fh:'Unbounded',system-ui,sans-serif; --fb:'Manrope',system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--tx);font-family:var(--fb);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+button,input,select,textarea{font:inherit;color:inherit}
+::selection{background:var(--acc);color:#000}
+::-webkit-scrollbar{width:8px;height:8px}::-webkit-scrollbar-thumb{background:var(--line2);border-radius:9px}
+h1,h2,h3{font-family:var(--fh);font-weight:800;letter-spacing:-.02em;line-height:1.08}
+.grad{background:linear-gradient(90deg,var(--acc),var(--acc2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.mut{color:var(--mut)}
+.eyebrow{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--acc);font-weight:700}
+.logo{display:flex;align-items:center;gap:10px;font-family:var(--fh);font-weight:800;font-size:14px}
+.logo-mark{width:34px;height:34px;border-radius:10px;background:conic-gradient(from 210deg,var(--acc),var(--acc2),var(--acc));display:grid;place-items:center;color:#000;font-size:11px;box-shadow:0 0 22px rgba(206,216,88,.35);flex:none}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 20px;border-radius:999px;font-weight:700;font-size:14px;border:0;cursor:pointer;transition:transform .25s var(--ease),background .25s,box-shadow .25s;white-space:nowrap}
+.btn:active{transform:scale(.97)}
+.btn-acc{background:var(--acc);color:#0a0a0a;box-shadow:0 8px 30px -10px rgba(206,216,88,.7)}
+.btn-acc:hover{background:var(--acc2)}
+.btn-ghost{background:rgba(255,255,255,.05);border:1px solid var(--line2)}
+.btn-ghost:hover{background:rgba(255,255,255,.1)}
+.btn-sm{padding:8px 14px;font-size:13px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:20px}
+.badge{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;font-size:12px;font-weight:700;background:rgba(255,255,255,.06);border:1px solid var(--line2);white-space:nowrap}
+.badge i{width:7px;height:7px;border-radius:50%;background:currentColor}
+.b-ok{color:var(--ok);background:rgba(139,227,166,.1);border-color:rgba(139,227,166,.25)}
+.b-acc{color:var(--acc);background:rgba(206,216,88,.1);border-color:rgba(206,216,88,.3)}
+.b-teal{color:#5FC7B6;background:rgba(45,131,119,.15);border-color:rgba(45,131,119,.4)}
+.b-warn{color:var(--warn);background:rgba(243,185,95,.1);border-color:rgba(243,185,95,.3)}
+.b-bad{color:var(--bad);background:rgba(240,111,111,.1);border-color:rgba(240,111,111,.3)}
+.field label{display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);margin-bottom:7px;font-weight:600}
+.inp,.field input,.field select,.field textarea{width:100%;background:var(--bg2);border:1px solid var(--line2);border-radius:12px;padding:11px 14px;outline:none;transition:.2s;font-weight:600}
+.inp:focus,.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--acc);box-shadow:0 0 0 4px rgba(206,216,88,.12)}
+input[type=range]{width:100%;appearance:none;height:6px;border-radius:9px;background:linear-gradient(90deg,var(--acc) var(--p,50%),var(--line2) var(--p,50%));outline:none}
+input[type=range]::-webkit-slider-thumb{appearance:none;width:20px;height:20px;border-radius:50%;background:#fff;border:5px solid var(--acc);cursor:grab}
+input[type=range]::-moz-range-thumb{width:12px;height:12px;border-radius:50%;background:#fff;border:5px solid var(--acc)}
+.range-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}
+.range-row b{font-size:14px}
+/* app shell */
+.app{display:grid;grid-template-columns:240px 1fr;min-height:100vh}
+.side{position:sticky;top:0;height:100vh;padding:22px 16px;border-right:1px solid var(--line);background:var(--bg2);display:flex;flex-direction:column;gap:6px}
+.side .logo{padding:0 8px 22px}
+.nav-i{display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:12px;color:var(--mut);cursor:pointer;font-weight:600;font-size:14px;transition:.2s;border:0;background:none;width:100%;text-align:left}
+.nav-i:hover{background:rgba(255,255,255,.04);color:var(--tx)}
+.nav-i.on{background:rgba(206,216,88,.1);color:var(--acc)}
+.nav-i .ic{width:20px;text-align:center}
+.nav-i .cnt{margin-left:auto;background:var(--acc);color:#000;font-size:11px;font-weight:800;padding:1px 7px;border-radius:999px}
+.side .bottom{margin-top:auto;padding:14px;border-radius:16px;background:var(--card);border:1px solid var(--line);font-size:13px}
+.main{padding:26px clamp(16px,3vw,40px) 60px;min-width:0}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:26px;flex-wrap:wrap}
+.topbar h1{font-size:clamp(22px,2.6vw,32px)}
+.avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--green2),var(--teal));display:grid;place-items:center;font-weight:800;font-size:14px;flex:none}
+.view{display:none;animation:vin .5s var(--ease)}
+.view.on{display:block}
+@keyframes vin{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.grid{display:grid;gap:16px}
+.kpi{position:relative;overflow:hidden}
+.kpi small{color:var(--mut);font-size:12px;text-transform:uppercase;letter-spacing:.08em}
+.kpi b{display:block;font-family:var(--fh);font-size:28px;margin:6px 0 2px}
+.kpi .d{font-size:12px;font-weight:700}
+.up{color:var(--ok)}.down{color:var(--bad)}
+.toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,120px);background:var(--card2);border:1px solid rgba(206,216,88,.35);padding:13px 20px;border-radius:14px;z-index:300;transition:transform .45s var(--ease);font-weight:600;box-shadow:0 20px 50px rgba(0,0,0,.5)}
+.toast.show{transform:translate(-50%,0)}
+.demo-tag{position:fixed;right:14px;bottom:14px;z-index:200;font-size:11px;padding:6px 11px;border-radius:999px;background:rgba(243,252,122,.08);border:1px solid rgba(243,252,122,.3);color:var(--acc2)}
+.mnav{display:none}
+@media (max-width:900px){
+  .app{grid-template-columns:1fr}
+  .side{display:none}
+  .mnav{display:flex;position:fixed;bottom:0;left:0;right:0;z-index:100;background:rgba(15,23,21,.92);backdrop-filter:blur(14px);border-top:1px solid var(--line2);justify-content:space-around;padding:8px 4px calc(8px + env(safe-area-inset-bottom))}
+  .mnav button{background:none;border:0;color:var(--mut);font-size:10px;display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 6px;cursor:pointer}
+  .mnav button span{font-size:19px}
+  .mnav button.on{color:var(--acc)}
+  .main{padding-bottom:100px}
+  .demo-tag{bottom:76px}
+}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+@media (max-width:900px){.grid[style*="grid-template-columns"]:not(.keep){grid-template-columns:1fr!important}}
+@media (max-width:600px){.kpi b{font-size:21px}.card{padding:16px}}
+
+
+.w{width:min(1200px,92vw);margin:0 auto}
+.hero{padding:70px 0 40px;position:relative}
+.hero::before{content:"";position:absolute;inset:-100px -50vw 0;background:radial-gradient(45% 60% at 80% 20%,rgba(206,216,88,.16),transparent 70%),radial-gradient(40% 50% at 10% 60%,rgba(45,131,119,.16),transparent 70%);z-index:-1}
+.hero h1{font-size:clamp(38px,6vw,84px);margin:18px 0}
+.hero p{color:var(--mut);font-size:18px;max-width:640px}
+.flow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:34px;font-size:13px;font-weight:700}
+.flow span{padding:9px 14px;border-radius:999px;border:1px solid var(--line2);background:var(--card)}
+.flow i{color:var(--acc);font-style:normal}
+.apps{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:40px 0 80px}
+.app-c{position:relative;display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line);border-radius:26px;padding:26px;overflow:hidden;transition:transform .45s var(--ease),border-color .3s;min-height:280px;opacity:0;animation:up .8s var(--ease) forwards}
+@keyframes up{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:none}}
+.app-c:hover{transform:translateY(-6px);border-color:rgba(206,216,88,.4)}
+.app-c::after{content:"";position:absolute;width:240px;height:240px;right:-90px;top:-90px;background:radial-gradient(circle,rgba(206,216,88,.16),transparent 65%);transition:.5s}
+.app-c:hover::after{transform:scale(1.4)}
+.app-c .ic{width:54px;height:54px;border-radius:16px;background:rgba(206,216,88,.12);display:grid;place-items:center;font-size:24px;margin-bottom:20px}
+.app-c h3{font-size:20px;margin-bottom:8px}
+.app-c p{color:var(--mut);font-size:14px;flex:1}
+.app-c .for{display:flex;gap:6px;flex-wrap:wrap;margin:16px 0}
+.app-c .go{display:flex;justify-content:space-between;align-items:center;font-weight:800;color:var(--acc);padding-top:16px;border-top:1px solid var(--line)}
+.app-c .go span{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.06);display:grid;place-items:center;transition:.3s;color:var(--tx)}
+.app-c:hover .go span{background:var(--acc);color:#000;transform:rotate(-45deg)}
+.big{grid-column:span 2;background:linear-gradient(150deg,#1f2e25,var(--card) 60%)}
+@media (max-width:1000px){.apps{grid-template-columns:1fr 1fr}}
+@media (max-width:640px){.apps{grid-template-columns:1fr}.big{grid-column:auto}}
+</style></head><body>
+
+
+<div class="w">
+  <header class="hero">
+    <div class="logo"><span class="logo-mark">GAL</span>Global Auto Logistic</div>
+    <h1>Цифрова <span class="grad">екосистема</span><br>для пригону авто</h1>
+    <p>Сім продуктів, які працюють разом: реклама приводить клієнта, сайт і калькулятор продають, CRM веде угоду, монітор знаходить лоти, водій і кабінет роблять доставку прозорою.</p>
+    <div class="flow"><span>Реклама і лендинги</span><i>→</i><span>Сайт і калькулятор</span><i>→</i><span>CRM</span><i>→</i><span>Монітор лотів і оцінка ремонту</span><i>→</i><span>Водій</span><i>→</i><span>Кабінет клієнта</span></div>
+  </header>
+  <div class="apps" id="apps"></div>
+</div>
+<div class="demo-tag">ПРОТОТИПИ · демо-дані</div>
+<script>
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const fmt=n=>'$'+Math.round(n).toLocaleString('uk-UA').replace(/[  ,]/g,' ');
+function setFill(r){r.style.setProperty('--p',((r.value-r.min)/(r.max-r.min)*100)+'%')}
+function toast(msg){let t=$('#toast');if(!t){t=document.createElement('div');t.id='toast';t.className='toast';document.body.appendChild(t)}
+  t.textContent=msg;t.classList.add('show');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('show'),2600)}
+function countUp(el,to,dur=1200,pre='',suf=''){const st=performance.now();(function f(t){const p=Math.min(1,(t-st)/dur),v=to*(1-Math.pow(1-p,4));
+  el.textContent=pre+Math.round(v).toLocaleString('uk-UA').replace(/[  ,]/g,' ')+suf;if(p<1)requestAnimationFrame(f)})(st)}
+/* tabs for app shells: buttons with data-view */
+function initViews(){const go=v=>{$$('[data-view]').forEach(b=>b.classList.toggle('on',b.dataset.view===v));$$('.view').forEach(x=>x.classList.toggle('on',x.id==='v-'+v));scrollTo(0,0);if(window.onView)onView(v)};
+  $$('[data-view]').forEach(b=>b.addEventListener('click',()=>go(b.dataset.view)));return go}
+/* stylised car side view */
+function car(type,color,uid=''){
+  const id='g'+color.replace('#','')+type+uid;
+  const bodies={
+    suv:'M20 92 L28 70 Q34 58 52 56 L92 52 Q112 30 140 26 L232 24 Q258 26 276 48 L300 56 Q324 60 330 74 L334 92 Z',
+    sedan:'M16 92 L22 76 Q28 66 46 64 L96 58 Q124 34 160 32 L222 32 Q252 34 274 56 L316 62 Q334 66 336 80 L336 92 Z',
+    coupe:'M16 92 L20 78 Q26 68 46 66 L110 60 Q150 34 196 34 L230 36 Q262 42 286 62 L322 68 Q336 72 336 84 L336 92 Z'};
+  const glass={suv:'M100 54 Q118 34 142 32 L180 32 L180 54 Z M188 32 L230 32 Q252 34 266 52 L188 54Z',
+    sedan:'M106 60 Q130 40 160 38 L190 38 L190 60Z M198 38 L222 38 Q246 40 262 58 L198 60Z',
+    coupe:'M122 60 Q154 40 196 40 L212 40 L212 62Z M220 41 L232 42 Q256 48 272 62 L220 62Z'};
+  return `<svg viewBox="0 0 352 120" class="carsvg"><defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${color}"/><stop offset="1" stop-color="#0b1110"/></linearGradient></defs>
+  <ellipse cx="176" cy="108" rx="160" ry="8" fill="rgba(0,0,0,.6)"/>
+  <path d="${bodies[type]}" fill="url(#${id})" stroke="rgba(255,255,255,.18)"/>
+  <path d="${glass[type]}" fill="rgba(160,220,200,.18)"/>
+  <path d="M30 80 H330" stroke="rgba(255,255,255,.15)"/><rect x="318" y="70" width="14" height="5" rx="2" fill="#F3FC7A"/><rect x="18" y="72" width="10" height="5" rx="2" fill="#FF3030"/>
+  <g fill="#0a0a0a" stroke="#3a4644" stroke-width="5"><circle cx="86" cy="92" r="19"/><circle cx="270" cy="92" r="19"/></g>
+  <g fill="#8A9894"><circle cx="86" cy="92" r="6"/><circle cx="270" cy="92" r="6"/></g></svg>`;
+}
+const GAL_APPS=[['index.html','Сайт'],['cabinet.html','Кабінет клієнта'],['crm.html','CRM'],['monitor.html','Монітор лотів'],['driver.html','Водій'],['repair.html','Оцінка ремонту'],['landing.html','Лендинги'],['hub.html','Усі продукти']];
+
+
+const A=[
+ ['index.html','🌐','Сайт з калькулятором і каталогом','Калькулятор розмитнення 2026, каталог з детальною карткою авто і кредитом, онлайн-трекінг, заявка.',['Клієнти','Продажі'],1],
+ ['cabinet.html','👤','Кабінет клієнта','Де зараз авто, фото й відео з кожного етапу, графік оплат, документи і чат з менеджером.',['Клієнти']],
+ ['crm.html','📊','CRM для менеджерів','Дашборд, воронка з перетягуванням угод, ліди з реклами, рейтинг менеджерів, авто в дорозі по 14 філіях.',['Менеджери','Керівник']],
+ ['monitor.html','🔭','Монітор лотів','Copart, IAAI, Manheim в одному потоці: фільтри під клієнта, ціна під ключ одразу, автоставки, відправка в Telegram.',['Менеджери']],
+ ['driver.html','🚛','Застосунок водія','Скан VIN, фото з 4 сторін, статуси рейсу і GPS. Усе одразу з’являється в кабінеті клієнта.',['Водії','Логісти']],
+ ['repair.html','🧠','Оцінка ремонту по фото','Фото з аукціону → пошкодження, деталі, години роботи і вартість ремонту. Оригінал чи аналог.',['Менеджери','СТО']],
+ ['landing.html','🎯','Лендинги під рекламу','Три офери з квізом: авто до $15 000, електромобілі, для військових. Ліди йдуть одразу в CRM.',['Маркетинг']]
+];
+$('#apps').innerHTML=A.map((a,i)=>`<a class="app-c ${a[5]?'big':''}" href="${a[0]}" style="animation-delay:${i*.07}s"><div class="ic">${a[1]}</div><h3>${a[2]}</h3><p>${a[3]}</p><div class="for">${a[4].map(t=>`<span class="badge">${t}</span>`).join('')}</div><div class="go">Відкрити прототип<span>→</span></div></a>`).join('');
+</script>
+
+</body></html>

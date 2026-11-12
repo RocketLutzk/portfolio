@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="uk"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>CRM — Global Auto Logistic</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>:root{
+  --bg:#0A100F; --bg2:#0F1715; --card:#142020; --card2:#182625; --line:rgba(255,255,255,.08); --line2:rgba(255,255,255,.14);
+  --tx:#F3F4F6; --mut:#8A9894; --acc:#CED858; --acc2:#F3FC7A; --teal:#2D8377; --ok:#8BE3A6; --warn:#F3B95F; --bad:#F06F6F;
+  --green:#2D3C3A; --green2:#475F50; --r:20px; --ease:cubic-bezier(.2,.8,.2,1);
+  --fh:'Unbounded',system-ui,sans-serif; --fb:'Manrope',system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--tx);font-family:var(--fb);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+button,input,select,textarea{font:inherit;color:inherit}
+::selection{background:var(--acc);color:#000}
+::-webkit-scrollbar{width:8px;height:8px}::-webkit-scrollbar-thumb{background:var(--line2);border-radius:9px}
+h1,h2,h3{font-family:var(--fh);font-weight:800;letter-spacing:-.02em;line-height:1.08}
+.grad{background:linear-gradient(90deg,var(--acc),var(--acc2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.mut{color:var(--mut)}
+.eyebrow{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--acc);font-weight:700}
+.logo{display:flex;align-items:center;gap:10px;font-family:var(--fh);font-weight:800;font-size:14px}
+.logo-mark{width:34px;height:34px;border-radius:10px;background:conic-gradient(from 210deg,var(--acc),var(--acc2),var(--acc));display:grid;place-items:center;color:#000;font-size:11px;box-shadow:0 0 22px rgba(206,216,88,.35);flex:none}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 20px;border-radius:999px;font-weight:700;font-size:14px;border:0;cursor:pointer;transition:transform .25s var(--ease),background .25s,box-shadow .25s;white-space:nowrap}
+.btn:active{transform:scale(.97)}
+.btn-acc{background:var(--acc);color:#0a0a0a;box-shadow:0 8px 30px -10px rgba(206,216,88,.7)}
+.btn-acc:hover{background:var(--acc2)}
+.btn-ghost{background:rgba(255,255,255,.05);border:1px solid var(--line2)}
+.btn-ghost:hover{background:rgba(255,255,255,.1)}
+.btn-sm{padding:8px 14px;font-size:13px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:20px}
+.badge{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;font-size:12px;font-weight:700;background:rgba(255,255,255,.06);border:1px solid var(--line2);white-space:nowrap}
+.badge i{width:7px;height:7px;border-radius:50%;background:currentColor}
+.b-ok{color:var(--ok);background:rgba(139,227,166,.1);border-color:rgba(139,227,166,.25)}
+.b-acc{color:var(--acc);background:rgba(206,216,88,.1);border-color:rgba(206,216,88,.3)}
+.b-teal{color:#5FC7B6;background:rgba(45,131,119,.15);border-color:rgba(45,131,119,.4)}
+.b-warn{color:var(--warn);background:rgba(243,185,95,.1);border-color:rgba(243,185,95,.3)}
+.b-bad{color:var(--bad);background:rgba(240,111,111,.1);border-color:rgba(240,111,111,.3)}
+.field label{display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);margin-bottom:7px;font-weight:600}
+.inp,.field input,.field select,.field textarea{width:100%;background:var(--bg2);border:1px solid var(--line2);border-radius:12px;padding:11px 14px;outline:none;transition:.2s;font-weight:600}
+.inp:focus,.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--acc);box-shadow:0 0 0 4px rgba(206,216,88,.12)}
+input[type=range]{width:100%;appearance:none;height:6px;border-radius:9px;background:linear-gradient(90deg,var(--acc) var(--p,50%),var(--line2) var(--p,50%));outline:none}
+input[type=range]::-webkit-slider-thumb{appearance:none;width:20px;height:20px;border-radius:50%;background:#fff;border:5px solid var(--acc);cursor:grab}
+input[type=range]::-moz-range-thumb{width:12px;height:12px;border-radius:50%;background:#fff;border:5px solid var(--acc)}
+.range-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}
+.range-row b{font-size:14px}
+/* app shell */
+.app{display:grid;grid-template-columns:240px 1fr;min-height:100vh}
+.side{position:sticky;top:0;height:100vh;padding:22px 16px;border-right:1px solid var(--line);background:var(--bg2);display:flex;flex-direction:column;gap:6px}
+.side .logo{padding:0 8px 22px}
+.nav-i{display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:12px;color:var(--mut);cursor:pointer;font-weight:600;font-size:14px;transition:.2s;border:0;background:none;width:100%;text-align:left}
+.nav-i:hover{background:rgba(255,255,255,.04);color:var(--tx)}
+.nav-i.on{background:rgba(206,216,88,.1);color:var(--acc)}
+.nav-i .ic{width:20px;text-align:center}
+.nav-i .cnt{margin-left:auto;background:var(--acc);color:#000;font-size:11px;font-weight:800;padding:1px 7px;border-radius:999px}
+.side .bottom{margin-top:auto;padding:14px;border-radius:16px;background:var(--card);border:1px solid var(--line);font-size:13px}
+.main{padding:26px clamp(16px,3vw,40px) 60px;min-width:0}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:26px;flex-wrap:wrap}
+.topbar h1{font-size:clamp(22px,2.6vw,32px)}
+.avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--green2),var(--teal));display:grid;place-items:center;font-weight:800;font-size:14px;flex:none}
+.view{display:none;animation:vin .5s var(--ease)}
+.view.on{display:block}
+@keyframes vin{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.grid{display:grid;gap:16px}
+.kpi{position:relative;overflow:hidden}
+.kpi small{color:var(--mut);font-size:12px;text-transform:uppercase;letter-spacing:.08em}
+.kpi b{display:block;font-family:var(--fh);font-size:28px;margin:6px 0 2px}
+.kpi .d{font-size:12px;font-weight:700}
+.up{color:var(--ok)}.down{color:var(--bad)}
+.toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,120px);background:var(--card2);border:1px solid rgba(206,216,88,.35);padding:13px 20px;border-radius:14px;z-index:300;transition:transform .45s var(--ease);font-weight:600;box-shadow:0 20px 50px rgba(0,0,0,.5)}
+.toast.show{transform:translate(-50%,0)}
+.demo-tag{position:fixed;right:14px;bottom:14px;z-index:200;font-size:11px;padding:6px 11px;border-radius:999px;background:rgba(243,252,122,.08);border:1px solid rgba(243,252,122,.3);color:var(--acc2)}
+.mnav{display:none}
+@media (max-width:900px){
+  .app{grid-template-columns:1fr}
+  .side{display:none}
+  .mnav{display:flex;position:fixed;bottom:0;left:0;right:0;z-index:100;background:rgba(15,23,21,.92);backdrop-filter:blur(14px);border-top:1px solid var(--line2);justify-content:space-around;padding:8px 4px calc(8px + env(safe-area-inset-bottom))}
+  .mnav button{background:none;border:0;color:var(--mut);font-size:10px;display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 6px;cursor:pointer}
+  .mnav button span{font-size:19px}
+  .mnav button.on{color:var(--acc)}
+  .main{padding-bottom:100px}
+  .demo-tag{bottom:76px}
+}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+@media (max-width:900px){.grid[style*="grid-template-columns"]:not(.keep){grid-template-columns:1fr!important}}
+@media (max-width:600px){.kpi b{font-size:21px}.card{padding:16px}}
+
+
+.filters{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.filters select{width:auto;min-width:150px}
+.kpis{grid-template-columns:repeat(4,1fr)}
+.spark{position:absolute;right:14px;bottom:14px;width:90px;height:34px;opacity:.9}
+.chart{height:240px;margin-top:14px}
+.chart svg{width:100%;height:100%;overflow:visible}
+.bar-l{display:grid;grid-template-columns:90px 1fr 50px;gap:12px;align-items:center;padding:7px 0;font-size:13px}
+.bar-l .tr{height:10px;border-radius:9px;background:var(--line);overflow:hidden}
+.bar-l .tr i{display:block;height:100%;width:0;border-radius:9px;transition:width 1.2s var(--ease)}
+.lb-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px dashed var(--line);font-size:14px}
+.lb-row:last-child{border:0}
+.lb-row .avatar{width:34px;height:34px;font-size:12px}
+.task{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px dashed var(--line);font-size:14px;cursor:pointer}
+.task:last-child{border:0}
+.task .ck{width:20px;height:20px;border-radius:6px;border:2px solid var(--line2);flex:none;margin-top:1px;display:grid;place-items:center;font-size:12px;transition:.2s}
+.task.done .ck{background:var(--acc);border-color:var(--acc);color:#000}
+.task.done span{text-decoration:line-through;color:var(--mut)}
+.board{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(250px,1fr);gap:12px;overflow-x:auto;padding-bottom:14px;align-items:start}
+.col{background:var(--bg2);border:1px solid var(--line);border-radius:18px;padding:12px;min-height:420px;transition:.2s}
+.col.over{border-color:var(--acc);background:rgba(206,216,88,.05)}
+.col-h{display:flex;justify-content:space-between;align-items:center;padding:4px 6px 12px;font-weight:700;font-size:13px}
+.col-h span{color:var(--mut);font-weight:600}
+.col-h i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:8px}
+.deal{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:9px;cursor:grab;transition:transform .2s,border-color .2s,box-shadow .2s;animation:vin .4s var(--ease)}
+.deal:hover{border-color:var(--line2);transform:translateY(-2px)}
+.deal.drag{opacity:.4}
+.deal b{font-size:14px;display:block}
+.deal .car{font-size:12px;color:var(--mut);margin:2px 0 10px}
+.deal .ft{display:flex;justify-content:space-between;align-items:center;font-size:12px}
+.deal .ft .avatar{width:24px;height:24px;font-size:10px}
+.src{font-size:10px;font-weight:800;padding:2px 7px;border-radius:6px;background:rgba(255,255,255,.06);color:var(--mut)}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{text-align:left;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);font-weight:600;padding:12px 10px;border-bottom:1px solid var(--line)}
+td{padding:13px 10px;border-bottom:1px solid var(--line)}
+tbody tr{cursor:pointer;transition:background .15s}
+tbody tr:hover{background:rgba(255,255,255,.03)}
+.tbl-wrap{overflow-x:auto}
+.drawer{position:fixed;inset:0;z-index:150;background:rgba(3,6,5,.6);backdrop-filter:blur(6px);opacity:0;pointer-events:none;transition:opacity .3s}
+.drawer.open{opacity:1;pointer-events:auto}
+.dpanel{position:absolute;right:0;top:0;bottom:0;width:min(480px,100vw);background:var(--bg);border-left:1px solid var(--line2);padding:26px;overflow-y:auto;transform:translateX(100%);transition:transform .45s var(--ease)}
+.drawer.open .dpanel{transform:none}
+.x{float:right;width:40px;height:40px;border-radius:50%;border:1px solid var(--line2);background:var(--card);cursor:pointer}
+.kv{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border-radius:14px;overflow:hidden;margin:16px 0}
+.kv div{background:var(--card);padding:12px}
+.kv small{display:block;color:var(--mut);font-size:11px;text-transform:uppercase;letter-spacing:.06em}
+.kv b{font-size:14px}
+.stages{display:flex;gap:4px;margin:14px 0}
+.stages i{flex:1;height:6px;border-radius:9px;background:var(--line2)}
+.stages i.on{background:var(--acc)}
+.log{border-left:2px solid var(--line2);padding-left:16px;margin-top:10px}
+.log div{position:relative;padding:8px 0;font-size:13px}
+.log div::before{content:"";position:absolute;left:-22px;top:13px;width:10px;height:10px;border-radius:50%;background:var(--teal)}
+.log small{color:var(--mut);display:block}
+.modal{position:fixed;inset:0;z-index:160;background:rgba(3,6,5,.7);display:none;place-items:center;padding:20px}
+.modal.on{display:grid;animation:vin .3s}
+.modal .box{width:min(520px,100%);background:var(--bg);border:1px solid var(--line2);border-radius:24px;padding:26px}
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0}
+@media (max-width:1100px){.kpis{grid-template-columns:1fr 1fr}}
+@media (max-width:600px){.fg{grid-template-columns:1fr}}
+</style></head><body>
+
+
+
+<div class="app">
+  <aside class="side">
+    <div class="logo"><span class="logo-mark">GAL</span>CRM</div>
+    <button class="nav-i on" data-view="dash"><span class="ic">◉</span>Дашборд</button>
+    <button class="nav-i" data-view="pipe"><span class="ic">▥</span>Воронка угод</button>
+    <button class="nav-i" data-view="leads"><span class="ic">☰</span>Ліди<span class="cnt" id="newCnt">0</span></button>
+    <button class="nav-i" data-view="fleet"><span class="ic">⛴</span>Авто в дорозі</button>
+    <div class="bottom"><div style="display:flex;gap:10px;align-items:center"><div class="avatar">МГ</div><div><b>Марія Гнатюк</b><div class="mut" style="font-size:12px">керівник продажів</div></div></div></div>
+  </aside>
+  <main class="main">
+    <div class="topbar">
+      <div><div class="eyebrow">Global Auto Logistic · CRM</div><h1 id="ttl">Дашборд</h1></div>
+      <div class="filters">
+        <select class="inp" id="fBranch"><option value="all">Усі філії (14)</option><option>Львів</option><option>Рівне</option><option>Луцьк</option><option>Чернівці</option></select>
+        <select class="inp" id="fPeriod"><option>Листопад 2026</option><option>Жовтень 2026</option><option>Q4 2026</option></select>
+        <button class="btn btn-acc" id="addLead">+ Новий лід</button>
+      </div>
+    </div>
+
+    <!-- DASH -->
+    <section class="view on" id="v-dash">
+      <div class="grid kpis" id="kpis"></div>
+      <div class="grid" style="grid-template-columns:1.6fr 1fr;margin-top:16px">
+        <div class="card"><div style="display:flex;justify-content:space-between;align-items:center"><b>Виручка і угоди по місяцях</b><span class="badge b-acc"><i></i>+18% до плану</span></div><div class="chart" id="chart"></div></div>
+        <div class="card"><b>Джерела лідів</b><div id="srcs" style="margin-top:14px"></div>
+          <div style="margin-top:14px;padding-top:14px;border-top:1px dashed var(--line);font-size:13px" class="mut">Найдешевший лід: <b style="color:var(--acc)">TikTok · $4.2</b></div></div>
+      </div>
+      <div class="grid" style="grid-template-columns:1fr 1fr;margin-top:16px">
+        <div class="card"><b>Рейтинг менеджерів</b><div id="lbd" style="margin-top:8px"></div></div>
+        <div class="card"><div style="display:flex;justify-content:space-between"><b>Задачі на сьогодні</b><span class="mut" style="font-size:13px" id="taskCnt"></span></div><div id="tasks" style="margin-top:8px"></div></div>
+      </div>
+    </section>
+
+    <!-- PIPE -->
+    <section class="view" id="v-pipe">
+      <p class="mut" style="margin:-10px 0 16px;font-size:13px">Перетягніть угоду в іншу колонку. На телефоні — відкрийте угоду і натисніть «Наступний етап».</p>
+      <div class="board" id="board"></div>
+    </section>
+
+    <!-- LEADS -->
+    <section class="view" id="v-leads">
+      <div class="card">
+        <div class="filters" style="margin-bottom:12px"><input class="inp" id="lq" placeholder="Пошук: ім'я, телефон, авто…" style="max-width:340px"><select class="inp" id="lsrc"><option value="all">Усі джерела</option><option>Meta</option><option>Google</option><option>TikTok</option><option>Сайт</option><option>Telegram</option></select></div>
+        <div class="tbl-wrap"><table><thead><tr><th>Клієнт</th><th>Запит</th><th>Бюджет</th><th>Джерело</th><th>Етап</th><th>Менеджер</th><th>Створено</th></tr></thead><tbody id="ltb"></tbody></table></div>
+      </div>
+    </section>
+
+    <!-- FLEET -->
+    <section class="view" id="v-fleet">
+      <div class="grid kpis" id="fk"></div>
+      <div class="card" style="margin-top:16px"><div class="tbl-wrap"><table><thead><tr><th>Авто</th><th>Клієнт</th><th>Етап</th><th>Контейнер</th><th>ETA</th><th>Оплачено</th></tr></thead><tbody id="ftb"></tbody></table></div></div>
+    </section>
+  </main>
+</div>
+
+<nav class="mnav"><button class="on" data-view="dash"><span>◉</span>Дашборд</button><button data-view="pipe"><span>▥</span>Воронка</button><button data-view="leads"><span>☰</span>Ліди</button><button data-view="fleet"><span>⛴</span>Авто</button></nav>
+
+<div class="drawer" id="drawer"><div class="dpanel" id="dpanel"></div></div>
+<div class="modal" id="modal"><form class="box" id="leadForm">
+  <h3 style="font-size:20px">Новий лід</h3>
+  <div class="fg">
+    <div class="field"><label>Ім'я</label><input required name="n" placeholder="Ім'я клієнта"></div>
+    <div class="field"><label>Телефон</label><input required name="ph" placeholder="+380"></div>
+    <div class="field"><label>Що шукає</label><input name="car" placeholder="Напр. RAV4 2021+"></div>
+    <div class="field"><label>Бюджет, $</label><input name="b" type="number" value="20000"></div>
+    <div class="field"><label>Джерело</label><select name="s"><option>Meta</option><option>Google</option><option>TikTok</option><option>Сайт</option><option>Telegram</option></select></div>
+    <div class="field"><label>Менеджер</label><select name="m"><option>Ольга К.</option><option>Тарас Б.</option><option>Ірина Д.</option><option>Назар П.</option></select></div>
+  </div>
+  <div style="display:flex;gap:10px;justify-content:flex-end"><button type="button" class="btn btn-ghost" id="mClose">Скасувати</button><button class="btn btn-acc">Створити</button></div>
+</form></div>
+<a class="demo-tag" href="hub.html">ПРОТОТИП · демо-дані · усі продукти →</a>
+
+<script>
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const fmt=n=>'$'+Math.round(n).toLocaleString('uk-UA').replace(/[  ,]/g,' ');
+function setFill(r){r.style.setProperty('--p',((r.value-r.min)/(r.max-r.min)*100)+'%')}
+function toast(msg){let t=$('#toast');if(!t){t=document.createElement('div');t.id='toast';t.className='toast';document.body.appendChild(t)}
+  t.textContent=msg;t.classList.add('show');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('show'),2600)}
+function countUp(el,to,dur=1200,pre='',suf=''){const st=performance.now();(function f(t){const p=Math.min(1,(t-st)/dur),v=to*(1-Math.pow(1-p,4));
+  el.textContent=pre+Math.round(v).toLocaleString('uk-UA').replace(/[  ,]/g,' ')+suf;if(p<1)requestAnimationFrame(f)})(st)}
+/* tabs for app shells: buttons with data-view */
+function initViews(){const go=v=>{$$('[data-view]').forEach(b=>b.classList.toggle('on',b.dataset.view===v));$$('.view').forEach(x=>x.classList.toggle('on',x.id==='v-'+v));scrollTo(0,0);if(window.onView)onView(v)};
+  $$('[data-view]').forEach(b=>b.addEventListener('click',()=>go(b.dataset.view)));return go}
+/* stylised car side view */
+function car(type,color,uid=''){
+  const id='g'+color.replace('#','')+type+uid;
+  const bodies={
+    suv:'M20 92 L28 70 Q34 58 52 56 L92 52 Q112 30 140 26 L232 24 Q258 26 276 48 L300 56 Q324 60 330 74 L334 92 Z',
+    sedan:'M16 92 L22 76 Q28 66 46 64 L96 58 Q124 34 160 32 L222 32 Q252 34 274 56 L316 62 Q334 66 336 80 L336 92 Z',
+    coupe:'M16 92 L20 78 Q26 68 46 66 L110 60 Q150 34 196 34 L230 36 Q262 42 286 62 L322 68 Q336 72 336 84 L336 92 Z'};
+  const glass={suv:'M100 54 Q118 34 142 32 L180 32 L180 54 Z M188 32 L230 32 Q252 34 266 52 L188 54Z',
+    sedan:'M106 60 Q130 40 160 38 L190 38 L190 60Z M198 38 L222 38 Q246 40 262 58 L198 60Z',
+    coupe:'M122 60 Q154 40 196 40 L212 40 L212 62Z M220 41 L232 42 Q256 48 272 62 L220 62Z'};
+  return `<svg viewBox="0 0 352 120" class="carsvg"><defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${color}"/><stop offset="1" stop-color="#0b1110"/></linearGradient></defs>
+  <ellipse cx="176" cy="108" rx="160" ry="8" fill="rgba(0,0,0,.6)"/>
+  <path d="${bodies[type]}" fill="url(#${id})" stroke="rgba(255,255,255,.18)"/>
+  <path d="${glass[type]}" fill="rgba(160,220,200,.18)"/>
+  <path d="M30 80 H330" stroke="rgba(255,255,255,.15)"/><rect x="318" y="70" width="14" height="5" rx="2" fill="#F3FC7A"/><rect x="18" y="72" width="10" height="5" rx="2" fill="#FF3030"/>
+  <g fill="#0a0a0a" stroke="#3a4644" stroke-width="5"><circle cx="86" cy="92" r="19"/><circle cx="270" cy="92" r="19"/></g>
+  <g fill="#8A9894"><circle cx="86" cy="92" r="6"/><circle cx="270" cy="92" r="6"/></g></svg>`;
+}
+const GAL_APPS=[['index.html','Сайт'],['cabinet.html','Кабінет клієнта'],['crm.html','CRM'],['monitor.html','Монітор лотів'],['driver.html','Водій'],['repair.html','Оцінка ремонту'],['landing.html','Лендинги'],['hub.html','Усі продукти']];
+
+
+const STAGES=[['new','Новий лід','#8A9894'],['cons','Консультація','#2D8377'],['pick','Підбір лотів','#5FC7B6'],['bid','Ставка','#F3B95F'],['won','Викуплено','#CED858'],['ship','Доставка','#9FD0FF'],['done','Видано','#8BE3A6']];
+const MGR={'Ольга К.':'ОК','Тарас Б.':'ТБ','Ірина Д.':'ІД','Назар П.':'НП'};
+const NAMES=['Андрій Мельник','Олена Шевчук','Ігор Бондар','Юлія Ткачук','Віталій Романюк','Наталія Кравець','Сергій Олійник','Марта Левицька','Остап Гнатів','Дмитро Савчук','Христина Пасічник','Роман Іваськів','Василь Гуменюк','Ірина Петрук','Богдан Лісовий','Оксана Дзюба'];
+const CARSQ=['Tesla Model Y','Toyota RAV4','BMW X5','Kia EV6','Audi Q5','Honda CR-V','VW Tiguan','Ford Mach-E','Jeep Cherokee','Mazda CX-5','Hyundai Tucson','Lexus RX'];
+const SRC=['Meta','Google','TikTok','Сайт','Telegram'];
+const BR=['Львів','Рівне','Луцьк','Чернівці'];
+let seed=7;const rnd=()=>(seed=(seed*16807)%2147483647)/2147483647;
+const pick=a=>a[Math.floor(rnd()*a.length)];
+let deals=NAMES.map((n,i)=>({id:i+1,n,ph:'+380 6'+Math.floor(rnd()*9)+' '+(100+Math.floor(rnd()*899))+' '+(10+Math.floor(rnd()*89))+' '+(10+Math.floor(rnd()*89)),
+  car:pick(CARSQ),b:Math.round((12+rnd()*35))*1000,s:pick(SRC),st:STAGES[Math.min(6,Math.floor(rnd()*7))][0],m:pick(Object.keys(MGR)),br:pick(BR),d:(Math.floor(rnd()*12)+1)+'.11',hot:rnd()>.7}));
+[0,5,9].forEach(i=>deals[i].st='new');
+const go=initViews();
+const titles={dash:'Дашборд',pipe:'Воронка угод',leads:'Ліди',fleet:'Авто в дорозі'};
+window.onView=v=>{$('#ttl').textContent=titles[v];if(v==='dash')dash()};
+const stName=k=>STAGES.find(s=>s[0]===k);
+const brF=()=>$('#fBranch').value;
+const vis=()=>deals.filter(d=>brF()==='all'||d.br===brF());
+
+/* dashboard */
+function spark(vals,col){const mx=Math.max(...vals),mn=Math.min(...vals);return `<svg class="spark" viewBox="0 0 90 34"><polyline fill="none" stroke="${col}" stroke-width="2.2" stroke-linecap="round" points="${vals.map((v,i)=>`${i*90/(vals.length-1)},${32-(v-mn)/(mx-mn||1)*28}`).join(' ')}"/></svg>`}
+function dash(){
+  const k=brF()==='all'?1:.27;
+  const K=[['Нові ліди',Math.round(342*k),'+12%','up',[5,7,6,9,8,11,12]],['Конверсія в угоду',18.4,'+2.1 п.п.','up',[14,15,15,16,17,17,18]],['Виручка, $',Math.round(286400*k),'+18%','up',[8,9,11,10,13,14,16]],['Середній чек, $',27900,'−3%','down',[30,29,29,28,28,28,27]]];
+  $('#kpis').innerHTML=K.map((x,i)=>`<div class="card kpi"><small>${x[0]}</small><b data-v="${x[1]}" data-i="${i}">0</b><span class="d ${x[3]}">${x[2]} до жовтня</span>${spark(x[4],x[3]==='up'?'#CED858':'#F06F6F')}</div>`).join('');
+  $$('#kpis b').forEach(b=>{const v=+b.dataset.v;if(b.dataset.i==='1'){b.textContent=v+'%'}else countUp(b,v,1100,b.dataset.i>='2'?'$':'')});
+  // chart
+  const M=['Чер','Лип','Сер','Вер','Жов','Лис'],R=[168,182,201,224,243,286].map(v=>v*k),D=[7,8,8,9,10,11].map(v=>Math.round(v*k*4));
+  const W=600,H=220,mx=Math.max(...R)*1.15,bw=46;
+  let s=`<svg viewBox="0 0 ${W} ${H+24}">`;
+  for(let g=0;g<4;g++){const y=H-g*H/3;s+=`<line x1="0" x2="${W}" y1="${y}" y2="${y}" stroke="rgba(255,255,255,.06)"/>`}
+  M.forEach((m,i)=>{const x=40+i*(W-80)/5,h=R[i]/mx*H;s+=`<rect x="${x-bw/2}" y="${H-h}" width="${bw}" height="${h}" rx="10" fill="${i===5?'url(#bg1)':'rgba(206,216,88,.18)'}"><animate attributeName="height" from="0" to="${h}" dur=".9s" begin="${i*.08}s" fill="freeze" calcMode="spline" keySplines=".2 .8 .2 1"/><animate attributeName="y" from="${H}" to="${H-h}" dur=".9s" begin="${i*.08}s" fill="freeze" calcMode="spline" keySplines=".2 .8 .2 1"/></rect>
+    <text x="${x}" y="${H-h-8}" text-anchor="middle" fill="#F3F4F6" font-size="12" font-weight="700" font-family="Manrope,sans-serif">$${Math.round(R[i])}k</text><text x="${x}" y="${H+18}" text-anchor="middle" fill="#8A9894" font-size="12" font-family="Manrope,sans-serif">${m}</text>`});
+  const pts=M.map((m,i)=>`${40+i*(W-80)/5},${H-D[i]/Math.max(...D)*H*.55-20}`).join(' ');
+  s+=`<polyline points="${pts}" fill="none" stroke="#2D8377" stroke-width="3" stroke-dasharray="1000" stroke-dashoffset="1000"><animate attributeName="stroke-dashoffset" to="0" dur="1.6s" begin=".4s" fill="freeze"/></polyline>`;
+  s+=`<defs><linearGradient id="bg1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F3FC7A"/><stop offset="1" stop-color="#CED858"/></linearGradient></defs></svg>`;
+  $('#chart').innerHTML=s;
+  const SV=[['Meta',38,'#CED858'],['Google',24,'#5FC7B6'],['TikTok',19,'#F3FC7A'],['Сайт',12,'#2D8377'],['Telegram',7,'#8A9894']];
+  $('#srcs').innerHTML=SV.map(x=>`<div class="bar-l"><span>${x[0]}</span><div class="tr"><i style="background:${x[2]}" data-w="${x[1]/38*100}"></i></div><b>${x[1]}%</b></div>`).join('');
+  setTimeout(()=>$$('#srcs i').forEach(i=>i.style.width=i.dataset.w+'%'),80);
+  const LB=Object.keys(MGR).map(m=>[m,vis().filter(d=>d.m===m&&['won','ship','done'].includes(d.st)).length,vis().filter(d=>d.m===m).length]).sort((a,b)=>b[1]-a[1]);
+  $('#lbd').innerHTML=LB.map((x,i)=>`<div class="lb-row"><span style="width:18px;color:${i?'var(--mut)':'var(--acc)'};font-weight:800">${i+1}</span><div class="avatar">${MGR[x[0]]}</div><div style="flex:1"><b>${x[0]}</b><div class="mut" style="font-size:12px">${x[2]} угод у роботі</div></div><span class="badge b-acc">${x[1]} продажів</span></div>`).join('');
+}
+const TASKS=[['Передзвонити Олені Шевчук — 3 варіанти RAV4','10:30'],['Ставка на лот Copart #45120933 (Kia EV6) — ліміт $21 000','12:00'],['Надіслати фото контейнера Андрію Мельнику','13:00'],['Зустріч у філії: Ігор Бондар, договір','15:30'],['Оновити ETA для 6 авто з судна MSC Aurora','17:00']];
+function tasks(){$('#tasks').innerHTML=TASKS.map((t,i)=>`<div class="task" data-i="${i}"><div class="ck"></div><span style="flex:1">${t[0]}</span><small class="mut">${t[1]}</small></div>`).join('');
+  const upd=()=>$('#taskCnt').textContent=$$('.task.done').length+' з '+TASKS.length+' виконано';
+  $$('.task').forEach(t=>t.onclick=()=>{t.classList.toggle('done');t.querySelector('.ck').textContent=t.classList.contains('done')?'✓':'';upd()});upd()}
+
+/* board */
+let dragId=null;
+function board(){
+  $('#board').innerHTML=STAGES.map(s=>{const ds=vis().filter(d=>d.st===s[0]);const sum=ds.reduce((a,d)=>a+d.b,0);
+    return `<div class="col" data-st="${s[0]}"><div class="col-h"><div><i style="background:${s[2]}"></i>${s[1]}</div><span>${ds.length} · ${fmt(sum)}</span></div>
+    ${ds.map(d=>`<div class="deal" draggable="true" data-id="${d.id}"><div style="display:flex;justify-content:space-between;gap:6px"><b>${d.n}</b>${d.hot?'<span title="гарячий">🔥</span>':''}</div><div class="car">${d.car} · до ${fmt(d.b)}</div><div class="ft"><span class="src">${d.s}</span><span class="mut">${d.br}</span><div class="avatar">${MGR[d.m]}</div></div></div>`).join('')}</div>`}).join('');
+  $$('.deal').forEach(el=>{el.ondragstart=e=>{dragId=+el.dataset.id;el.classList.add('drag');e.dataTransfer.effectAllowed='move'};el.ondragend=()=>el.classList.remove('drag');el.onclick=()=>openDeal(+el.dataset.id)});
+  $$('.col').forEach(c=>{c.ondragover=e=>{e.preventDefault();c.classList.add('over')};c.ondragleave=()=>c.classList.remove('over');
+    c.ondrop=e=>{e.preventDefault();c.classList.remove('over');const d=deals.find(x=>x.id===dragId);if(d&&d.st!==c.dataset.st){d.st=c.dataset.st;board();leads();toast(`${d.n} → ${stName(d.st)[1]}`)}}});
+}
+/* leads */
+function leads(){
+  const q=$('#lq').value.toLowerCase(),s=$('#lsrc').value;
+  const L=vis().filter(d=>(s==='all'||d.s===s)&&(!q||(d.n+d.ph+d.car).toLowerCase().includes(q)));
+  $('#ltb').innerHTML=L.map(d=>{const st=stName(d.st);return `<tr data-id="${d.id}"><td><b>${d.n}</b><div class="mut" style="font-size:12px">${d.ph}</div></td><td>${d.car}</td><td>${fmt(d.b)}</td><td><span class="src">${d.s}</span></td><td><span class="badge" style="color:${st[2]}"><i></i>${st[1]}</span></td><td>${d.m}</td><td class="mut">${d.d}</td></tr>`}).join('');
+  $$('#ltb tr').forEach(r=>r.onclick=()=>openDeal(+r.dataset.id));
+  $('#newCnt').textContent=vis().filter(d=>d.st==='new').length;
+}
+/* fleet */
+function fleet(){
+  const F=vis().filter(d=>['won','ship','done'].includes(d.st));
+  const ph=['Порт США','В морі','Порт ЄС','Автовоз','Розмитнення'];
+  $('#fk').innerHTML=[['Авто в дорозі',F.length],['У морі',Math.ceil(F.length/2)],['На розмитненні',Math.max(1,Math.floor(F.length/4))],['Середній шлях, днів',47]].map(x=>`<div class="card kpi"><small>${x[0]}</small><b>${x[1]}</b></div>`).join('');
+  $('#ftb').innerHTML=F.map((d,i)=>`<tr data-id="${d.id}"><td><b>${d.car}</b></td><td>${d.n}</td><td><span class="badge b-teal"><i></i>${ph[i%5]}</span></td><td class="mut">MSCU ${400000+d.id*731}</td><td>≈ ${8+i*3} днів</td><td><div style="width:110px;height:8px;border-radius:9px;background:var(--line2);overflow:hidden"><i style="display:block;height:100%;width:${55+(i*13)%45}%;background:var(--acc)"></i></div></td></tr>`).join('');
+  $$('#ftb tr').forEach(r=>r.onclick=()=>openDeal(+r.dataset.id));
+}
+/* deal drawer */
+function openDeal(id){
+  const d=deals.find(x=>x.id===id),si=STAGES.findIndex(s=>s[0]===d.st),st=STAGES[si];
+  $('#dpanel').innerHTML=`<button class="x" id="dx">✕</button>
+   <div class="eyebrow">Угода #${1000+d.id}</div><h2 style="font-size:24px;margin:8px 0">${d.n}</h2>
+   <span class="badge" style="color:${st[2]}"><i></i>${st[1]}</span> ${d.hot?'<span class="badge b-warn">🔥 гарячий</span>':''}
+   <div class="stages">${STAGES.map((s,i)=>`<i class="${i<=si?'on':''}"></i>`).join('')}</div>
+   <div class="kv">${[['Телефон',d.ph],['Філія',d.br],['Запит',d.car],['Бюджет під ключ',fmt(d.b)],['Джерело',d.s],['Менеджер',d.m]].map(r=>`<div><small>${r[0]}</small><b>${r[1]}</b></div>`).join('')}</div>
+   <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+     <button class="btn btn-ghost btn-sm" onclick="toast('Дзвінок через IP-телефонію (демо)')">📞 Подзвонити</button>
+     <button class="btn btn-ghost btn-sm" onclick="toast('Відкрито чат у Telegram (демо)')">✈ Telegram</button>
+     <button class="btn btn-ghost btn-sm" onclick="toast('Розрахунок надіслано клієнту (демо)')">🧮 Надіслати розрахунок</button>
+     <button class="btn btn-ghost btn-sm" onclick="toast('Підбірку лотів сформовано (демо)')">🚗 Підбірка лотів</button>
+   </div>
+   ${si<6?`<button class="btn btn-acc" style="width:100%;margin-top:12px" id="nextSt">Наступний етап → ${STAGES[si+1][1]}</button>`:''}
+   <h4 style="margin:24px 0 6px;font-family:var(--fh);font-size:14px">Історія</h4>
+   <div class="log"><div>Лід створено з ${d.s}<small>${d.d} · автоматично</small></div><div>Перший дзвінок, уточнено бюджет<small>${d.d} · ${d.m}</small></div>${si>=2?`<div>Надіслано 4 варіанти лотів<small>${d.m}</small></div>`:''}${si>=4?`<div>Лот виграно, рахунок оплачено<small>${d.m}</small></div>`:''}</div>
+   <div class="field" style="margin-top:18px"><label>Нотатка</label><textarea rows="3" placeholder="Додати коментар…"></textarea></div>
+   <button class="btn btn-ghost btn-sm" style="margin-top:10px" onclick="toast('Нотатку збережено')">Зберегти</button>`;
+  $('#dx').onclick=closeD;
+  const n=$('#nextSt');if(n)n.onclick=()=>{d.st=STAGES[si+1][0];refresh();openDeal(id);toast(`${d.n} → ${STAGES[si+1][1]}`)};
+  $('#drawer').classList.add('open');
+}
+const closeD=()=>$('#drawer').classList.remove('open');
+$('#drawer').onclick=e=>{if(e.target.id==='drawer')closeD()};
+addEventListener('keydown',e=>{if(e.key==='Escape'){closeD();$('#modal').classList.remove('on')}});
+/* new lead */
+$('#addLead').onclick=()=>$('#modal').classList.add('on');
+$('#mClose').onclick=()=>$('#modal').classList.remove('on');
+$('#leadForm').onsubmit=e=>{e.preventDefault();const f=new FormData(e.target);
+  deals.unshift({id:deals.length+100,n:f.get('n'),ph:f.get('ph'),car:f.get('car')||'Підбір',b:+f.get('b')||20000,s:f.get('s'),st:'new',m:f.get('m'),br:brF()==='all'?'Львів':brF(),d:'сьогодні',hot:true});
+  e.target.reset();$('#modal').classList.remove('on');refresh();go('pipe');toast('Лід створено, менеджер отримав сповіщення')};
+function refresh(){dash();board();leads();fleet()}
+['fBranch','fPeriod'].forEach(i=>$('#'+i).onchange=refresh);
+['lq','lsrc'].forEach(i=>$('#'+i).oninput=leads);
+tasks();refresh();
+/* simulate incoming lead */
+setTimeout(()=>{deals.unshift({id:999,n:'Новий лід з TikTok',ph:'+380 67 555 12 34',car:'Tesla Model 3',b:22000,s:'TikTok',st:'new',m:'Ольга К.',br:'Львів',d:'щойно',hot:true});refresh();toast('🔔 Новий лід з TikTok: Tesla Model 3, $22 000')},6000);
+</script>
+
+</body></html>
