@@ -93,10 +93,12 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border-radius:50%;bac
 .hero h1{font-size:clamp(38px,6vw,84px);margin:18px 0}
 .hero p{color:var(--mut);font-size:18px;max-width:640px}
 .flow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:34px;font-size:13px;font-weight:700}
-.flow span{padding:9px 14px;border-radius:999px;border:1px solid var(--line2);background:var(--card)}
+.flow a{padding:9px 14px;border-radius:999px;border:1px solid var(--line2);background:var(--card);color:inherit;text-decoration:none;transition:border-color .2s,background .2s}
+.flow a:hover,.flow a:focus-visible{border-color:var(--acc);background:rgba(206,216,88,.12)}
+.flow .pair{display:inline-flex;gap:6px}
 .flow i{color:var(--acc);font-style:normal}
 .apps{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:40px 0 80px}
-.app-c{position:relative;display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line);border-radius:26px;padding:26px;overflow:hidden;transition:transform .45s var(--ease),border-color .3s;min-height:280px;opacity:0;animation:up .8s var(--ease) forwards}
+.app-c{position:relative;display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line);border-radius:26px;padding:26px;overflow:hidden;transition:transform .45s var(--ease),border-color .3s;min-height:280px;animation:up .8s var(--ease) both}
 @keyframes up{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:none}}
 .app-c:hover{transform:translateY(-6px);border-color:rgba(206,216,88,.4)}
 .app-c::after{content:"";position:absolute;width:240px;height:240px;right:-90px;top:-90px;background:radial-gradient(circle,rgba(206,216,88,.16),transparent 65%);transition:.5s}
@@ -119,7 +121,7 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border-radius:50%;bac
     <div class="logo"><span class="logo-mark">GAL</span>Global Auto Logistic</div>
     <h1>Цифрова <span class="grad">екосистема</span><br>для пригону авто</h1>
     <p>Сім продуктів, які працюють разом: реклама приводить клієнта, сайт і калькулятор продають, CRM веде угоду, монітор знаходить лоти, водій і кабінет роблять доставку прозорою.</p>
-    <div class="flow"><span>Реклама і лендинги</span><i>→</i><span>Сайт і калькулятор</span><i>→</i><span>CRM</span><i>→</i><span>Монітор лотів і оцінка ремонту</span><i>→</i><span>Водій</span><i>→</i><span>Кабінет клієнта</span></div>
+    <div class="flow"><a href="landing.html">Реклама і лендинги</a><i>→</i><a href="index.html">Сайт і калькулятор</a><i>→</i><a href="crm.html">CRM</a><i>→</i><span class="pair"><a href="monitor.html">Монітор лотів</a><a href="repair.html">Оцінка ремонту</a></span><i>→</i><a href="driver.html">Водій</a><i>→</i><a href="cabinet.html">Кабінет клієнта</a></div>
   </header>
   <div class="apps" id="apps"></div>
 </div>

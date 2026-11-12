@@ -36,7 +36,7 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:400;op
 body.in #gate{clip-path:inset(0 0 100% 0)}
 #gate .ring{position:absolute;width:min(80vw,560px);aspect-ratio:1;border:1px solid var(--line);border-radius:50%;animation:spin 40s linear infinite}
 #gate .ring::before{content:"";position:absolute;inset:40px;border:1px dashed var(--line);border-radius:50%}
-#gate .box{position:relative;opacity:0;transform:translateY(20px);animation:up 1s .2s var(--ease) forwards}
+#gate .box{position:relative;animation:up 1s .2s var(--ease) both}
 .wm{font-family:var(--serif);font-weight:700;letter-spacing:.3em;color:var(--gold2)}
 #gate .wm{font-size:clamp(34px,7vw,52px);margin-bottom:4px}
 #gate .since{color:var(--muted);letter-spacing:.4em;font-size:11px;margin-bottom:44px}
@@ -518,7 +518,7 @@ footer{border-top:1px solid var(--line);padding:80px 0 30px;overflow:hidden}
 #confirm .r{display:flex;gap:10px;justify-content:flex-end}
 
 @keyframes spin{to{transform:rotate(360deg)}}
-@keyframes up{to{opacity:1;transform:none}}
+@keyframes up{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
 @keyframes float{0%,100%{transform:translateY(0) rotate(-1.5deg)}50%{transform:translateY(-16px) rotate(1.5deg)}}
 @keyframes mq{to{transform:translateX(-50%)}}
 @keyframes drip{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
