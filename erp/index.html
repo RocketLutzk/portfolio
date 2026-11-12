@@ -1,0 +1,967 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Мідний контур</title>
+<style>
+  :root{
+    --bg:#F7F4EE; --surface:#FFFFFF; --surface-2:#F1ECE3; --surface-3:#E9E2D4;
+    --border:#E2DACB; --border-strong:#CBBFA8;
+    --text:#241F19; --text-secondary:#5C5346; --text-muted:#8C8172;
+    --accent:#B4652A; --accent-ink:#6B3A16; --accent-tint:#F1E1D2;
+    --cat-1:#B4652A; --cat-2:#1B8A6B; --cat-3:#4A5FBF; --cat-4:#A3384F;
+    --cat-1-tint:#F1E1D2; --cat-2-tint:#DCEFE9; --cat-3-tint:#E3E6F6; --cat-4-tint:#F3DEE3;
+    --good:#2F7A4F; --good-bg:#E7F1E9; --warning:#A6741F; --warning-bg:#F5EBD8; --critical:#A23B32; --critical-bg:#F5E1DE;
+    --shadow:0 1px 2px rgba(36,31,25,0.06), 0 1px 1px rgba(36,31,25,0.04);
+    --font-display:'Fraunces', Georgia, 'Times New Roman', serif;
+    --font-body:'Work Sans', -apple-system, 'Segoe UI', sans-serif;
+    --font-mono:'JetBrains Mono', 'SFMono-Regular', Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#18160F; --surface:#221F19; --surface-2:#28241D; --surface-3:#332D23;
+      --border:#3A3428; --border-strong:#4C4536;
+      --text:#F0EAE0; --text-secondary:#C4BCAD; --text-muted:#8F8776;
+      --accent:#D98A4A; --accent-ink:#F3D8BE; --accent-tint:#3A2A1B;
+      --cat-1:#CC8043; --cat-2:#33A085; --cat-3:#7683D6; --cat-4:#CC647E;
+      --cat-1-tint:#3A2A1B; --cat-2-tint:#173028; --cat-3-tint:#232A45; --cat-4-tint:#3A2028;
+      --good:#56B378; --good-bg:#1E2E22; --warning:#D9A448; --warning-bg:#332811; --critical:#D9635F; --critical-bg:#33201D;
+      --shadow:0 1px 2px rgba(0,0,0,0.3);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#18160F; --surface:#221F19; --surface-2:#28241D; --surface-3:#332D23;
+    --border:#3A3428; --border-strong:#4C4536;
+    --text:#F0EAE0; --text-secondary:#C4BCAD; --text-muted:#8F8776;
+    --accent:#D98A4A; --accent-ink:#F3D8BE; --accent-tint:#3A2A1B;
+    --cat-1:#CC8043; --cat-2:#33A085; --cat-3:#7683D6; --cat-4:#CC647E;
+    --cat-1-tint:#3A2A1B; --cat-2-tint:#173028; --cat-3-tint:#232A45; --cat-4-tint:#3A2028;
+    --good:#56B378; --good-bg:#1E2E22; --warning:#D9A448; --warning-bg:#332811; --critical:#D9635F; --critical-bg:#33201D;
+    --shadow:0 1px 2px rgba(0,0,0,0.3);
+  }
+
+  *{box-sizing:border-box;}
+  body{background:var(--bg); color:var(--text); font-family:var(--font-body); margin:0;}
+  h1,h2,h3{font-family:var(--font-display); font-weight:600; margin:0; text-wrap:balance;}
+  table{border-collapse:collapse; width:100%;}
+  .num{font-family:var(--font-mono); font-variant-numeric:tabular-nums;}
+  ::selection{background:var(--accent-tint);}
+
+  .shell{display:flex; min-height:100vh; align-items:stretch;}
+  .side{
+    width:252px; flex:0 0 auto; background:var(--surface-2); border-right:1px solid var(--border);
+    padding:20px 0 16px; display:flex; flex-direction:column; gap:2px;
+  }
+  .brand{padding:0 20px 18px; border-bottom:1px solid var(--border); margin-bottom:14px;}
+  .brand-name{font-family:var(--font-display); font-size:19px; font-weight:600; color:var(--text); line-height:1.15;}
+  .brand-sub{font-size:11.5px; color:var(--text-muted); margin-top:4px; letter-spacing:.01em;}
+  .demo-pill{
+    display:inline-flex; align-items:center; gap:5px; margin-top:10px; padding:3px 9px;
+    background:var(--warning-bg); color:var(--warning); border-radius:20px; font-size:11px; font-weight:500;
+  }
+  .demo-pill svg{width:11px; height:11px;}
+
+  .nav-group-label{
+    padding:12px 20px 6px; font-size:11px; text-transform:uppercase; letter-spacing:.06em;
+    color:var(--text-muted); font-weight:500;
+  }
+  .nav-item{
+    display:flex; align-items:center; gap:10px; padding:8px 20px 8px 22px; margin:0 8px; border-radius:8px;
+    color:var(--text-secondary); font-size:13.5px; text-align:left; background:none; border:none; cursor:pointer;
+    width:calc(100% - 16px); font-family:var(--font-body);
+  }
+  .nav-item:hover{background:var(--surface-3); color:var(--text);}
+  .nav-item.active{background:var(--surface); color:var(--text); box-shadow:var(--shadow); font-weight:500;}
+  .nav-item.active .dot{background:var(--accent);}
+  .nav-item .dot{width:6px; height:6px; border-radius:50%; background:var(--border-strong); flex:0 0 auto;}
+  .nav-item.reports{color:var(--cat-4);}
+  .nav-item.reports.active{color:var(--cat-4);}
+  .nav-item.reports .dot{background:var(--cat-4-tint);}
+  .nav-item.reports.active .dot{background:var(--cat-4);}
+
+  .side-foot{margin-top:auto; padding:14px 20px 4px; border-top:1px solid var(--border); font-size:11.5px; color:var(--text-muted); line-height:1.6;}
+
+  .main{flex:1 1 auto; min-width:0; padding:28px 34px 60px; overflow-x:hidden;}
+  .view{display:none;}
+  .view.active{display:block;}
+
+  .view-head{display:flex; justify-content:space-between; align-items:flex-end; gap:16px; margin-bottom:20px; flex-wrap:wrap;}
+  .view-title{font-size:22px;}
+  .view-sub{color:var(--text-secondary); font-size:13.5px; margin-top:4px;}
+
+  .kpi-row{display:grid; grid-template-columns:repeat(auto-fit, minmax(168px,1fr)); gap:12px; margin-bottom:22px;}
+  .kpi{background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:14px 16px;}
+  .kpi-label{font-size:11.5px; color:var(--text-muted); margin-bottom:7px;}
+  .kpi-value{font-family:var(--font-mono); font-size:22px; font-weight:500; letter-spacing:-.01em;}
+  .kpi-trend{display:flex; align-items:center; gap:4px; margin-top:6px; font-size:11.5px;}
+  .kpi-trend svg{width:11px; height:11px;}
+  .kpi-trend.up{color:var(--good);} .kpi-trend.down{color:var(--critical);}
+
+  .grid{display:grid; gap:14px;}
+  .grid.cols-3-1{grid-template-columns:2fr 1fr;}
+  .grid.cols-2{grid-template-columns:1fr 1fr;}
+  @media (max-width:860px){ .grid.cols-3-1, .grid.cols-2{grid-template-columns:1fr;} .side{width:auto;} .shell{flex-direction:column;} .main{padding:20px 16px 48px;} }
+
+  .card{background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:18px 20px;}
+  .card-title{font-size:14.5px; font-weight:600; font-family:var(--font-body);}
+  .card-sub{font-size:12px; color:var(--text-muted); margin-top:2px; margin-bottom:14px;}
+
+  .table-wrap{background:var(--surface); border:1px solid var(--border); border-radius:12px; overflow:hidden; overflow-x:auto;}
+  table.data{min-width:560px;}
+  table.data th{
+    text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:.04em; color:var(--text-muted);
+    font-weight:500; padding:11px 16px; border-bottom:1px solid var(--border); white-space:nowrap;
+  }
+  table.data th.r{text-align:right;}
+  table.data td{padding:10px 16px; border-bottom:1px solid var(--border); font-size:13.5px; vertical-align:middle;}
+  table.data td.r{text-align:right;}
+  table.data td.dim{color:var(--text-secondary);}
+  table.data td.code{font-family:var(--font-mono); font-size:12.5px;}
+  table.data tr:last-child td{border-bottom:none;}
+  table.data tbody tr:hover{background:var(--surface-2);}
+
+  .pill{display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:500; padding:3px 0;}
+  .pill .dot{width:6px; height:6px; border-radius:50%;}
+  .pill.good{color:var(--good);} .pill.good .dot{background:var(--good);}
+  .pill.warning{color:var(--warning);} .pill.warning .dot{background:var(--warning);}
+  .pill.critical{color:var(--critical);} .pill.critical .dot{background:var(--critical);}
+  .pill.neutral{color:var(--text-secondary);} .pill.neutral .dot{background:var(--border-strong);}
+
+  .bars-stack{display:flex; flex-direction:column; gap:14px;}
+  .bar-row-label{display:flex; justify-content:space-between; font-size:12.5px; margin-bottom:6px;}
+  .bar-track{background:var(--surface-2); height:7px; border-radius:20px; overflow:hidden;}
+  .bar-fill{height:100%; border-radius:20px;}
+
+  .chart-box{position:relative;}
+  .chart-tip{
+    position:absolute; pointer-events:none; background:var(--text); color:var(--bg); font-size:12px;
+    padding:6px 10px; border-radius:7px; transform:translate(-50%,-115%); white-space:nowrap; opacity:0;
+    transition:opacity .1s; z-index:5; font-family:var(--font-body); line-height:1.5;
+  }
+  .chart-tip b{font-family:var(--font-mono);}
+  .legend{display:flex; gap:16px; flex-wrap:wrap; margin-top:10px; font-size:12px; color:var(--text-secondary);}
+  .legend-item{display:flex; align-items:center; gap:6px;}
+  .legend-swatch{width:10px; height:10px; border-radius:3px;}
+
+  /* report document styling */
+  .report-doc{background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:30px 32px 26px; max-width:880px;}
+  .report-letterhead{display:flex; justify-content:space-between; align-items:flex-start; gap:16px; padding-bottom:18px; border-bottom:2px solid var(--text); flex-wrap:wrap;}
+  .report-mark{font-family:var(--font-display); font-size:15px; font-weight:600; color:var(--accent-ink); display:flex; align-items:center; gap:8px;}
+  .report-mark .ring{width:9px; height:9px; border-radius:50%; border:2px solid var(--accent);}
+  .report-title{font-size:21px; margin-top:10px;}
+  .report-meta{text-align:right; font-size:12px; color:var(--text-muted); line-height:1.7;}
+  .report-body{padding-top:20px;}
+  .report-section-label{font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--text-muted); margin:26px 0 10px;}
+  .report-section-label:first-child{margin-top:0;}
+  .report-note{background:var(--good-bg); color:var(--good); border-radius:10px; padding:12px 15px; font-size:13px; display:flex; gap:10px; align-items:flex-start;}
+  .report-note svg{flex:0 0 auto; margin-top:2px;}
+  .report-foot{margin-top:26px; padding-top:16px; border-top:1px solid var(--border); font-size:12px; color:var(--text-muted); display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px;}
+  .report-tabs{display:flex; gap:6px; margin-bottom:18px; flex-wrap:wrap;}
+  .report-tab{
+    padding:8px 14px; border-radius:9px; font-size:13px; background:var(--surface); border:1px solid var(--border);
+    color:var(--text-secondary); cursor:pointer; font-family:var(--font-body);
+  }
+  .report-tab.active{background:var(--text); color:var(--bg); border-color:var(--text); font-weight:500;}
+  .rdoc{display:none;} .rdoc.active{display:block;}
+</style>
+
+<div class="shell">
+  <nav class="side">
+    <div class="brand">
+      <div class="brand-name">Мідний контур</div>
+      <div class="brand-sub">ERP · Горілчаний завод</div>
+      <span class="demo-pill">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>
+        демонстраційні дані
+      </span>
+    </div>
+
+    <button class="nav-item active" data-view="overview"><span class="dot"></span>Огляд</button>
+
+    <div class="nav-group-label">Виробничий блок</div>
+    <button class="nav-item" data-view="warehouse"><span class="dot"></span>Склад</button>
+    <button class="nav-item" data-view="mfg"><span class="dot"></span>Виробництво</button>
+    <button class="nav-item" data-view="lab"><span class="dot"></span>Лабораторія</button>
+    <button class="nav-item" data-view="maint"><span class="dot"></span>ТОіР обладнання</button>
+
+    <div class="nav-group-label">Комерція</div>
+    <button class="nav-item" data-view="sales"><span class="dot"></span>Продажі / CRM</button>
+    <button class="nav-item" data-view="procurement"><span class="dot"></span>Закупівлі</button>
+    <button class="nav-item" data-view="logistics"><span class="dot"></span>Логістика</button>
+
+    <div class="nav-group-label">Фінанси та кадри</div>
+    <button class="nav-item" data-view="accounting"><span class="dot"></span>Бухгалтерія</button>
+    <button class="nav-item" data-view="hr"><span class="dot"></span>Кадри</button>
+    <button class="nav-item" data-view="excise"><span class="dot"></span>Акциз</button>
+
+    <div class="nav-group-label">Сервіси</div>
+    <button class="nav-item" data-view="docs"><span class="dot"></span>Документообіг</button>
+
+    <div class="nav-group-label">Звіти</div>
+    <button class="nav-item reports" data-view="reports"><span class="dot"></span>Формальна звітність</button>
+
+    <div class="side-foot">Зміна А · 08:00–20:00<br/>Львів, 21 вересня 2026</div>
+  </nav>
+
+  <main class="main">
+
+    <!-- OVERVIEW -->
+    <section class="view active" id="view-overview">
+      <div class="view-head">
+        <div><h1 class="view-title">Загальний огляд</h1><div class="view-sub">Стан по всіх блоках станом на поточну зміну</div></div>
+      </div>
+      <div class="kpi-row">
+        <div class="kpi"><div class="kpi-label">Вироблено сьогодні</div><div class="kpi-value">461 дал</div><div class="kpi-trend up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 15l6-6 4 4 6-8"/></svg>+7.2% до плану</div></div>
+        <div class="kpi"><div class="kpi-label">Активні замовлення</div><div class="kpi-value">5</div><div class="kpi-trend up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 15l6-6 4 4 6-8"/></svg>3 460 ящ. в роботі</div></div>
+        <div class="kpi"><div class="kpi-label">Марки акцизу в резерві</div><div class="kpi-value">132 700</div><div class="kpi-trend down"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 9l6 6 4-4 6 8"/></svg>потрібне дозамовлення</div></div>
+        <div class="kpi"><div class="kpi-label">Дозволів спливає</div><div class="kpi-value">1</div><div class="kpi-trend down"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 9l6 6 4-4 6 8"/></svg>протягом 9 днів</div></div>
+      </div>
+      <div class="grid cols-3-1">
+        <div class="card">
+          <div class="card-title">Динаміка виробництва</div>
+          <div class="card-sub">дал спирту (у перерахунку на 100%), 14 днів, пунктир — план 430 дал/добу</div>
+          <div class="chart-box" id="chart-overview-line"></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Структура собівартості</div>
+          <div class="card-sub">частка статті у собівартості дала готової продукції</div>
+          <div id="chart-overview-cost"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- WAREHOUSE -->
+    <section class="view" id="view-warehouse">
+      <div class="view-head"><div><h1 class="view-title">Склад</h1><div class="view-sub">Сировина, пакувальні матеріали й готова продукція</div></div></div>
+      <div class="grid cols-2">
+        <div class="card">
+          <div class="card-title">Залишки сировини й пакування</div>
+          <div class="card-sub">рівень відносно мінімального / максимального запасу</div>
+          <div class="bars-stack" id="warehouse-bars"></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Готова продукція на складі</div>
+          <div class="card-sub">у ящиках, за SKU</div>
+          <div class="table-wrap" style="border:none;">
+            <table class="data">
+              <thead><tr><th>SKU</th><th class="r">Ящиків</th><th class="r">Одиниць/ящик</th></tr></thead>
+              <tbody id="finished-goods-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MFG -->
+    <section class="view" id="view-mfg">
+      <div class="view-head"><div><h1 class="view-title">Виробництво</h1><div class="view-sub">Активні партії, рецептури, технологічні стадії</div></div></div>
+      <div class="table-wrap" style="margin-bottom:16px;">
+        <table class="data">
+          <thead><tr><th>Партія</th><th>Рецептура</th><th class="r">Обсяг, дал</th><th>Стадія</th><th>Початок</th><th>Технолог</th></tr></thead>
+          <tbody id="mfg-body"></tbody>
+        </table>
+      </div>
+      <div class="card">
+        <div class="card-title">Довідник рецептур</div>
+        <div class="card-sub">нормативний склад на 100 дал готової продукції</div>
+        <div class="table-wrap" style="border:none;">
+          <table class="data">
+            <thead><tr><th>Рецептура</th><th>Спирт</th><th>Вода</th><th>Додатково</th></tr></thead>
+            <tbody id="recipes-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- LAB -->
+    <section class="view" id="view-lab">
+      <div class="view-head"><div><h1 class="view-title">Лабораторія</h1><div class="view-sub">Вхідний контроль сировини та аналіз готової продукції</div></div></div>
+      <div class="kpi-row">
+        <div class="kpi"><div class="kpi-label">Перевірено за тиждень</div><div class="kpi-value">18</div></div>
+        <div class="kpi"><div class="kpi-label">На контролі</div><div class="kpi-value">1</div></div>
+        <div class="kpi"><div class="kpi-label">Заблоковано (брак)</div><div class="kpi-value">1</div></div>
+      </div>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>Партія</th><th>Показник</th><th>Норма</th><th class="r">Факт</th><th>Висновок</th><th>Лаборант</th></tr></thead>
+          <tbody id="lab-body"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- MAINT -->
+    <section class="view" id="view-maint">
+      <div class="view-head"><div><h1 class="view-title">ТОіР обладнання</h1><div class="view-sub">Плановий і аварійний ремонт, графік обслуговування</div></div></div>
+      <div class="kpi-row">
+        <div class="kpi"><div class="kpi-label">У роботі</div><div class="kpi-value">5 / 6</div></div>
+        <div class="kpi"><div class="kpi-label">Заплановане ТО</div><div class="kpi-value">3</div></div>
+        <div class="kpi"><div class="kpi-label">Аварійний простій, вересень</div><div class="kpi-value">3.5 год</div></div>
+      </div>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>Обладнання</th><th>Тип робіт</th><th>Дата</th><th>Статус</th></tr></thead>
+          <tbody id="maint-body"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- SALES -->
+    <section class="view" id="view-sales">
+      <div class="view-head"><div><h1 class="view-title">Продажі / CRM</h1><div class="view-sub">Активні замовлення та воронка нових клієнтів</div></div></div>
+      <div class="table-wrap" style="margin-bottom:16px;">
+        <table class="data">
+          <thead><tr><th>Клієнт</th><th class="r">Ящиків</th><th>Статус</th><th class="r">Сума, грн</th><th>Менеджер</th><th>Дата</th></tr></thead>
+          <tbody id="sales-body"></tbody>
+        </table>
+      </div>
+      <div class="card">
+        <div class="card-title">Воронка нових клієнтів</div>
+        <div class="table-wrap" style="border:none;">
+          <table class="data">
+            <thead><tr><th>Клієнт</th><th>Етап</th><th class="r">Очікуваний обсяг</th></tr></thead>
+            <tbody id="pipeline-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROCUREMENT -->
+    <section class="view" id="view-procurement">
+      <div class="view-head"><div><h1 class="view-title">Закупівлі</h1><div class="view-sub">Постачальники, умови договорів, ціни</div></div></div>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>Постачальник</th><th>Матеріал</th><th class="r">Ціна</th><th>Договір</th><th>Статус</th></tr></thead>
+          <tbody id="procurement-body"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- LOGISTICS -->
+    <section class="view" id="view-logistics">
+      <div class="view-head"><div><h1 class="view-title">Логістика</h1><div class="view-sub">Активні рейси доставки власним транспортом</div></div></div>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>Маршрут</th><th>Водій</th><th>Транспорт</th><th>Статус</th><th>Примітка</th></tr></thead>
+          <tbody id="logistics-body"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ACCOUNTING -->
+    <section class="view" id="view-accounting">
+      <div class="view-head"><div><h1 class="view-title">Бухгалтерія</h1><div class="view-sub">План / факт по статтях витрат, вересень 2026</div></div></div>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>Стаття</th><th class="r">План, грн</th><th class="r">Факт, грн</th><th class="r">Відхилення</th></tr></thead>
+          <tbody id="accounting-body"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- HR -->
+    <section class="view" id="view-hr">
+      <div class="view-head"><div><h1 class="view-title">Кадри</h1><div class="view-sub">Персонал, зміни, стаж</div></div></div>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>Співробітник</th><th>Посада</th><th>Зміна / підрозділ</th><th>Статус</th><th class="r">Стаж</th></tr></thead>
+          <tbody id="hr-body"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- EXCISE -->
+    <section class="view" id="view-excise">
+      <div class="view-head"><div><h1 class="view-title">Акциз</h1><div class="view-sub">Облік марок акцизного податку по партіях</div></div></div>
+      <div class="kpi-row">
+        <div class="kpi"><div class="kpi-label">Отримано марок</div><div class="kpi-value">620 000</div></div>
+        <div class="kpi"><div class="kpi-label">Використано</div><div class="kpi-value">487 300</div></div>
+        <div class="kpi"><div class="kpi-label">Залишок</div><div class="kpi-value">132 700</div></div>
+        <div class="kpi"><div class="kpi-label">Бракованих</div><div class="kpi-value">1 120</div></div>
+      </div>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>Партія</th><th class="r">Марок використано</th><th>Статус</th></tr></thead>
+          <tbody id="excise-body"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- DOCS -->
+    <section class="view" id="view-docs">
+      <div class="view-head"><div><h1 class="view-title">Документообіг</h1><div class="view-sub">Ліцензії, дозволи, договори</div></div></div>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>Документ</th><th>Тип</th><th>Діє до</th><th>Статус</th></tr></thead>
+          <tbody id="docs-body"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- REPORTS -->
+    <section class="view" id="view-reports">
+      <div class="view-head"><div><h1 class="view-title">Формальна звітність</h1><div class="view-sub">Документи для керівництва — генеруються системою на основі первинних даних</div></div></div>
+
+      <div class="report-tabs">
+        <button class="report-tab active" data-rdoc="r-prod">Виробничий звіт</button>
+        <button class="report-tab" data-rdoc="r-cost">Собівартість</button>
+        <button class="report-tab" data-rdoc="r-excise">Акцизна звірка</button>
+        <button class="report-tab" data-rdoc="r-sales">Продажі й клієнти</button>
+      </div>
+
+      <!-- Report: Production -->
+      <div class="rdoc active" id="rdoc-r-prod">
+        <div class="report-doc">
+          <div class="report-letterhead">
+            <div>
+              <div class="report-mark"><span class="ring"></span>Мідний контур · ERP</div>
+              <div class="report-title">Виробничий звіт</div>
+            </div>
+            <div class="report-meta">Період: 08.09–21.09.2026 (14 днів)<br/>Сформовано: 21.09.2026, 09:00<br/>Підрозділ: виробництво</div>
+          </div>
+          <div class="report-body">
+            <div class="kpi-row">
+              <div class="kpi"><div class="kpi-label">Вироблено за період</div><div class="kpi-value">6 112 дал</div></div>
+              <div class="kpi"><div class="kpi-label">Середньодобово</div><div class="kpi-value">436.6 дал</div></div>
+              <div class="kpi"><div class="kpi-label">Виконання плану</div><div class="kpi-value">101.5%</div></div>
+              <div class="kpi"><div class="kpi-label">Понаднормові втрати</div><div class="kpi-value">0.4%</div></div>
+            </div>
+            <div class="report-section-label">Динаміка виробництва</div>
+            <div class="chart-box" id="chart-report-prod"></div>
+            <div class="report-section-label">Партії за період</div>
+            <div class="table-wrap" style="border:none;">
+              <table class="data">
+                <thead><tr><th>Партія</th><th>Рецептура</th><th class="r">Обсяг, дал</th><th class="r">Втрати, %</th><th>Стадія</th></tr></thead>
+                <tbody id="report-prod-body"></tbody>
+              </table>
+            </div>
+          </div>
+          <div class="report-foot"><span>Відповідальний: начальник виробництва Р. П. Ткачук</span><span>Автоматично сформовано системою «Мідний контур»</span></div>
+        </div>
+      </div>
+
+      <!-- Report: Cost -->
+      <div class="rdoc" id="rdoc-r-cost">
+        <div class="report-doc">
+          <div class="report-letterhead">
+            <div>
+              <div class="report-mark"><span class="ring"></span>Мідний контур · ERP</div>
+              <div class="report-title">Звіт по собівартості</div>
+            </div>
+            <div class="report-meta">Період: вересень 2026 (з початку місяця)<br/>Сформовано: 21.09.2026, 09:15<br/>Підрозділ: бухгалтерія</div>
+          </div>
+          <div class="report-body">
+            <div class="kpi-row">
+              <div class="kpi"><div class="kpi-label">Собівартість / дал, план</div><div class="kpi-value">369.5 грн</div></div>
+              <div class="kpi"><div class="kpi-label">Собівартість / дал, факт</div><div class="kpi-value">372.7 грн</div></div>
+              <div class="kpi"><div class="kpi-label">Відхилення</div><div class="kpi-value">+0.9%</div></div>
+              <div class="kpi"><div class="kpi-label">Разом витрат, факт</div><div class="kpi-value">4 882 000 грн</div></div>
+            </div>
+            <div class="report-section-label">План / факт за статтями</div>
+            <div class="chart-box" id="chart-report-cost"></div>
+            <div class="report-section-label">Деталізація</div>
+            <div class="table-wrap" style="border:none;">
+              <table class="data">
+                <thead><tr><th>Стаття</th><th class="r">План, грн</th><th class="r">Факт, грн</th><th class="r">Відхилення</th></tr></thead>
+                <tbody id="report-cost-body"></tbody>
+              </table>
+            </div>
+          </div>
+          <div class="report-foot"><span>Відповідальний: головний бухгалтер</span><span>Автоматично сформовано системою «Мідний контур»</span></div>
+        </div>
+      </div>
+
+      <!-- Report: Excise -->
+      <div class="rdoc" id="rdoc-r-excise">
+        <div class="report-doc">
+          <div class="report-letterhead">
+            <div>
+              <div class="report-mark"><span class="ring"></span>Мідний контур · ERP</div>
+              <div class="report-title">Акцизна звірка</div>
+            </div>
+            <div class="report-meta">Станом на: 21.09.2026<br/>Остання звірка з ДПС: 18.09.2026<br/>Підрозділ: акцизний облік</div>
+          </div>
+          <div class="report-body">
+            <div class="kpi-row">
+              <div class="kpi"><div class="kpi-label">Отримано марок</div><div class="kpi-value">620 000</div></div>
+              <div class="kpi"><div class="kpi-label">Використано</div><div class="kpi-value">487 300</div></div>
+              <div class="kpi"><div class="kpi-label">Залишок</div><div class="kpi-value">132 700</div></div>
+              <div class="kpi"><div class="kpi-label">Бракованих (актовано)</div><div class="kpi-value">1 120</div></div>
+            </div>
+            <div class="report-note">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6L9 17l-5-5"/></svg>
+              <div>Розбіжностей між фактичним залишком готової продукції та обліком марок не виявлено. Наступна планова звірка з ДПС: 25.09.2026.</div>
+            </div>
+            <div class="report-section-label">Використання марок по партіях</div>
+            <div class="chart-box" id="chart-report-excise"></div>
+            <div class="table-wrap" style="border:none; margin-top:14px;">
+              <table class="data">
+                <thead><tr><th>Партія</th><th class="r">Марок використано</th><th>Статус</th></tr></thead>
+                <tbody id="report-excise-body"></tbody>
+              </table>
+            </div>
+          </div>
+          <div class="report-foot"><span>Відповідальний: бухгалтер з акцизного обліку</span><span>Автоматично сформовано системою «Мідний контур»</span></div>
+        </div>
+      </div>
+
+      <!-- Report: Sales -->
+      <div class="rdoc" id="rdoc-r-sales">
+        <div class="report-doc">
+          <div class="report-letterhead">
+            <div>
+              <div class="report-mark"><span class="ring"></span>Мідний контур · ERP</div>
+              <div class="report-title">Звіт продажів і клієнтів</div>
+            </div>
+            <div class="report-meta">Період: вересень 2026 (з початку місяця)<br/>Сформовано: 21.09.2026, 09:30<br/>Підрозділ: комерційний відділ</div>
+          </div>
+          <div class="report-body">
+            <div class="kpi-row">
+              <div class="kpi"><div class="kpi-label">Виручка (МТD)</div><div class="kpi-value">3 010 200 грн</div></div>
+              <div class="kpi"><div class="kpi-label">Відвантажено</div><div class="kpi-value">3 460 ящ.</div></div>
+              <div class="kpi"><div class="kpi-label">Середній чек</div><div class="kpi-value">870 грн/ящ</div></div>
+              <div class="kpi"><div class="kpi-label">Нові клієнти в роботі</div><div class="kpi-value">3</div></div>
+            </div>
+            <div class="report-section-label">Топ клієнтів за виручкою</div>
+            <div class="chart-box" id="chart-report-sales"></div>
+            <div class="report-section-label">Замовлення за період</div>
+            <div class="table-wrap" style="border:none;">
+              <table class="data">
+                <thead><tr><th>Клієнт</th><th class="r">Ящиків</th><th>Статус</th><th class="r">Сума, грн</th></tr></thead>
+                <tbody id="report-sales-body"></tbody>
+              </table>
+            </div>
+          </div>
+          <div class="report-foot"><span>Відповідальний: керівник відділу продажів</span><span>Автоматично сформовано системою «Мідний контур»</span></div>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+</div>
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Work+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+
+<script>
+(function(){
+  "use strict";
+  var SVGNS = "http://www.w3.org/2000/svg";
+  function css(name){ return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+  function fmt(n){ return Math.round(n).toLocaleString('uk-UA'); }
+  function el(tag, attrs){
+    var e = document.createElementNS(SVGNS, tag);
+    for(var k in attrs){ e.setAttribute(k, attrs[k]); }
+    return e;
+  }
+
+  /* ---------- navigation ---------- */
+  var navItems = document.querySelectorAll('.nav-item[data-view]');
+  navItems.forEach(function(btn){
+    btn.addEventListener('click', function(){
+      navItems.forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      document.querySelectorAll('.view').forEach(function(v){ v.classList.remove('active'); });
+      var target = document.getElementById('view-' + btn.dataset.view);
+      if(target) target.classList.add('active');
+    });
+  });
+  var rtabs = document.querySelectorAll('.report-tab');
+  rtabs.forEach(function(btn){
+    btn.addEventListener('click', function(){
+      rtabs.forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      document.querySelectorAll('.rdoc').forEach(function(d){ d.classList.remove('active'); });
+      document.getElementById('rdoc-' + btn.dataset.rdoc).classList.add('active');
+    });
+  });
+
+  /* ---------- line chart with hover ---------- */
+  function lineChart(root, opts){
+    var W = 640, H = 220, padL = 40, padR = 16, padT = 16, padB = 26;
+    var plotW = W - padL - padR, plotH = H - padT - padB;
+    var vals = opts.values, labels = opts.labels;
+    var min = Math.min.apply(null, vals), max = Math.max.apply(null, vals);
+    if(opts.target != null){ min = Math.min(min, opts.target); max = Math.max(max, opts.target); }
+    var pad = (max - min) * 0.18 || 10;
+    min -= pad; max += pad;
+    function x(i){ return padL + (plotW * i) / (vals.length - 1); }
+    function y(v){ return padT + plotH - ((v - min) / (max - min)) * plotH; }
+
+    var svg = el('svg', {viewBox:'0 0 '+W+' '+H, width:'100%', height:H, style:'display:block; overflow:visible;'});
+    var gridColor = css('--border');
+    var textMuted = css('--text-muted');
+    var accent = opts.color || css('--accent');
+
+    [0.25,0.5,0.75,1].forEach(function(f){
+      var yy = padT + plotH * (1-f);
+      svg.appendChild(el('line', {x1:padL, x2:W-padR, y1:yy, y2:yy, stroke:gridColor, 'stroke-width':1, 'stroke-dasharray':'2 4'}));
+      var val = min + (max-min)*f;
+      var t = el('text', {x:padL-8, y:yy+4, 'text-anchor':'end', 'font-size':10.5, fill:textMuted, 'font-family':"'JetBrains Mono', monospace"});
+      t.textContent = Math.round(val);
+      svg.appendChild(t);
+    });
+
+    if(opts.target != null){
+      var ty = y(opts.target);
+      svg.appendChild(el('line', {x1:padL, x2:W-padR, y1:ty, y2:ty, stroke:textMuted, 'stroke-width':1.4, 'stroke-dasharray':'5 4'}));
+      var tl = el('text', {x:W-padR, y:ty-6, 'text-anchor':'end', 'font-size':11, fill:textMuted});
+      tl.textContent = 'план ' + opts.target + ' ' + (opts.unit||'');
+      svg.appendChild(tl);
+    }
+
+    var areaPts = vals.map(function(v,i){ return x(i)+','+y(v); }).join(' L ');
+    var areaD = 'M '+padL+','+(padT+plotH)+' L '+areaPts+' L '+x(vals.length-1)+','+(padT+plotH)+' Z';
+    var grad = el('linearGradient', {id:'lg-'+root.id, x1:0,y1:0,x2:0,y2:1});
+    grad.appendChild(el('stop', {offset:'0%', 'stop-color':accent, 'stop-opacity':0.22}));
+    grad.appendChild(el('stop', {offset:'100%', 'stop-color':accent, 'stop-opacity':0}));
+    var defs = el('defs', {}); defs.appendChild(grad); svg.appendChild(defs);
+    svg.appendChild(el('path', {d:areaD, fill:'url(#lg-'+root.id+')'}));
+
+    var lineD = 'M ' + vals.map(function(v,i){ return x(i)+' '+y(v); }).join(' L ');
+    svg.appendChild(el('path', {d:lineD, fill:'none', stroke:accent, 'stroke-width':2.5, 'stroke-linecap':'round', 'stroke-linejoin':'round'}));
+
+    vals.forEach(function(v,i){
+      if(i===vals.length-1){
+        svg.appendChild(el('circle', {cx:x(i), cy:y(v), r:5, fill:accent}));
+        svg.appendChild(el('circle', {cx:x(i), cy:y(v), r:9, fill:accent, 'fill-opacity':0.18}));
+        var lbl = el('text', {x:x(i)-6, y:y(v)-12, 'text-anchor':'end', 'font-size':11.5, 'font-weight':600, fill:css('--text'), 'font-family':"'JetBrains Mono', monospace"});
+        lbl.textContent = v;
+        svg.appendChild(lbl);
+      }
+    });
+
+    labels.forEach(function(l,i){
+      if(i % 2 !== 0 && i !== labels.length-1) return;
+      var t = el('text', {x:x(i), y:H-6, 'text-anchor':'middle', 'font-size':10.5, fill:textMuted});
+      t.textContent = l;
+      svg.appendChild(t);
+    });
+
+    var hoverLine = el('line', {x1:0,x2:0,y1:padT,y2:padT+plotH, stroke:textMuted, 'stroke-width':1, opacity:0});
+    svg.appendChild(hoverLine);
+    var hoverDot = el('circle', {r:5, fill:accent, opacity:0});
+    svg.appendChild(hoverDot);
+    var hitRect = el('rect', {x:padL, y:padT, width:plotW, height:plotH, fill:'transparent'});
+    svg.appendChild(hitRect);
+
+    root.appendChild(svg);
+    var tip = document.createElement('div');
+    tip.className = 'chart-tip';
+    root.style.position = 'relative';
+    root.appendChild(tip);
+
+    hitRect.addEventListener('mousemove', function(e){
+      var rect = svg.getBoundingClientRect();
+      var relX = ((e.clientX - rect.left) / rect.width) * W;
+      var i = Math.round((relX - padL) / plotW * (vals.length-1));
+      i = Math.max(0, Math.min(vals.length-1, i));
+      var cx = x(i), cy = y(vals[i]);
+      hoverLine.setAttribute('x1', cx); hoverLine.setAttribute('x2', cx); hoverLine.setAttribute('opacity', 0.5);
+      hoverDot.setAttribute('cx', cx); hoverDot.setAttribute('cy', cy); hoverDot.setAttribute('opacity', 1);
+      tip.style.opacity = 1;
+      tip.style.left = (cx/W*100) + '%';
+      tip.style.top = (cy/H*100) + '%';
+      tip.innerHTML = labels[i] + ' &middot; <b>' + vals[i] + '</b> ' + (opts.unit||'');
+    });
+    hitRect.addEventListener('mouseleave', function(){
+      hoverLine.setAttribute('opacity', 0); hoverDot.setAttribute('opacity', 0); tip.style.opacity = 0;
+    });
+  }
+
+  /* ---------- horizontal bar chart (single hue, ranking) ---------- */
+  function hBarChart(root, opts){
+    var items = opts.items.slice().sort(function(a,b){ return b.value - a.value; });
+    var W = 640, rowH = 34, padL = 140, padR = 70, padTop = 6;
+    var H = padTop*2 + items.length*rowH;
+    var plotW = W - padL - padR;
+    var max = Math.max.apply(null, items.map(function(i){return i.value;}));
+    var svg = el('svg', {viewBox:'0 0 '+W+' '+H, width:'100%', height:H, style:'display:block;'});
+    var base = opts.color || css('--accent');
+    items.forEach(function(it, idx){
+      var y = padTop + idx*rowH;
+      var w = (it.value/max) * plotW;
+      var label = el('text', {x:padL-10, y:y+rowH/2+4, 'text-anchor':'end', 'font-size':12.5, fill:css('--text-secondary')});
+      label.textContent = it.label;
+      svg.appendChild(label);
+      svg.appendChild(el('rect', {x:padL, y:y+6, width:plotW, height:rowH-14, rx:4, fill:css('--surface-2')}));
+      var opacity = 0.55 + 0.45*(it.value/max);
+      var bar = el('rect', {x:padL, y:y+6, width:Math.max(w,3), height:rowH-14, rx:4, fill:base, 'fill-opacity':opacity});
+      svg.appendChild(bar);
+      var vlabel = el('text', {x:padL+w+8, y:y+rowH/2+4, 'font-size':12, 'font-family':"'JetBrains Mono', monospace", fill:css('--text')});
+      vlabel.textContent = opts.valueFmt ? opts.valueFmt(it.value) : it.value;
+      svg.appendChild(vlabel);
+    });
+    root.appendChild(svg);
+  }
+
+  /* ---------- grouped vertical bar chart (plan vs actual) ---------- */
+  function groupedBarChart(root, opts){
+    var cats = opts.categories;
+    var series = opts.series;
+    var W = 640, H = 240, padL = 44, padR = 16, padT = 16, padB = 46;
+    var plotW = W-padL-padR, plotH = H-padT-padB;
+    var max = 0;
+    series.forEach(function(s){ s.values.forEach(function(v){ if(v>max) max=v; }); });
+    max *= 1.15;
+    var groupW = plotW / cats.length;
+    var barW = Math.min(24, groupW/(series.length+1.4));
+    var svg = el('svg', {viewBox:'0 0 '+W+' '+H, width:'100%', height:H, style:'display:block;'});
+
+    [0.25,0.5,0.75,1].forEach(function(f){
+      var yy = padT + plotH*(1-f);
+      svg.appendChild(el('line', {x1:padL,x2:W-padR,y1:yy,y2:yy, stroke:css('--border'), 'stroke-width':1, 'stroke-dasharray':'2 4'}));
+    });
+
+    cats.forEach(function(cat, ci){
+      var gx = padL + ci*groupW + groupW/2;
+      series.forEach(function(s, si){
+        var v = s.values[ci];
+        var h = (v/max)*plotH;
+        var bx = gx - (series.length*barW)/2 - (series.length-1)*2/2 + si*(barW+2);
+        svg.appendChild(el('rect', {x:bx, y:padT+plotH-h, width:barW, height:h, rx:3, fill:s.color}));
+      });
+      var lbl = el('text', {x:gx, y:H-14, 'text-anchor':'middle', 'font-size':10.5, fill:css('--text-muted')});
+      lbl.textContent = cat;
+      svg.appendChild(lbl);
+    });
+    root.appendChild(svg);
+
+    var legend = document.createElement('div');
+    legend.className = 'legend';
+    series.forEach(function(s){
+      var it = document.createElement('div'); it.className='legend-item';
+      it.innerHTML = '<span class="legend-swatch" style="background:'+s.color+'"></span>'+s.name;
+      legend.appendChild(it);
+    });
+    root.parentNode.appendChild(legend);
+  }
+
+  /* ---------- data ---------- */
+  var prodLabels = ['08.09','09.09','10.09','11.09','12.09','13.09','14.09','15.09','16.09','17.09','18.09','19.09','20.09','21.09'];
+  var prodValues = [405,420,398,435,410,455,430,448,462,440,470,455,438,461];
+
+  lineChart(document.getElementById('chart-overview-line'), {labels:prodLabels, values:prodValues, target:430, unit:'дал'});
+  lineChart(document.getElementById('chart-report-prod'), {labels:prodLabels, values:prodValues, target:430, unit:'дал'});
+
+  var costBreakdown = [
+    {label:'Сировина й спирт', value:38, color:'var(--cat-1)'},
+    {label:'Акциз', value:27, color:'var(--cat-3)'},
+    {label:'Пакування', value:16, color:'var(--cat-2)'},
+    {label:'Персонал', value:12, color:'var(--cat-4)'},
+    {label:'Логістика', value:7, color:'var(--text-muted)'}
+  ];
+  (function(){
+    var box = document.getElementById('chart-overview-cost');
+    var stack = document.createElement('div'); stack.className = 'bars-stack';
+    costBreakdown.forEach(function(c){
+      var row = document.createElement('div');
+      row.innerHTML = '<div class="bar-row-label"><span>'+c.label+'</span><span class="num">'+c.value+'%</span></div>'+
+        '<div class="bar-track"><div class="bar-fill" style="width:'+c.value+'%; background:'+c.color+'"></div></div>';
+      stack.appendChild(row);
+    });
+    box.appendChild(stack);
+  })();
+
+  var rawMaterials = [
+    {name:'Спирт ректифікований', qty:3120, unit:'дал 100%', min:1500, max:5000},
+    {name:'Пляшка скляна 0.5 л', qty:148000, unit:'шт', min:60000, max:200000},
+    {name:'Пляшка скляна 0.7 л', qty:52000, unit:'шт', min:20000, max:80000},
+    {name:'Кришка гвинтова', qty:51000, unit:'шт', min:60000, max:200000},
+    {name:'Етикетка фронтальна', qty:132000, unit:'шт', min:60000, max:200000},
+    {name:'Короб картонний', qty:9800, unit:'шт', min:5000, max:20000}
+  ];
+  (function(){
+    var box = document.getElementById('warehouse-bars');
+    rawMaterials.forEach(function(m){
+      var low = m.qty < m.min;
+      var pct = Math.min(100, Math.round((m.qty/m.max)*100));
+      var row = document.createElement('div');
+      row.innerHTML = '<div class="bar-row-label"><span>'+m.name+(low?' <span style="color:var(--critical)">· нижче мінімуму</span>':'')+'</span><span class="num" style="color:'+(low?'var(--critical)':'var(--text-secondary)')+'">'+fmt(m.qty)+' '+m.unit+'</span></div>'+
+        '<div class="bar-track"><div class="bar-fill" style="width:'+pct+'%; background:'+(low?'var(--critical)':'var(--cat-3)')+'"></div></div>';
+      box.appendChild(row);
+    });
+  })();
+
+  var finishedGoods = [
+    {sku:'Класична 40%, 0.5 л', boxes:4120, per:12},
+    {sku:'Пшенична 40%, 0.5 л', boxes:1860, per:12},
+    {sku:"М'яка на молоці 40%, 0.7 л", boxes:940, per:6},
+    {sku:'Класична 40%, 0.7 л', boxes:610, per:6}
+  ];
+  document.getElementById('finished-goods-body').innerHTML = finishedGoods.map(function(g){
+    return '<tr><td>'+g.sku+'</td><td class="r num">'+fmt(g.boxes)+'</td><td class="r dim">'+g.per+'</td></tr>';
+  }).join('');
+
+  var pillMap = {
+    'Готово':'good','Наклеєно':'good','Відвантажено':'good','Активний':'good','Придатно':'good','Виконано':'good',
+    'Фільтрація':'neutral','Комплектація':'warning','Очікує оплати':'warning','Плановий':'warning','На розгляді':'warning','Спливає':'warning','На контролі':'neutral',
+    'Купажування':'neutral','Звірено з ДПС':'good','В дорозі':'neutral','Розлив':'neutral','У відрядженні':'neutral',
+    'Брак':'critical','Заблоковано':'critical','Аварійний':'critical','Прострочено':'critical'
+  };
+  function pill(status){
+    var cls = pillMap[status] || 'neutral';
+    return '<span class="pill '+cls+'"><span class="dot"></span>'+status+'</span>';
+  }
+
+  var batches = [
+    {id:'П-0473', recipe:'Класична 40%', volume:900, stage:'Купажування', start:'21.09 08:10', tech:'Ткачук Р.'},
+    {id:'П-0472', recipe:'Класична 40%', volume:820, stage:'Розлив', start:'20.09 14:00', tech:'Ткачук Р.'},
+    {id:'П-0471', recipe:"М'яка на молоці 40%", volume:640, stage:'Фільтрація', start:'20.09 09:30', tech:'Гнатюк Н.'},
+    {id:'П-0470', recipe:'Пшенична 40%', volume:710, stage:'Готово', start:'19.09 07:45', tech:'Ткачук Р.'},
+    {id:'П-0469', recipe:'Класична 40%', volume:855, stage:'Готово', start:'18.09 08:00', tech:'Ткачук Р.'},
+    {id:'П-0468', recipe:'Класична 40%', volume:780, stage:'Відвантажено', start:'17.09 07:30', tech:'Гнатюк Н.'},
+    {id:'П-0467', recipe:'Пшенична 40%', volume:690, stage:'Відвантажено', start:'16.09 08:15', tech:'Ткачук Р.'}
+  ];
+  document.getElementById('mfg-body').innerHTML = batches.map(function(b){
+    return '<tr><td class="code">'+b.id+'</td><td>'+b.recipe+'</td><td class="r num">'+b.volume+'</td><td>'+pill(b.stage)+'</td><td class="dim">'+b.start+'</td><td class="dim">'+b.tech+'</td></tr>';
+  }).join('');
+
+  var recipes = [
+    {name:'Класична 40%', alcohol:'40.2%', water:'59.6%', extra:'обробка активованим вугіллям'},
+    {name:'Пшенична 40%', alcohol:'40.5% (пшеничний)', water:'59.3%', extra:'глюкоза 0.2%'},
+    {name:"М'яка на молоці 40%", alcohol:'40.0%', water:'58.5%', extra:'сухе молоко 1.5%'}
+  ];
+  document.getElementById('recipes-body').innerHTML = recipes.map(function(r){
+    return '<tr><td>'+r.name+'</td><td class="dim">'+r.alcohol+'</td><td class="dim">'+r.water+'</td><td class="dim">'+r.extra+'</td></tr>';
+  }).join('');
+
+  var labTests = [
+    {batch:'П-0470', test:'Міцність', norm:'40.0% ± 0.2', fact:'40.1%', status:'Придатно', lab:'Гнатюк Н.'},
+    {batch:'П-0469', test:'Міцність', norm:'40.0% ± 0.2', fact:'39.9%', status:'Придатно', lab:'Гнатюк Н.'},
+    {batch:'П-0469', test:'Прозорість', norm:'без домішок', fact:'норма', status:'Придатно', lab:'Гнатюк Н.'},
+    {batch:'П-0471', test:'Вхідний контроль спирту', norm:'96.0%+', fact:'96.3%', status:'Придатно', lab:'Ткачук Р.'},
+    {batch:'П-0468', test:'Органолептика', norm:'норма', fact:'норма', status:'Придатно', lab:'Гнатюк Н.'},
+    {batch:'П-0465', test:'Міцність', norm:'40.0% ± 0.2', fact:'38.6%', status:'Брак', lab:'Гнатюк Н.'}
+  ];
+  document.getElementById('lab-body').innerHTML = labTests.map(function(t){
+    return '<tr><td class="code">'+t.batch+'</td><td>'+t.test+'</td><td class="dim">'+t.norm+'</td><td class="r num">'+t.fact+'</td><td>'+pill(t.status)+'</td><td class="dim">'+t.lab+'</td></tr>';
+  }).join('');
+
+  var equipment = [
+    {name:'Лінія розливу №1', type:'Плановий огляд', date:'25.09.2026', status:'Плановий'},
+    {name:'Купажна ємність №2', type:'Заміна фільтра', date:'23.09.2026', status:'Плановий'},
+    {name:'Лінія розливу №2', type:'Аварійна зупинка (збій дозатора кришки)', date:'19.09.2026', status:'Аварійний'},
+    {name:'Компресор №1', type:'ТО пройдено', date:'12.09.2026', status:'Виконано'},
+    {name:'Фільтр-прес', type:'Плановий огляд', date:'30.09.2026', status:'Плановий'},
+    {name:'Насосна станція', type:'ТО пройдено', date:'08.09.2026', status:'Виконано'}
+  ];
+  document.getElementById('maint-body').innerHTML = equipment.map(function(e){
+    return '<tr><td>'+e.name+'</td><td class="dim">'+e.type+'</td><td class="dim">'+e.date+'</td><td>'+pill(e.status)+'</td></tr>';
+  }).join('');
+
+  var orders = [
+    {client:'ТД «Мережа Захід»', boxes:1200, status:'Відвантажено', amount:1044000, manager:'Савчук О.', date:'18.09'},
+    {client:'Дистрибуція Львів', boxes:640, status:'Комплектація', amount:556800, manager:'Бойко Т.', date:'20.09'},
+    {client:'ТОВ «Каскад Трейд»', boxes:980, status:'Очікує оплати', amount:852600, manager:'Савчук О.', date:'15.09'},
+    {client:'Південь Опт', boxes:350, status:'Відвантажено', amount:304500, manager:'Бойко Т.', date:'17.09'},
+    {client:'Буковина Груп', boxes:290, status:'Комплектація', amount:252300, manager:'Савчук О.', date:'21.09'}
+  ];
+  document.getElementById('sales-body').innerHTML = orders.map(function(o){
+    return '<tr><td>'+o.client+'</td><td class="r num">'+fmt(o.boxes)+'</td><td>'+pill(o.status)+'</td><td class="r num">'+fmt(o.amount)+'</td><td class="dim">'+o.manager+'</td><td class="dim">'+o.date+'</td></tr>';
+  }).join('');
+  document.getElementById('report-sales-body').innerHTML = orders.map(function(o){
+    return '<tr><td>'+o.client+'</td><td class="r num">'+fmt(o.boxes)+'</td><td>'+pill(o.status)+'</td><td class="r num">'+fmt(o.amount)+'</td></tr>';
+  }).join('');
+
+  var pipeline = [
+    {client:'Ритейл Мережа Плюс', stage:'Перемовини', vol:'800 ящ/міс'},
+    {client:'Дніпро Дистриб', stage:'Комерційна пропозиція надіслана', vol:'450 ящ/міс'},
+    {client:'АгроТрейд Груп', stage:'Узгодження договору', vol:'300 ящ/міс'}
+  ];
+  document.getElementById('pipeline-body').innerHTML = pipeline.map(function(p){
+    return '<tr><td>'+p.client+'</td><td class="dim">'+p.stage+'</td><td class="r dim">'+p.vol+'</td></tr>';
+  }).join('');
+
+  var procurement = [
+    {supplier:'Укрспирт', material:'Спирт ректифікований', price:'42.50 грн/л', contract:'до 31.12.2026', status:'Активний'},
+    {supplier:'СклоПак ЛТД', material:'Пляшка скляна 0.5 / 0.7 л', price:'3.20 / 3.85 грн/шт', contract:'до 30.06.2027', status:'Активний'},
+    {supplier:'ЕтикетПрінт', material:'Етикетки', price:'0.45 грн/шт', contract:'нова пропозиція на розгляді', status:'На розгляді'},
+    {supplier:'МеталКрепаж', material:'Кришка гвинтова', price:'0.38 грн/шт', contract:'до 01.03.2027', status:'Активний'},
+    {supplier:'УкрКартон', material:'Короб картонний', price:'6.90 грн/шт', contract:'до 15.11.2026', status:'Активний'}
+  ];
+  document.getElementById('procurement-body').innerHTML = procurement.map(function(p){
+    return '<tr><td>'+p.supplier+'</td><td class="dim">'+p.material+'</td><td class="r num">'+p.price+'</td><td class="dim">'+p.contract+'</td><td>'+pill(p.status)+'</td></tr>';
+  }).join('');
+
+  var logistics = [
+    {route:'Львів → Київ', driver:'Коваль І.', vehicle:'МАЗ, AA1234BB', status:'В дорозі', note:'виїзд 21.09 06:00'},
+    {route:'Львів → Тернопіль', driver:'Бойко С.', vehicle:'MAN, AA5678CC', status:'Відвантажено', note:'доставлено 20.09'},
+    {route:'Львів → Ужгород', driver:'Гнатюк М.', vehicle:'МАЗ, AA9012DD', status:'Комплектація', note:'плановий виїзд 22.09'},
+    {route:'Львів → Івано-Франківськ', driver:'Ткачук В.', vehicle:'Renault, AA3456EE', status:'Відвантажено', note:'доставлено 19.09'}
+  ];
+  document.getElementById('logistics-body').innerHTML = logistics.map(function(l){
+    return '<tr><td>'+l.route+'</td><td class="dim">'+l.driver+'</td><td class="dim code">'+l.vehicle+'</td><td>'+pill(l.status)+'</td><td class="dim">'+l.note+'</td></tr>';
+  }).join('');
+
+  var accountingRows = [
+    {item:'Сировина й спирт', planned:1840000, actual:1902400},
+    {item:'Акциз', planned:1310000, actual:1298500},
+    {item:'Пакування', planned:770000, actual:744200},
+    {item:'Персонал', planned:580000, actual:580000},
+    {item:'Логістика', planned:340000, actual:356900}
+  ];
+  function devPct(p,a){ var d=((a-p)/p*100); var s=(d>=0?'+':'')+d.toFixed(1)+'%'; return '<span style="color:'+(d>0?'var(--critical)':(d<0?'var(--good)':'var(--text-muted)'))+'">'+s+'</span>'; }
+  function accRow(r){ return '<tr><td>'+r.item+'</td><td class="r num dim">'+fmt(r.planned)+'</td><td class="r num">'+fmt(r.actual)+'</td><td class="r">'+devPct(r.planned,r.actual)+'</td></tr>'; }
+  document.getElementById('accounting-body').innerHTML = accountingRows.map(accRow).join('') +
+    '<tr style="font-weight:600"><td>Разом</td><td class="r num dim">4 840 000</td><td class="r num">4 882 000</td><td class="r">'+devPct(4840000,4882000)+'</td></tr>';
+  document.getElementById('report-cost-body').innerHTML = document.getElementById('accounting-body').innerHTML;
+
+  groupedBarChart(document.getElementById('chart-report-cost'), {
+    categories:['Сировина','Акциз','Пакування','Персонал','Логістика'],
+    series:[
+      {name:'План', color:'var(--border-strong)', values:[1840,1310,770,580,340]},
+      {name:'Факт', color:'var(--cat-1)', values:[1902.4,1298.5,744.2,580,356.9]}
+    ]
+  });
+
+  var hrRows = [
+    {name:'Мельник О. В.', role:'Оператор лінії', shift:'Зміна А', status:'Активний', tenure:'4 р.'},
+    {name:'Ткачук Р. П.', role:'Технолог', shift:'Зміна А', status:'Активний', tenure:'7 р.'},
+    {name:'Гринчук Н. С.', role:'Комірник', shift:'Зміна Б', status:'Активний', tenure:'2 р.'},
+    {name:'Савчук О. М.', role:'Менеджер з продажів', shift:'Офіс', status:'Активний', tenure:'3 р.'},
+    {name:'Бойко С. І.', role:'Водій-експедитор', shift:'Зміна А', status:'Активний', tenure:'5 р.'},
+    {name:'Коваль І. П.', role:'Водій-експедитор', shift:'Зміна Б', status:'У відрядженні', tenure:'6 р.'}
+  ];
+  document.getElementById('hr-body').innerHTML = hrRows.map(function(h){
+    return '<tr><td>'+h.name+'</td><td class="dim">'+h.role+'</td><td class="dim">'+h.shift+'</td><td>'+pill(h.status)+'</td><td class="r dim">'+h.tenure+'</td></tr>';
+  }).join('');
+
+  var exciseRows = [
+    {batch:'П-0470', stamps:8520, status:'Наклеєно'},
+    {batch:'П-0469', stamps:10260, status:'Наклеєно'},
+    {batch:'П-0468', stamps:9360, status:'Звірено з ДПС'},
+    {batch:'П-0467', stamps:8280, status:'Звірено з ДПС'},
+    {batch:'П-0466', stamps:9840, status:'Звірено з ДПС'},
+    {batch:'П-0465', stamps:0, status:'Заблоковано'}
+  ];
+  document.getElementById('excise-body').innerHTML = exciseRows.map(function(e){
+    return '<tr><td class="code">'+e.batch+'</td><td class="r num">'+fmt(e.stamps)+'</td><td>'+pill(e.status)+'</td></tr>';
+  }).join('');
+  document.getElementById('report-excise-body').innerHTML = document.getElementById('excise-body').innerHTML;
+  hBarChart(document.getElementById('chart-report-excise'), {
+    items: exciseRows.filter(function(e){return e.stamps>0;}).map(function(e){ return {label:e.batch, value:e.stamps}; }),
+    color:'var(--cat-3)', valueFmt: fmt
+  });
+
+  var docsRows = [
+    {doc:'Ліцензія на виробництво алкоголю', type:'Ліцензія', expiry:'12.03.2027', status:'Активний'},
+    {doc:'Договір оренди виробничого приміщення', type:'Договір', expiry:'01.01.2027', status:'Активний'},
+    {doc:'Дозвіл на викиди в атмосферу', type:'Дозвіл', expiry:'30.09.2026', status:'Спливає'},
+    {doc:'Страхування виробничих потужностей', type:'Поліс', expiry:'20.02.2027', status:'Активний'}
+  ];
+  document.getElementById('docs-body').innerHTML = docsRows.map(function(d){
+    return '<tr><td>'+d.doc+'</td><td class="dim">'+d.type+'</td><td class="dim">'+d.expiry+'</td><td>'+pill(d.status)+'</td></tr>';
+  }).join('');
+
+  var reportBatches = batches.map(function(b){
+    var loss = b.stage==='Готово'||b.stage==='Відвантажено' ? (0.2+Math.random()*0.4).toFixed(1) : '—';
+    return {id:b.id, recipe:b.recipe, volume:b.volume, loss:loss, stage:b.stage};
+  });
+  document.getElementById('report-prod-body').innerHTML = reportBatches.map(function(b){
+    return '<tr><td class="code">'+b.id+'</td><td>'+b.recipe+'</td><td class="r num">'+b.volume+'</td><td class="r num">'+b.loss+'</td><td>'+pill(b.stage)+'</td></tr>';
+  }).join('');
+
+  var topClients = orders.map(function(o){ return {label:o.client.replace('ТД ','').replace('ТОВ ',''), value:o.amount}; });
+  hBarChart(document.getElementById('chart-report-sales'), {items: topClients, color:'var(--cat-1)', valueFmt: function(v){ return fmt(v)+' грн'; }});
+
+})();
+</script>
+
+</body></html>

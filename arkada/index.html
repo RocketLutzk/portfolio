@@ -1,0 +1,1782 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Аркада — сайт з адмінкою</title>
+<meta name="description" content="Дизайн-концепт сайту горілчаного бренду з адмінкою.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0e0c0a; --bg2:#171411; --card:#1d1915; --card2:#25201b; --line:rgba(230,200,136,.14); --line2:rgba(230,200,136,.28);
+  --text:#f4ede3; --muted:#a79b8b; --gold:#c9a45c; --gold2:#ecd29a; --ok:#7fc29b; --bad:#e38277;
+  --serif:'Cormorant Garamond',Georgia,serif; --sans:'Manrope',system-ui,sans-serif;
+  --ease:cubic-bezier(.22,1,.36,1); --bar:0px; --accent:#c9a45c;
+  color-scheme:dark;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);line-height:1.6;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+body.locked{overflow:hidden}
+a{color:inherit;text-decoration:none}
+button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit}
+img{display:block;max-width:100%}
+.wrap{max-width:1240px;margin:0 auto;padding:0 20px}
+.serif{font-family:var(--serif)}
+.eyebrow{color:var(--gold);letter-spacing:.32em;font-size:11px;text-transform:uppercase;font-weight:600}
+.empty{border:1px dashed var(--line2);border-radius:20px;padding:50px 20px;text-align:center;color:var(--muted)}
+body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:400;opacity:.06;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.progress{position:fixed;top:0;left:0;height:2px;background:linear-gradient(90deg,var(--gold),var(--gold2));z-index:130;width:0}
+
+/* Gate */
+#gate{position:fixed;inset:0;z-index:150;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:20px;text-align:center;transition:clip-path 1.2s var(--ease);clip-path:inset(0 0 0 0)}
+body.in #gate{clip-path:inset(0 0 100% 0)}
+#gate .ring{position:absolute;width:min(80vw,560px);aspect-ratio:1;border:1px solid var(--line);border-radius:50%;animation:spin 40s linear infinite}
+#gate .ring::before{content:"";position:absolute;inset:40px;border:1px dashed var(--line);border-radius:50%}
+#gate .box{position:relative;opacity:0;transform:translateY(20px);animation:up 1s .2s var(--ease) forwards}
+.wm{font-family:var(--serif);font-weight:700;letter-spacing:.3em;color:var(--gold2)}
+#gate .wm{font-size:clamp(34px,7vw,52px);margin-bottom:4px}
+#gate .since{color:var(--muted);letter-spacing:.4em;font-size:11px;margin-bottom:44px}
+#gate h2{font-family:var(--serif);font-size:clamp(26px,5vw,36px);font-weight:500;font-style:italic;margin-bottom:28px}
+.btns{display:flex;gap:12px;justify-content:center}
+.btn{position:relative;z-index:0;overflow:hidden;display:inline-flex;align-items:center;gap:10px;border:1px solid var(--gold);padding:14px 34px;font-weight:600;letter-spacing:.14em;font-size:12px;text-transform:uppercase;cursor:pointer;background:transparent;color:var(--gold2);border-radius:40px;transition:color .4s}
+.btn::before{content:"";position:absolute;inset:0;background:var(--gold2);transform:translateY(101%);transition:transform .45s var(--ease);z-index:-1}
+.btn:hover{color:#15110c}.btn:hover::before{transform:none}
+.btn.fill{background:var(--gold);color:#15110c}
+.btn .arr{transition:transform .4s var(--ease)}.btn:hover .arr{transform:translateX(5px)}
+#gate .no-msg{opacity:0;color:var(--muted);margin-top:22px;font-size:14px;transition:.4s}
+#gate .no-msg.on{opacity:1}
+
+/* Announcement bar */
+#abar{position:fixed;top:0;left:0;right:0;z-index:101;height:38px;display:none;align-items:center;justify-content:center;gap:12px;padding:0 44px;background:var(--accent);color:#15110c;font-size:13px;font-weight:600;text-align:center;overflow:hidden}
+#abar.on{display:flex}
+#abar span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#abar a{text-decoration:underline;white-space:nowrap}
+#abar button{position:absolute;right:10px;background:none;border:0;cursor:pointer;font-size:16px;color:#15110c;width:28px;height:28px}
+
+/* Header */
+header{position:fixed;top:var(--bar);left:0;right:0;z-index:100;transition:background .4s,transform .5s var(--ease)}
+header.solid{background:rgba(14,12,10,.78);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+header.hide{transform:translateY(calc(-100% - var(--bar)))}
+header .wrap{display:flex;align-items:center;justify-content:space-between;height:70px;gap:20px}
+header .wm{font-size:20px}
+nav ul{display:flex;gap:26px;list-style:none;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+nav a{position:relative;padding:4px 0}
+nav a::after{content:"";position:absolute;left:0;bottom:0;height:1px;width:100%;background:var(--gold2);transform:scaleX(0);transform-origin:right;transition:transform .4s var(--ease)}
+nav a:hover{color:var(--text)}nav a:hover::after{transform:scaleX(1);transform-origin:left}
+.hright{display:flex;align-items:center;gap:10px}
+.adm-btn{display:none;align-items:center;gap:8px;border:1px solid var(--line2);background:rgba(201,164,92,.1);color:var(--gold2);border-radius:30px;padding:8px 16px;font-size:12px;font-weight:600;letter-spacing:.08em;cursor:pointer;transition:.3s}
+.adm-btn.on{display:inline-flex}
+.adm-btn:hover{background:var(--gold2);color:#15110c}
+.burger{display:none;width:40px;height:40px;background:none;border:0;cursor:pointer;position:relative}
+.burger span{position:absolute;left:9px;right:9px;height:1.5px;background:var(--text);transition:.4s var(--ease)}
+.burger span:nth-child(1){top:15px}.burger span:nth-child(2){top:24px}
+.burger.x span:nth-child(1){top:19px;transform:rotate(45deg)}.burger.x span:nth-child(2){top:19px;transform:rotate(-45deg)}
+
+/* Hero */
+.hero{position:relative;min-height:100svh;display:flex;align-items:center;overflow:hidden;padding:calc(100px + var(--bar)) 0 60px}
+.hero .glow{position:absolute;width:70vmax;height:70vmax;left:50%;top:50%;border-radius:50%;background:radial-gradient(circle,rgba(201,164,92,.22),transparent 60%);transform:translate(-50%,-50%);pointer-events:none;transition:transform .8s var(--ease)}
+.hero .bigword{position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);text-align:center;font-family:var(--serif);font-weight:700;font-size:26vw;line-height:1;color:transparent;-webkit-text-stroke:1px rgba(236,210,154,.1);pointer-events:none;white-space:nowrap}
+.hero .wrap{position:relative;display:grid;grid-template-columns:1.15fr .85fr;gap:30px;align-items:center;width:100%}
+.hero h1{font-family:var(--serif);font-size:clamp(46px,7.2vw,112px);line-height:.95;font-weight:500;margin:22px 0 26px;letter-spacing:-.01em}
+.hero h1 .line{display:block;overflow:hidden;padding-bottom:.06em}
+.hero h1 .line>span{display:inline-block;transform:translateY(110%);transition:transform 1.2s var(--ease)}
+.hero h1 em{color:var(--gold2)}
+body.in .hero h1 .line>span{transform:none}
+body.in .hero h1 .line:nth-child(2)>span{transition-delay:.12s}
+body.in .hero h1 .line:nth-child(3)>span{transition-delay:.24s}
+.hero .fade{opacity:0;transform:translateY(20px);transition:1s var(--ease)}
+body.in .hero .fade{opacity:1;transform:none;transition-delay:.5s}
+body.in .hero .fade.d2{transition-delay:.7s}
+.hero p{color:var(--muted);max-width:460px;margin-bottom:36px;font-size:16px}
+.hero-stage{position:relative;height:min(72vh,620px);display:flex;align-items:center;justify-content:center}
+.hero-bottle{position:relative;z-index:2;opacity:0;transform:translateY(80px) scale(.9);transition:opacity 1.2s .3s,transform 1.6s .3s var(--ease)}
+body.in .hero-bottle{opacity:1;transform:none}
+.hero-bottle .float{animation:float 6s ease-in-out infinite}
+.hero-bottle svg{height:min(64vh,560px);width:auto;filter:drop-shadow(0 40px 50px rgba(0,0,0,.7))}
+.badge-rot{position:absolute;right:4%;bottom:10%;width:130px;height:130px;z-index:3;animation:spin 18s linear infinite}
+.badge-rot text{font-size:10.5px;letter-spacing:3.4px;fill:var(--gold2);font-family:var(--sans);font-weight:600}
+.scroll-hint{position:absolute;left:50%;bottom:24px;transform:translateX(-50%);font-size:10px;letter-spacing:.3em;color:var(--muted);text-transform:uppercase;display:flex;flex-direction:column;align-items:center;gap:10px}
+.scroll-hint i{width:1px;height:44px;background:linear-gradient(var(--gold),transparent);animation:drip 2s ease-in-out infinite}
+
+.marquee{border-top:1px solid var(--line);border-bottom:1px solid var(--line);overflow:hidden;padding:22px 0;background:var(--bg2)}
+.marquee .track{display:flex;gap:56px;width:max-content;animation:mq 38s linear infinite}
+.marquee span{font-family:var(--serif);font-size:clamp(26px,3.5vw,44px);font-style:italic;white-space:nowrap}
+.marquee b{color:var(--gold);font-weight:400;font-style:normal}
+
+.rv{opacity:0;transform:translateY(50px);transition:opacity 1.1s var(--ease),transform 1.1s var(--ease)}
+.rv.on{opacity:1;transform:none}
+.rv.d1{transition-delay:.1s}.rv.d2{transition-delay:.2s}.rv.d3{transition-delay:.3s}
+.mask{overflow:hidden;display:block}
+.mask>span{display:inline-block;transform:translateY(105%);transition:transform 1.2s var(--ease)}
+.mask.on>span{transform:none}
+
+section{position:relative;padding:130px 0}
+.sec-head{margin-bottom:70px;display:flex;justify-content:space-between;align-items:flex-end;gap:30px;flex-wrap:wrap}
+.sec-head h2{font-family:var(--serif);font-size:clamp(40px,6vw,86px);font-weight:500;line-height:.98;letter-spacing:-.01em}
+.sec-head h2 em{color:var(--gold2)}
+.sec-head p{color:var(--muted);max-width:380px}
+
+/* Promo */
+.promo-sec{padding:90px 0 0}
+.promo{position:relative;overflow:hidden;border-radius:28px;padding:56px 50px;display:grid;grid-template-columns:1.4fr .6fr;gap:30px;align-items:center;background:linear-gradient(120deg,color-mix(in srgb,var(--accent) 28%,var(--card)),var(--card) 70%);border:1px solid var(--line2)}
+.promo::after{content:"";position:absolute;width:420px;height:420px;right:-120px;top:-160px;border-radius:50%;background:radial-gradient(circle,color-mix(in srgb,var(--accent) 55%,transparent),transparent 65%);animation:float 9s ease-in-out infinite}
+.promo h3{font-family:var(--serif);font-size:clamp(34px,4.4vw,60px);font-weight:500;line-height:1;margin:12px 0 14px;position:relative;z-index:1}
+.promo p{color:var(--muted);max-width:520px;position:relative;z-index:1}
+.promo .btn{position:relative;z-index:1;justify-self:end;background:var(--accent);border-color:var(--accent);color:#15110c}
+.promo .eyebrow{position:relative;z-index:1;color:var(--accent)}
+
+/* Stats */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line)}
+.stat{padding:44px 24px 10px 0;border-right:1px solid var(--line);margin-right:24px}
+.stat:last-child{border-right:0}
+.stat b{display:block;font-family:var(--serif);font-size:clamp(46px,5.4vw,78px);font-weight:500;line-height:1;color:var(--gold2)}
+.stat span{font-size:13px;color:var(--muted)}
+
+/* Story */
+.story{padding:0}
+.story-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px}
+.stage{position:sticky;top:0;height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.stage .sglow{position:absolute;width:80%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,var(--glow),transparent 62%);transition:background 1s}
+.stage .sname{position:absolute;font-family:var(--serif);font-weight:700;font-size:clamp(80px,12vw,190px);color:transparent;-webkit-text-stroke:1px rgba(236,210,154,.14);white-space:nowrap;transition:opacity .6s}
+.stage .sb{position:relative;transition:transform 1s var(--ease)}
+.stage svg,.stage img{height:min(70vh,580px);width:auto;filter:drop-shadow(0 40px 50px rgba(0,0,0,.7))}
+.stage .idx{position:absolute;left:0;bottom:40px;font-size:12px;letter-spacing:.2em;color:var(--muted)}
+.stage .idx b{font-family:var(--serif);font-size:34px;color:var(--gold2);font-weight:500;letter-spacing:0;margin-right:6px}
+.stage .dots{position:absolute;right:0;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:10px}
+.stage .dots i{width:6px;height:6px;border-radius:50%;background:var(--line2);transition:.4s}
+.stage .dots i.on{background:var(--gold2);height:22px;border-radius:4px}
+.s-item{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:60px 0}
+.s-item .cat{margin-bottom:14px}
+.s-item h3{font-family:var(--serif);font-size:clamp(40px,4.6vw,68px);font-weight:500;line-height:1;margin-bottom:22px}
+.s-item p{color:var(--muted);font-size:16px;max-width:460px;margin-bottom:26px}
+.s-item .specs{display:flex;gap:30px;flex-wrap:wrap;margin-bottom:26px}
+.s-item .specs small{display:block;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+.s-item .specs b{font-family:var(--serif);font-size:24px;font-weight:600}
+.pill{display:inline-block;border:1px solid var(--gold);color:var(--gold2);font-size:11px;letter-spacing:.15em;text-transform:uppercase;padding:5px 12px;border-radius:30px;margin-bottom:18px;align-self:flex-start}
+.s-item>*{opacity:.15;transform:translateX(30px);transition:1s var(--ease)}
+.s-item.on>*{opacity:1;transform:none}
+
+/* Ice */
+.ice{background:var(--bg2);overflow:hidden}
+.ice-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+.ice-stage{position:relative;height:560px;display:flex;align-items:center;justify-content:center;border:1px solid var(--line);border-radius:24px;background:radial-gradient(circle at 50% 60%,var(--iceglow,rgba(120,160,220,.08)),transparent 70%);overflow:hidden}
+.ice-stage svg{height:470px;width:auto;filter:drop-shadow(0 30px 40px rgba(0,0,0,.6))}
+.frost{position:absolute;inset:0;pointer-events:none;opacity:var(--frost,0);transition:opacity .3s}
+.frost i{position:absolute;width:3px;height:3px;background:#dfefff;border-radius:50%;animation:snow linear infinite}
+.temp{position:absolute;top:24px;left:24px;font-family:var(--serif);font-size:56px;line-height:1}
+.temp small{font-size:20px;color:var(--muted)}
+.ice-ctrl{margin-top:34px}
+.ice-ctrl label{display:flex;justify-content:space-between;font-size:12px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:4px;background:linear-gradient(90deg,#d9a55a,#3d7be0);outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;border-radius:50%;background:var(--text);border:4px solid var(--bg);box-shadow:0 0 0 1px var(--gold);cursor:grab}
+input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:var(--text);border:4px solid var(--bg);cursor:grab}
+.ice-msg{margin-top:20px;font-size:14px;color:var(--muted);min-height:24px}
+.ice-msg.ok{color:#8fb8ff}
+
+/* Catalog */
+.filters{display:flex;gap:8px;flex-wrap:wrap}
+.chip{border:1px solid var(--line);background:transparent;color:var(--muted);padding:10px 22px;border-radius:40px;font-size:13px;cursor:pointer;transition:.35s var(--ease)}
+.chip:hover{color:var(--text);border-color:var(--gold)}
+.chip.on{background:var(--gold2);color:#15110c;border-color:var(--gold2)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:18px;perspective:1200px}
+.card{position:relative;background:var(--card);border:1px solid var(--line);border-radius:20px;overflow:hidden;cursor:pointer;transform-style:preserve-3d;transition:transform .5s var(--ease),border-color .4s,opacity 1.1s var(--ease);display:flex;flex-direction:column}
+.card.hidden{display:none}
+.card.pop{animation:pop .7s var(--ease) both}
+.card:hover{border-color:var(--line2)}
+.card .pic{height:280px;display:flex;align-items:flex-end;justify-content:center;padding-bottom:22px;position:relative;overflow:hidden}
+.card .pic::before{content:"";position:absolute;width:260px;height:260px;border-radius:50%;left:50%;bottom:-40px;transform:translateX(-50%) scale(.8);background:radial-gradient(circle,var(--glow),transparent 65%);transition:transform .7s var(--ease)}
+.card:hover .pic::before{transform:translateX(-50%) scale(1.25)}
+.card .pic svg,.card .pic img{position:relative;height:230px;width:auto;object-fit:contain;transition:transform .7s var(--ease)}
+.card:hover .pic svg,.card:hover .pic img{transform:translateY(-10px) rotate(-4deg)}
+.card .info{padding:20px 22px 24px;border-top:1px solid var(--line);display:flex;flex-direction:column;flex:1}
+.card h4{font-family:var(--serif);font-size:26px;font-weight:600;line-height:1.1;margin:6px 0 8px}
+.card .short{font-size:14px;color:var(--muted);flex:1}
+.card .meta{display:flex;justify-content:space-between;align-items:center;margin-top:16px;font-size:12px;color:var(--muted)}
+.card .plus{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;color:var(--gold2);font-size:18px;transition:.4s var(--ease)}
+.card:hover .plus{background:var(--gold2);color:#15110c;transform:rotate(90deg)}
+.tag{position:absolute;top:16px;left:16px;z-index:2;background:rgba(14,12,10,.6);backdrop-filter:blur(6px);border:1px solid var(--line);color:var(--gold2);font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:5px 11px;border-radius:30px}
+
+/* Blog */
+.blog{background:var(--bg2)}
+.posts{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.post{cursor:pointer;display:flex;flex-direction:column;gap:16px}
+.post .cover{aspect-ratio:4/3;border-radius:20px;overflow:hidden;position:relative;background:var(--card);border:1px solid var(--line)}
+.post .cover img{width:100%;height:100%;object-fit:cover;transition:transform 1s var(--ease)}
+.post:hover .cover img,.post:hover .cover .ph{transform:scale(1.06)}
+.ph{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--serif);font-size:64px;font-style:italic;color:var(--gold2);background:radial-gradient(circle at 30% 30%,var(--phc,rgba(201,164,92,.35)),transparent 70%),var(--card);transition:transform 1s var(--ease)}
+.post .pmeta{font-size:12px;color:var(--muted);letter-spacing:.08em;display:flex;gap:10px;align-items:center}
+.post .pmeta b{color:var(--gold);font-weight:600;text-transform:uppercase;letter-spacing:.2em;font-size:10px}
+.post h4{font-family:var(--serif);font-size:28px;font-weight:600;line-height:1.1;transition:color .3s}
+.post:hover h4{color:var(--gold2)}
+.post p{font-size:14px;color:var(--muted)}
+.post.big{grid-column:span 2}
+.post.big .cover{aspect-ratio:16/9}
+.post.big h4{font-size:38px}
+.more-row{text-align:center;margin-top:50px}
+
+/* Reader */
+#reader{position:fixed;inset:0;z-index:145;background:var(--bg);overflow:auto;transform:translateY(100%);transition:transform .8s var(--ease)}
+#reader.open{transform:none}
+#reader .rhead{position:sticky;top:0;z-index:2;display:flex;justify-content:space-between;align-items:center;padding:14px 20px;background:rgba(14,12,10,.85);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+#reader .rcover{max-width:1100px;margin:30px auto 0;padding:0 20px}
+#reader .rcover>div{aspect-ratio:21/9;border-radius:24px;overflow:hidden;position:relative;border:1px solid var(--line)}
+#reader .rcover img{width:100%;height:100%;object-fit:cover}
+#reader article{max-width:720px;margin:0 auto;padding:50px 20px 100px}
+#reader h1{font-family:var(--serif);font-size:clamp(38px,5.5vw,68px);font-weight:500;line-height:1.02;margin:14px 0 18px}
+#reader .lead{font-size:19px;color:var(--muted);margin-bottom:34px}
+.prose p{font-size:17px;line-height:1.8;margin-bottom:22px;color:#e4dccf}
+.prose h3{font-family:var(--serif);font-size:32px;font-weight:600;margin:40px 0 14px}
+.prose ul{margin:0 0 22px 22px}.prose li{margin-bottom:8px;font-size:17px;color:#e4dccf}
+.prose strong{color:var(--gold2)}
+.prose blockquote{border-left:2px solid var(--gold);padding:4px 0 4px 22px;font-family:var(--serif);font-style:italic;font-size:26px;line-height:1.3;margin:30px 0;color:var(--text)}
+
+/* Product modal */
+#modal{position:fixed;inset:0;z-index:140;display:flex;align-items:flex-end;justify-content:center;pointer-events:none}
+#modal .veil{position:absolute;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(6px);opacity:0;transition:opacity .5s}
+#modal.open{pointer-events:auto}#modal.open .veil{opacity:1}
+.mbox{position:relative;background:var(--bg2);border:1px solid var(--line);border-bottom:0;width:100%;max-width:1000px;max-height:92vh;overflow:auto;display:grid;grid-template-columns:1fr 1.2fr;border-radius:28px 28px 0 0;transform:translateY(100%);transition:transform .7s var(--ease)}
+#modal.open .mbox{transform:none}
+.mbox .mpic{display:flex;align-items:center;justify-content:center;padding:40px;background:radial-gradient(circle,var(--glow),transparent 65%)}
+.mbox .mpic svg,.mbox .mpic img{height:400px;width:auto;animation:float 6s ease-in-out infinite}
+.mbox .mtxt{padding:50px 40px}
+.mbox h3{font-family:var(--serif);font-size:44px;font-weight:500;line-height:1;margin:10px 0 18px}
+.mbox p{color:var(--muted);font-size:15px;margin-bottom:24px}
+.mspecs{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin-bottom:24px}
+.mspecs div{padding:14px 0}
+.mspecs small{display:block;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.15em}
+.mspecs b{font-size:14px;font-weight:600}
+.notes{list-style:none;margin-bottom:28px}
+.notes li{font-size:14px;padding:8px 0;border-bottom:1px dashed var(--line);display:flex;gap:14px}
+.notes li span{color:var(--gold);min-width:90px}
+.close{position:absolute;top:18px;right:18px;width:42px;height:42px;border-radius:50%;background:var(--card);border:1px solid var(--line);color:var(--text);font-size:18px;cursor:pointer;z-index:3;transition:transform .4s var(--ease)}
+.close:hover{transform:rotate(90deg)}
+
+/* History */
+.hz{height:320vh;padding:0}
+.hz-sticky{position:sticky;top:0;height:100vh;overflow:hidden;display:flex;flex-direction:column;justify-content:center}
+.hz-head{padding:0 max(20px,calc((100vw - 1240px)/2 + 20px));margin-bottom:50px}
+.hz-head h2{font-family:var(--serif);font-size:clamp(40px,6vw,86px);font-weight:500;line-height:.98}
+.hz-head h2 em{color:var(--gold2)}
+.hz-track{display:flex;gap:28px;padding:0 max(20px,calc((100vw - 1240px)/2 + 20px));will-change:transform}
+.ev{flex:0 0 min(380px,78vw);border-left:1px solid var(--line);padding:0 24px 10px 26px;position:relative}
+.ev::before{content:"";position:absolute;left:-5px;top:14px;width:9px;height:9px;border-radius:50%;background:var(--gold)}
+.ev b{display:block;font-family:var(--serif);font-size:clamp(64px,7vw,104px);font-weight:500;line-height:1;color:transparent;-webkit-text-stroke:1px var(--gold2);margin-bottom:18px;transition:color .6s}
+.ev:hover b{color:var(--gold2)}
+.ev p{color:var(--muted);font-size:15px}
+.hz-bar{margin:60px max(20px,calc((100vw - 1240px)/2 + 20px)) 0;height:1px;background:var(--line);position:relative}
+.hz-bar i{position:absolute;left:0;top:0;height:1px;background:var(--gold2);width:0}
+
+.q-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.q{border:1px solid var(--line);border-radius:20px;padding:30px 26px 34px;position:relative;overflow:hidden;transition:border-color .4s}
+.q::after{content:"";position:absolute;inset:auto 0 0 0;height:0;background:linear-gradient(0deg,rgba(201,164,92,.18),transparent);transition:height .6s var(--ease)}
+.q:hover{border-color:var(--line2)}.q:hover::after{height:100%}
+.q .n{font-family:var(--serif);font-size:56px;line-height:1;color:transparent;-webkit-text-stroke:1px var(--gold);margin-bottom:40px}
+.q h4{font-size:18px;font-weight:600;margin-bottom:10px;position:relative;z-index:1}
+.q p{font-size:14px;color:var(--muted);position:relative;z-index:1}
+
+footer{border-top:1px solid var(--line);padding:80px 0 30px;overflow:hidden}
+.foot-big{font-family:var(--serif);font-weight:700;font-size:21vw;line-height:.8;text-align:center;color:transparent;-webkit-text-stroke:1px rgba(236,210,154,.28);margin:40px 0 30px;white-space:nowrap}
+.fcols{display:grid;grid-template-columns:2fr 1fr 1fr;gap:30px;font-size:14px;color:var(--muted)}
+.fcols h5{color:var(--text);font-size:11px;letter-spacing:.2em;text-transform:uppercase;margin-bottom:14px}
+.fcols li{list-style:none;padding:3px 0}
+.fcols a:hover{color:var(--gold2)}
+.warn{text-align:center;border-top:1px solid var(--line);padding-top:22px;margin-top:40px;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.concept-tag{position:fixed;bottom:12px;left:12px;z-index:90;background:rgba(0,0,0,.6);backdrop-filter:blur(6px);border:1px solid var(--line);color:var(--muted);font-size:10px;padding:5px 11px;border-radius:20px}
+
+/* ============ ADMIN ============ */
+#admin{position:fixed;inset:0;z-index:160;background:#100e0c;display:none;grid-template-columns:250px 1fr;font-size:14px}
+#admin.open{display:grid;animation:fadeIn .4s var(--ease)}
+.aside{border-right:1px solid var(--line);padding:22px 16px;display:flex;flex-direction:column;gap:4px;background:var(--bg2);overflow:auto}
+.aside .wm{font-size:18px;padding:0 10px}
+.aside .sub{font-size:11px;color:var(--muted);letter-spacing:.2em;text-transform:uppercase;padding:2px 10px 22px}
+.tab{display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:12px;background:none;border:0;cursor:pointer;color:var(--muted);text-align:left;font-weight:500;transition:.2s}
+.tab svg{width:18px;height:18px;flex:none}
+.tab:hover{background:var(--card);color:var(--text)}
+.tab.on{background:var(--card2);color:var(--gold2)}
+.tab .cnt{margin-left:auto;font-size:11px;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:1px 8px;color:var(--muted)}
+.aside .spacer{flex:1}
+.aside .exit{border:1px solid var(--line);color:var(--text);justify-content:center}
+.amain{overflow:auto;padding:30px 36px 80px}
+.atop{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:26px;flex-wrap:wrap}
+.atop h2{font-family:var(--serif);font-size:40px;font-weight:500;line-height:1}
+.atop p{color:var(--muted);margin-top:6px}
+.abtn{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line2);background:var(--card);color:var(--text);padding:10px 16px;border-radius:12px;cursor:pointer;font-weight:600;font-size:13px;transition:.2s;white-space:nowrap}
+.abtn:hover{border-color:var(--gold);color:var(--gold2)}
+.abtn.pri{background:var(--gold2);color:#15110c;border-color:var(--gold2)}
+.abtn.pri:hover{background:#f6e1b3;color:#15110c}
+.abtn.danger{color:var(--bad);border-color:rgba(227,130,119,.35)}
+.abtn.danger:hover{background:rgba(227,130,119,.12);color:var(--bad)}
+.abtn.sm{padding:6px 10px;font-size:12px;border-radius:9px}
+.abtn:disabled{opacity:.5;cursor:default}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:26px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 20px}
+.kpi small{color:var(--muted);font-size:12px}
+.kpi b{display:block;font-family:var(--serif);font-size:42px;font-weight:600;line-height:1.1;color:var(--gold2)}
+.kpi span{font-size:12px;color:var(--muted)}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px;margin-bottom:18px}
+.panel h3{font-size:15px;font-weight:700;margin-bottom:4px}
+.panel .hint{color:var(--muted);font-size:13px;margin-bottom:16px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.list{display:flex;flex-direction:column;gap:8px}
+.row{display:grid;grid-template-columns:52px 1fr auto;gap:14px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 14px 10px 10px;transition:border-color .2s}
+.row:hover{border-color:var(--line2)}
+.row .th{width:52px;height:52px;border-radius:10px;background:var(--bg2);display:grid;place-items:center;overflow:hidden}
+.row .th svg{height:46px;width:auto}
+.row .th img{width:100%;height:100%;object-fit:cover}
+.row .t b{display:block;font-weight:600}
+.row .t span{font-size:12px;color:var(--muted)}
+.row .acts{display:flex;gap:6px;align-items:center}
+.badge{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;border-radius:20px;border:1px solid}
+.badge.ok{color:var(--ok);border-color:rgba(127,194,155,.4)}
+.badge.mut{color:var(--muted);border-color:var(--line2)}
+.badge.gold{color:var(--gold2);border-color:var(--line2)}
+.search{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 14px;min-width:220px;outline:none}
+.search:focus{border-color:var(--gold)}
+/* forms */
+.form{display:grid;grid-template-columns:1fr 1fr;gap:14px 16px}
+.f{display:flex;flex-direction:column;gap:6px}
+.f.full{grid-column:1/-1}
+.f label{font-size:12px;color:var(--muted);font-weight:600}
+.f input[type=text],.f input[type=url],.f input[type=number],.f input[type=date],.f select,.f textarea{background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:10px 12px;outline:none;width:100%;transition:border-color .2s}
+.f input:focus,.f select:focus,.f textarea:focus{border-color:var(--gold)}
+.f textarea{min-height:90px;resize:vertical;line-height:1.55}
+.f textarea.tall{min-height:280px;font-family:ui-monospace,Menlo,monospace;font-size:13px}
+.f .note{font-size:11px;color:var(--muted)}
+.colors{display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end}
+.colors .f{flex:1;min-width:110px}
+.colors input[type=color]{width:100%;height:40px;border:1px solid var(--line);border-radius:10px;background:var(--bg2);padding:3px;cursor:pointer}
+.switch{display:flex;align-items:center;gap:10px;cursor:pointer;user-select:none;font-size:13px}
+.switch input{display:none}
+.switch i{width:38px;height:22px;border-radius:20px;background:var(--line2);position:relative;transition:.25s;flex:none}
+.switch i::after{content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:var(--text);transition:.25s var(--ease)}
+.switch input:checked+i{background:var(--gold)}
+.switch input:checked+i::after{transform:translateX(16px)}
+.editor{display:grid;grid-template-columns:1fr 300px;gap:18px;align-items:start}
+.preview{position:sticky;top:0;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px;display:flex;flex-direction:column;align-items:center;gap:10px}
+.preview .pv{height:320px;width:100%;display:flex;align-items:center;justify-content:center;border-radius:14px;background:radial-gradient(circle,var(--glow),transparent 65%)}
+.preview .pv svg,.preview .pv img{height:290px;width:auto;object-fit:contain}
+.preview small{color:var(--muted);font-size:12px;text-align:center}
+.upl{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.upl .thumb{width:120px;height:80px;border-radius:10px;border:1px dashed var(--line2);overflow:hidden;display:grid;place-items:center;color:var(--muted);font-size:11px;background:var(--bg2)}
+.upl .thumb img{width:100%;height:100%;object-fit:cover}
+.savebar{position:sticky;bottom:-80px;margin:22px -36px -80px;padding:14px 36px;background:rgba(16,14,12,.92);backdrop-filter:blur(8px);border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}
+.savebar .l{color:var(--muted);font-size:13px}
+.utm-out{background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:12px;font-family:ui-monospace,Menlo,monospace;font-size:12px;word-break:break-all;color:var(--gold2);user-select:all;min-height:44px}
+.seo-prev{background:#fff;border-radius:12px;padding:16px 18px;color:#202124;font-family:Arial,sans-serif}
+.seo-prev .u{font-size:12px;color:#4d5156}
+.seo-prev .tt{font-size:19px;color:#1a0dab;margin:4px 0 2px;line-height:1.3}
+.seo-prev .dd{font-size:13px;color:#4d5156;line-height:1.5}
+.locknote{display:flex;gap:10px;align-items:center;background:rgba(227,130,119,.08);border:1px solid rgba(227,130,119,.3);color:#f0b3ab;border-radius:12px;padding:12px 14px;margin-bottom:18px;font-size:13px}
+.mob-tabs{display:none}
+
+/* ===== B2B sections ===== */
+.b2b-intro{color:var(--muted);max-width:420px}
+.dirs{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:70px}
+.dir{position:relative;border:1px solid var(--line);border-radius:22px;padding:34px 28px 30px;background:var(--card);overflow:hidden;transition:border-color .4s,transform .6s var(--ease)}
+.dir:hover{border-color:var(--line2);transform:translateY(-6px)}
+.dir .ic{width:54px;height:54px;border-radius:16px;display:grid;place-items:center;background:rgba(201,164,92,.12);color:var(--gold2);margin-bottom:26px}
+.dir .ic svg{width:26px;height:26px}
+.dir h4{font-family:var(--serif);font-size:30px;font-weight:600;line-height:1.05;margin-bottom:12px}
+.dir p{color:var(--muted);font-size:14px}
+.dir .num{position:absolute;right:22px;top:16px;font-family:var(--serif);font-size:70px;line-height:1;color:transparent;-webkit-text-stroke:1px rgba(236,210,154,.18)}
+.ben-wrap{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:start}
+.bens{display:grid;grid-template-columns:1fr 1fr;gap:0;border-top:1px solid var(--line)}
+.ben{padding:26px 22px 26px 0;border-bottom:1px solid var(--line)}
+.ben:nth-child(odd){border-right:1px solid var(--line)}
+.ben:nth-child(even){padding-left:22px}
+.ben b{display:flex;gap:10px;align-items:center;font-size:16px;margin-bottom:6px}
+.ben b::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--gold);flex:none}
+.ben p{color:var(--muted);font-size:14px}
+.pstats{display:flex;gap:40px;flex-wrap:wrap;margin-top:40px}
+.pstats div b{display:block;font-family:var(--serif);font-size:54px;font-weight:500;color:var(--gold2);line-height:1}
+.pstats div span{font-size:13px;color:var(--muted)}
+/* lead form */
+.lform{background:var(--card);border:1px solid var(--line2);border-radius:24px;padding:34px 30px;position:relative;overflow:hidden}
+.lform::before{content:"";position:absolute;width:300px;height:300px;right:-120px;top:-140px;border-radius:50%;background:radial-gradient(circle,rgba(201,164,92,.25),transparent 65%)}
+.lform h3{font-family:var(--serif);font-size:34px;font-weight:500;line-height:1.05;margin-bottom:6px;position:relative}
+.lform>p{color:var(--muted);font-size:14px;margin-bottom:22px;position:relative}
+.lgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px 18px;position:relative}
+.lf{display:flex;flex-direction:column;gap:4px}
+.lf.full{grid-column:1/-1}
+.lf label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.lf input,.lf select,.lf textarea{background:transparent;border:0;border-bottom:1px solid var(--line2);padding:10px 0;outline:none;color:var(--text);transition:border-color .3s;border-radius:0}
+.lf select option{background:var(--bg2)}
+.lf textarea{resize:vertical;min-height:80px;line-height:1.5}
+.lf input:focus,.lf select:focus,.lf textarea:focus{border-color:var(--gold2)}
+.lconsent{grid-column:1/-1;display:flex;gap:10px;align-items:flex-start;font-size:12px;color:var(--muted);cursor:pointer}
+.lconsent input{margin-top:3px;accent-color:var(--gold)}
+.lfoot{grid-column:1/-1;display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;margin-top:6px}
+.lmsg{font-size:13px;color:var(--muted)}
+.lmsg.err{color:var(--bad)}
+.ldone{position:relative;text-align:center;padding:40px 10px}
+.ldone .ok{width:64px;height:64px;border-radius:50%;margin:0 auto 18px;display:grid;place-items:center;background:rgba(127,194,155,.15);color:var(--ok);font-size:30px;animation:pop .7s var(--ease)}
+.ldone h4{font-family:var(--serif);font-size:30px;font-weight:500;margin-bottom:8px}
+.ldone p{color:var(--muted);font-size:14px;margin-bottom:20px}
+/* export */
+.export{background:var(--bg2);overflow:hidden}
+.exp-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:50px;align-items:center}
+.globe-box{position:relative;aspect-ratio:1;max-width:620px;width:100%;margin:0 auto}
+.globe-box canvas{width:100%;height:100%;display:block;cursor:grab;touch-action:pan-y}
+.globe-box canvas:active{cursor:grabbing}
+.globe-box .halo{position:absolute;inset:8%;border-radius:50%;background:radial-gradient(circle at 40% 35%,rgba(201,164,92,.16),transparent 62%);pointer-events:none}
+.globe-tip{position:absolute;pointer-events:none;background:var(--text);color:#15110c;font-size:12px;font-weight:700;padding:4px 10px;border-radius:20px;transform:translate(-50%,-140%);white-space:nowrap;opacity:0;transition:opacity .2s}
+.exp-count{display:flex;align-items:baseline;gap:14px;margin:26px 0 18px}
+.exp-count b{font-family:var(--serif);font-size:84px;font-weight:500;line-height:.9;color:var(--gold2)}
+.exp-count span{color:var(--muted);font-size:14px;max-width:160px}
+.ctry{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:30px}
+.ctry span{border:1px solid var(--line);border-radius:30px;padding:6px 12px;font-size:13px;color:var(--text);transition:.3s;cursor:default}
+.ctry span:hover,.ctry span.hl{border-color:var(--gold);background:rgba(201,164,92,.12)}
+.terms{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:30px}
+.term{border-left:1px solid var(--gold);padding:2px 0 2px 16px}
+.term b{display:block;font-size:15px;margin-bottom:2px}
+.term p{color:var(--muted);font-size:13px}
+.exp-form{margin-top:70px;display:grid;grid-template-columns:.8fr 1.2fr;gap:50px;align-items:start}
+.exp-form .side h3{font-family:var(--serif);font-size:clamp(34px,4vw,54px);font-weight:500;line-height:1}
+.exp-form .side p{color:var(--muted);margin-top:14px}
+/* brands */
+.brands-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.brand{position:relative;aspect-ratio:1/1.08;border:1px solid var(--line);border-radius:22px;overflow:hidden;padding:24px;display:flex;flex-direction:column;justify-content:flex-end;background:var(--card);transition:border-color .4s;isolation:isolate}
+.brand::before{content:"";position:absolute;inset:-30%;background:radial-gradient(circle at 50% 30%,var(--bc),transparent 55%);opacity:.45;transition:opacity .6s,transform 1s var(--ease);z-index:-1}
+.brand:hover{border-color:var(--line2)}
+.brand:hover::before{opacity:.8;transform:scale(1.1)}
+.brand .bn{font-family:var(--serif);font-size:clamp(30px,2.6vw,40px);font-weight:700;letter-spacing:.06em;line-height:1;margin-bottom:10px}
+.brand p{font-size:13px;color:var(--muted)}
+.brand .bmark{position:absolute;top:22px;left:24px;width:46px;height:46px;border-radius:50%;border:1px solid var(--line2);display:grid;place-items:center;font-family:var(--serif);font-size:22px;color:var(--gold2)}
+.brand .tagb{position:absolute;top:26px;right:22px;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+/* contacts */
+.contacts{background:var(--bg2)}
+.ct-grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:50px;align-items:start}
+.ct-main{border-top:1px solid var(--line)}
+.ct-row{display:grid;grid-template-columns:130px 1fr;gap:16px;padding:18px 0;border-bottom:1px solid var(--line)}
+.ct-row small{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);padding-top:3px}
+.ct-row a,.ct-row span{font-size:16px}
+.ct-row a:hover{color:var(--gold2)}
+.depts{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:26px}
+.dept{border:1px solid var(--line);border-radius:18px;padding:18px 18px 16px;background:var(--card);transition:border-color .3s}
+.dept:hover{border-color:var(--line2)}
+.dept b{display:block;font-size:15px;margin-bottom:4px}
+.dept p{font-size:12px;color:var(--muted);margin-bottom:10px}
+.dept a{display:block;font-size:13px;color:var(--gold2);word-break:break-all}
+/* admin leads */
+.lead{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;transition:border-color .2s}
+.lead:hover{border-color:var(--line2)}
+.lead.new{border-left:3px solid var(--gold2)}
+.lead .lh{display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;padding:14px 16px;cursor:pointer}
+.lead .lt{width:38px;height:38px;border-radius:10px;display:grid;place-items:center;background:var(--bg2);font-size:16px}
+.lead .lh b{display:block;font-weight:600}
+.lead .lh span{font-size:12px;color:var(--muted)}
+.lead .lb{display:none;padding:0 16px 16px 68px}
+.lead.open .lb{display:block}
+.lead dl{display:grid;grid-template-columns:140px 1fr;gap:6px 14px;font-size:13px;margin-bottom:14px}
+.lead dt{color:var(--muted)}
+.lead dd{white-space:pre-wrap;word-break:break-word}
+.st-sel{background:var(--bg2);border:1px solid var(--line2);border-radius:9px;padding:6px 8px;font-size:12px}
+.badge.new{color:#15110c;background:var(--gold2);border-color:var(--gold2)}
+.badge.work{color:#8fb8ff;border-color:rgba(143,184,255,.4)}
+.lrow-edit{display:grid;grid-template-columns:1fr 1.6fr auto;gap:10px;align-items:start;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--bg2)}
+.lrow-edit.c4{grid-template-columns:1fr 1fr 1fr auto}
+.lrow-edit .f input,.lrow-edit .f textarea{background:var(--card)}
+.lrow-edit .f textarea{min-height:60px}
+.lrow-edit .ra{display:flex;flex-direction:column;gap:4px;padding-top:20px}
+.cpick{display:flex;flex-wrap:wrap;gap:6px}
+.cpick button{border:1px solid var(--line);background:var(--bg2);color:var(--muted);border-radius:20px;padding:6px 11px;font-size:12px;cursor:pointer;transition:.2s}
+.cpick button.on{background:var(--gold2);color:#15110c;border-color:var(--gold2)}
+@media (max-width:900px){
+  .dirs{grid-template-columns:1fr;margin-bottom:50px}
+  .ben-wrap,.exp-grid,.exp-form,.ct-grid{grid-template-columns:1fr;gap:36px}
+  .bens{grid-template-columns:1fr}
+  .ben:nth-child(odd){border-right:0}.ben:nth-child(even){padding-left:0}
+  .lgrid{grid-template-columns:1fr}
+  .lform{padding:26px 20px}
+  .terms{grid-template-columns:1fr}
+  .brands-grid{grid-template-columns:1fr 1fr}
+  .brand{aspect-ratio:auto;min-height:200px;padding:18px}
+  .brand .bmark{top:16px;left:18px;width:38px;height:38px;font-size:18px}
+  .depts{grid-template-columns:1fr}
+  .ct-row{grid-template-columns:1fr;gap:2px}
+  .exp-count b{font-size:64px}
+  .lead .lb{padding:0 14px 14px}
+  .lead dl{grid-template-columns:1fr}
+  .lrow-edit,.lrow-edit.c4{grid-template-columns:1fr}
+  .lrow-edit .ra{flex-direction:row;padding-top:0}
+}
+@media (max-width:520px){.brands-grid{grid-template-columns:1fr}}
+
+/* Toast & confirm */
+#toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,30px);opacity:0;z-index:500;background:var(--text);color:#15110c;padding:11px 18px;border-radius:12px;font-weight:600;font-size:13px;transition:.4s var(--ease);pointer-events:none;max-width:90vw;text-align:center}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+#toast.err{background:var(--bad)}
+#confirm{position:fixed;inset:0;z-index:510;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;padding:20px}
+#confirm.on{display:flex}
+#confirm .cb{background:var(--bg2);border:1px solid var(--line2);border-radius:18px;padding:24px;max-width:380px;width:100%}
+#confirm h4{font-size:17px;margin-bottom:6px}
+#confirm p{color:var(--muted);font-size:14px;margin-bottom:20px}
+#confirm .r{display:flex;gap:10px;justify-content:flex-end}
+
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes up{to{opacity:1;transform:none}}
+@keyframes float{0%,100%{transform:translateY(0) rotate(-1.5deg)}50%{transform:translateY(-16px) rotate(1.5deg)}}
+@keyframes mq{to{transform:translateX(-50%)}}
+@keyframes drip{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+@keyframes pop{from{opacity:0;transform:translateY(40px) scale(.96)}to{opacity:1;transform:none}}
+@keyframes snow{from{transform:translateY(-10px)}to{transform:translateY(580px)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+@media (max-width:900px){
+  nav{position:fixed;inset:calc(70px + var(--bar)) 0 auto 0;background:rgba(14,12,10,.96);backdrop-filter:blur(14px);border-bottom:1px solid var(--line);clip-path:inset(0 0 100% 0);transition:clip-path .6s var(--ease)}
+  nav.open{clip-path:inset(0 0 0 0)}
+  nav ul{flex-direction:column;gap:0;padding:10px 20px 20px}
+  nav li a{display:block;padding:16px 0;border-bottom:1px solid var(--line);font-family:var(--serif);font-size:26px;text-transform:none;letter-spacing:0;color:var(--text)}
+  nav a::after{display:none}
+  .burger{display:block}
+  .adm-btn{padding:7px 12px}
+  .hero{padding:calc(90px + var(--bar)) 0 70px}
+  .hero .wrap{grid-template-columns:1fr;text-align:center}
+  .hero p{margin-left:auto;margin-right:auto}
+  .hero-stage{height:46vh;order:-1}
+  .hero-bottle svg{height:42vh}
+  .badge-rot{width:96px;height:96px;right:6%;bottom:4%}
+  .hero .bigword{top:30%}
+  section{padding:90px 0}
+  .sec-head{margin-bottom:44px}
+  .promo{grid-template-columns:1fr;padding:36px 26px}
+  .promo .btn{justify-self:start}
+  .stats{grid-template-columns:1fr 1fr}
+  .stat{margin-right:0;padding:30px 16px 24px 0}
+  .stat:nth-child(2){border-right:0;padding-left:16px}
+  .stat:nth-child(4){padding-left:16px}
+  .stat:nth-child(-n+2){border-bottom:1px solid var(--line)}
+  .story-grid{grid-template-columns:1fr;gap:0}
+  .stage{top:calc(70px + var(--bar));height:44vh;z-index:2;background:linear-gradient(var(--bg) 80%,transparent)}
+  .stage svg,.stage img{height:36vh}
+  .stage .idx{display:none}
+  .stage .dots{right:20px}
+  .s-item{min-height:75vh;padding:30px 20px;justify-content:flex-start}
+  .ice-grid{grid-template-columns:1fr;gap:30px}
+  .ice-stage{height:420px}.ice-stage svg{height:340px}
+  .posts{grid-template-columns:1fr}
+  .post.big{grid-column:auto}
+  .post.big h4{font-size:30px}
+  .mbox{grid-template-columns:1fr;border-radius:24px 24px 0 0}
+  .mbox .mpic{padding:30px 20px 10px}
+  .mbox .mpic svg,.mbox .mpic img{height:240px}
+  .mbox .mtxt{padding:20px 22px 34px}
+  .mbox h3{font-size:34px}
+  .hz{height:auto}
+  .hz-sticky{position:static;height:auto;padding:90px 0}
+  .hz-track{flex-direction:column;gap:34px;transform:none!important}
+  .ev{flex:none}.hz-bar{display:none}
+  .q-grid{grid-template-columns:1fr 1fr}
+  .fcols{grid-template-columns:1fr}
+  #abar{font-size:12px;padding:0 40px 0 14px;justify-content:flex-start}
+  /* admin */
+  #admin.open{display:flex;flex-direction:column}
+  .aside{display:none}
+  .mob-tabs{display:flex;gap:6px;overflow-x:auto;padding:12px 14px;border-bottom:1px solid var(--line);background:var(--bg2);flex:none}
+  .mob-tabs .tab{flex:none;padding:8px 12px}
+  .mob-tabs .tab svg{display:none}
+  .amain{padding:22px 16px 80px;flex:1}
+  .atop h2{font-size:32px}
+  .kpis{grid-template-columns:1fr 1fr}
+  .two,.form,.editor{grid-template-columns:1fr}
+  .preview{position:static}
+  .preview .pv{height:220px}.preview .pv svg,.preview .pv img{height:200px}
+  .savebar{margin:22px -16px -80px;padding:12px 16px}
+  .row{grid-template-columns:44px 1fr;padding-right:10px}
+  .row .th{width:44px;height:44px}
+  .row .acts{grid-column:1/-1;flex-wrap:wrap}
+  .search{min-width:0;width:100%}
+}
+@media (max-width:520px){.q-grid{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition-duration:.01s!important}
+  .rv,.mask>span,.s-item>*{opacity:1!important;transform:none!important}
+}
+</style>
+</head>
+<body class="locked">
+
+<div class="progress" id="progress"></div>
+<div id="abar"><span id="abarText"></span><a id="abarLink" href="#" target="_blank" rel="noopener"></a><button id="abarX" aria-label="Закрити">✕</button></div>
+
+<div id="gate">
+  <div class="ring"></div>
+  <div class="box">
+    <div class="wm brand-name">АРКАДА</div>
+    <div class="since">УКРАЇНА · З 1998</div>
+    <h2>Вам вже виповнилося 18 років?</h2>
+    <div class="btns">
+      <button class="btn fill" id="yes">Так <span class="arr">→</span></button>
+      <button class="btn" id="no">Ні</button>
+    </div>
+    <p class="no-msg" id="nomsg">Вибачте, вміст сайту доступний лише повнолітнім.</p>
+  </div>
+</div>
+
+<header id="hdr">
+  <div class="wrap">
+    <a href="#top" class="wm brand-name">АРКАДА</a>
+    <nav id="nav"><ul>
+      <li><a href="#story">Продукція</a></li>
+      <li><a href="#brands">Бренди</a></li>
+      <li><a href="#partners">Партнерам</a></li>
+      <li><a href="#export">Експорт</a></li>
+      <li><a href="#blog">Блог</a></li>
+      <li><a href="#contacts">Контакти</a></li>
+    </ul></nav>
+    <div class="hright">
+      <button class="adm-btn" id="admOpen"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z"/></svg>Адмінка</button>
+      <button class="burger" id="burger" aria-label="Меню"><span></span><span></span></button>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+<section class="hero">
+  <div class="glow" id="hglow"></div>
+  <div class="bigword">1998</div>
+  <div class="wrap">
+    <div>
+      <div class="eyebrow fade" id="hEyebrow"></div>
+      <h1>
+        <span class="line"><span id="hL1"></span></span>
+        <span class="line"><span><em id="hL2"></em></span></span>
+        <span class="line"><span><em id="hL3"></em></span></span>
+      </h1>
+      <p class="fade" id="hSub"></p>
+      <div class="fade d2"><a href="#story" class="btn fill" id="hCta">Відкрити колекцію <span class="arr">→</span></a></div>
+    </div>
+    <div class="hero-stage">
+      <div class="hero-bottle" id="hbottle"><div class="float" id="hbw"></div></div>
+      <svg class="badge-rot" viewBox="0 0 130 130"><defs><path id="circ" d="M65,65 m-50,0 a50,50 0 1,1 100,0 a50,50 0 1,1 -100,0"/></defs><text><textPath href="#circ">ЗАСНОВАНО 1998 · УКРАЇНА · </textPath></text><circle cx="65" cy="65" r="4" fill="#c9a45c"/></svg>
+    </div>
+  </div>
+  <div class="scroll-hint">Гортайте<i></i></div>
+</section>
+
+<div class="marquee"><div class="track" id="mq"></div></div>
+
+<section class="promo-sec" id="promoSec" hidden>
+  <div class="wrap">
+    <div class="promo rv">
+      <div><div class="eyebrow" id="prEyebrow"></div><h3 id="prTitle"></h3><p id="prText"></p></div>
+      <a class="btn" id="prBtn" href="#" target="_blank" rel="noopener"></a>
+    </div>
+  </div>
+</section>
+
+<section style="padding-bottom:60px">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2><span class="mask"><span>Завод, що</span></span><span class="mask"><span><em>тримає марку</em></span></span></h2>
+      <p class="rv">Сучасні лінії розливу, власні лабораторії та майже три десятиліття досвіду.</p>
+    </div>
+    <div class="stats">
+      <div class="stat rv"><b data-to="1998" data-plain>0</b><span>рік заснування</span></div>
+      <div class="stat rv d1"><b data-to="4">0</b><span>лінії розливу</span></div>
+      <div class="stat rv d2"><b id="statProducts" data-to="0">0</b><span>позицій у колекції</span></div>
+      <div class="stat rv d3"><b data-to="12" data-suf=" млн">0</b><span>пляшок щороку</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="story" id="story">
+  <div class="wrap">
+    <div class="story-grid" id="storyGrid">
+      <div class="stage" id="stage">
+        <div class="sglow" id="sglow"></div>
+        <div class="sname" id="sname"></div>
+        <div class="sb" id="sb"></div>
+        <div class="idx"><b id="sidx">01</b>/ <span id="stot"></span></div>
+        <div class="dots" id="sdots"></div>
+      </div>
+      <div id="sitems"></div>
+    </div>
+  </div>
+</section>
+
+<section class="ice" id="ice">
+  <div class="wrap ice-grid">
+    <div class="ice-stage" id="iceStage">
+      <div class="temp"><span id="tval">20</span><small>°C</small></div>
+      <div class="frost" id="frost"></div>
+      <div id="iceB"></div>
+    </div>
+    <div>
+      <div class="eyebrow rv">Розумна пляшка</div>
+      <h2 class="serif" style="font-size:clamp(40px,5.5vw,78px);font-weight:500;line-height:1;margin:18px 0 24px"><span class="mask"><span>Охолодіть</span></span><span class="mask"><span><em style="color:#8fb8ff">Arkada Frost</em></span></span></h2>
+      <p class="rv" style="color:var(--muted);max-width:440px">Термохромна пляшка сама підкаже, коли горілка готова: при охолодженні вона темніє і стає насичено-синьою. Спробуйте — потягніть повзунок.</p>
+      <div class="ice-ctrl rv">
+        <label><span>Кімнатна</span><span>Ідеальна</span></label>
+        <input type="range" id="range" min="0" max="100" value="0" aria-label="Температура">
+      </div>
+      <div class="ice-msg" id="imsg">Пляшка прозора — горілка ще тепла.</div>
+    </div>
+  </div>
+</section>
+
+<section id="catalog">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2><span class="mask"><span>Уся</span></span><span class="mask"><span><em>колекція</em></span></span></h2>
+      <div class="filters rv" id="filters"></div>
+    </div>
+    <div class="grid" id="grid"></div>
+  </div>
+</section>
+
+<section id="brands">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2><span class="mask"><span>Бренди</span></span><span class="mask"><span><em>заводу</em></span></span></h2>
+      <p class="rv">Крім лінійки «Аркада», завод виробляє інші власні марки — кожна зі своїм характером і аудиторією.</p>
+    </div>
+    <div class="brands-grid" id="brandsGrid"></div>
+  </div>
+</section>
+
+<section class="blog" id="blog">
+
+  <div class="wrap">
+    <div class="sec-head">
+      <h2><span class="mask"><span>Новини</span></span><span class="mask"><span><em>та дописи</em></span></span></h2>
+      <p class="rv">Новинки, рецепти коктейлів і культура подачі — від команди бренду.</p>
+    </div>
+    <div class="posts" id="posts"></div>
+    <div class="more-row" id="moreRow" hidden><button class="btn" id="moreBtn">Показати ще</button></div>
+  </div>
+</section>
+
+<section class="hz" id="history">
+  <div class="hz-sticky">
+    <div class="hz-head"><div class="eyebrow" style="margin-bottom:16px">Наш шлях</div><h2>Історія, яку<br><em>ми пишемо</em></h2></div>
+    <div class="hz-track" id="hzt">
+      <div class="ev"><b>1998</b><p>Невелика родинна виробня запускає першу класичну горілку марки.</p></div>
+      <div class="ev"><b>2004</b><p>Переїзд на новий завод і запуск першої автоматизованої лінії розливу.</p></div>
+      <div class="ev"><b>2010</b><p>Власна лабораторія та перехід на кришталеву фільтрацію води.</p></div>
+      <div class="ev"><b>2015</b><p>Вихід на міжнародні ринки та перші експортні поставки.</p></div>
+      <div class="ev"><b>2020</b><p>Лінійка смакових горілок на натуральних ароматних спиртах.</p></div>
+      <div class="ev"><b>2024</b><p>Запуск розумної пляшки, що змінює колір при охолодженні.</p></div>
+      <div class="ev"><b>2026</b><p>Лімітована серія Reserve ручної роботи.</p></div>
+    </div>
+    <div class="hz-bar"><i id="hzbar"></i></div>
+  </div>
+</section>
+
+<section id="quality">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2><span class="mask"><span>Формула</span></span><span class="mask"><span><em>якості</em></span></span></h2>
+      <p class="rv">Кожна пляшка проходить однаковий шлях — від зерна до контролю в лабораторії.</p>
+    </div>
+    <div class="q-grid">
+      <div class="q rv"><div class="n">01</div><h4>Спирт «Люкс»</h4><p>Добірне зерно з українських чорноземів як основа кожної горілки.</p></div>
+      <div class="q rv d1"><div class="n">02</div><h4>Гірський кришталь</h4><p>П'ятиступенева очистка води та фільтрація через кришталь.</p></div>
+      <div class="q rv d2"><div class="n">03</div><h4>21 день</h4><p>Вода і спирт поєднуються повільно — так смак стає гармонійним.</p></div>
+      <div class="q rv d3"><div class="n">04</div><h4>HACCP</h4><p>Власні лабораторії й контроль критичних точок на кожному етапі.</p></div>
+    </div>
+  </div>
+</section>
+<section id="partners">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2><span class="mask"><span>Партнерство</span></span><span class="mask"><span><em>та дистрибуція</em></span></span></h2>
+      <p class="b2b-intro rv" id="pIntro"></p>
+    </div>
+    <div class="dirs" id="pDirs"></div>
+    <div class="ben-wrap">
+      <div>
+        <div class="eyebrow rv" style="margin-bottom:18px">Чому з нами вигідно</div>
+        <div class="bens" id="pBens"></div>
+        <div class="pstats" id="pStats"></div>
+      </div>
+      <div class="lform rv" id="formPartner"></div>
+    </div>
+  </div>
+</section>
+
+<section class="export" id="export">
+  <div class="wrap">
+    <div class="exp-grid">
+      <div class="globe-box rv"><div class="halo"></div><canvas id="globe" aria-label="Глобус ринків експорту"></canvas><div class="globe-tip" id="gtip"></div></div>
+      <div>
+        <div class="eyebrow rv">Експорт продукції</div>
+        <h2 class="serif" style="font-size:clamp(40px,5.5vw,78px);font-weight:500;line-height:.98;margin-top:18px"><span class="mask"><span>Українська якість</span></span><span class="mask"><span><em style="color:var(--gold2)">на світових полицях</em></span></span></h2>
+        <div class="exp-count rv"><b id="expN">0</b><span>країн, де вже представлена наша продукція</span></div>
+        <p class="rv" id="eIntro" style="color:var(--muted);margin-bottom:22px"></p>
+        <div class="ctry rv" id="eCtry"></div>
+        <div class="terms rv" id="eTerms"></div>
+        <a href="#expFormAnchor" class="btn fill rv">Стати імпортером <span class="arr">→</span></a>
+      </div>
+    </div>
+    <div class="exp-form" id="expFormAnchor">
+      <div class="side"><h3 class="rv">Запит<br><em style="color:var(--gold2)">для імпортерів</em></h3><p class="rv">Розкажіть про ваш ринок і компанію — відділ експорту підготує комерційну пропозицію, прайс і пакет сертифікатів.</p></div>
+      <div class="lform rv" id="formExport"></div>
+    </div>
+  </div>
+</section>
+
+<section class="contacts" id="contacts">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2><span class="mask"><span>Контакти</span></span></h2>
+      <p class="rv">Пишіть напряму у потрібний відділ або залиште повідомлення — ми відповімо протягом робочого дня.</p>
+    </div>
+    <div class="ct-grid">
+      <div><div class="ct-main rv" id="ctMain"></div><div class="depts" id="ctDepts"></div></div>
+      <div class="lform rv" id="formContact"></div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="fcols">
+      <div><div class="wm brand-name" style="font-size:22px;margin-bottom:12px">АРКАДА</div><p>ТОВ «Аркада» (вигаданий бренд)<br>Сучасний український горілчаний завод</p></div>
+      <div><h5>Розділи</h5><ul><li><a href="#story">Продукція</a></li><li><a href="#brands">Бренди</a></li><li><a href="#partners">Партнерам</a></li><li><a href="#export">Експорт</a></li><li><a href="#blog">Блог</a></li><li><a href="#contacts">Контакти</a></li></ul></div>
+      <div><h5>Соцмережі</h5><ul id="socials"></ul></div>
+    </div>
+  </div>
+  <div class="foot-big brand-name" id="fbig">АРКАДА</div>
+  <div class="wrap"><div class="warn">Надмірне вживання алкоголю шкодить вашому здоров'ю</div></div>
+</footer>
+
+<div id="modal"><div class="veil" id="veil"></div><div class="mbox" id="mbox"></div></div>
+
+<div id="reader" aria-hidden="true">
+  <div class="rhead"><span class="wm brand-name" style="font-size:16px">АРКАДА</span><button class="abtn sm" id="readerClose">✕ Закрити</button></div>
+  <div id="readerBody"></div>
+</div>
+
+<!-- ============ ADMIN ============ -->
+<div id="admin" aria-hidden="true">
+  <aside class="aside">
+    <div class="wm brand-name">АРКАДА</div>
+    <div class="sub">Панель керування</div>
+    <div id="tabsSide"></div>
+    <div class="spacer"></div>
+    <button class="tab exit" data-exit>← На сайт</button>
+  </aside>
+  <div class="mob-tabs" id="tabsMob"></div>
+  <div class="amain" id="amain"></div>
+</div>
+
+<div id="confirm"><div class="cb"><h4 id="cfT"></h4><p id="cfP"></p><div class="r"><button class="abtn" id="cfNo">Скасувати</button><button class="abtn danger" id="cfYes">Видалити</button></div></div></div>
+<div id="toast"></div>
+<div class="concept-tag">Дизайн-концепт · вигаданий бренд</div>
+
+<script>
+const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const FINE = matchMedia('(pointer:fine)').matches;
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const safeUrl = u => { u=String(u||'').trim(); return /^(https?:|mailto:|#)/i.test(u) ? u : (u ? 'https://'+u.replace(/^\/+/,'') : '#'); };
+const blob = id => (id && S.media[id]) || '';
+const CATS = ['Класика','Преміум','Смакові','Подарунки'];
+
+/* ---------------- state ---------------- */
+const DEF_MK = {
+  brand:'АРКАДА',
+  heroEyebrow:'Український горілчаний завод', heroL1:'Якість', heroL2:'без', heroL3:'компромісів',
+  heroSub:'Спирт класу «Люкс», чиста гірська вода і кришталева фільтрація. Сучасні технології та давні рецепти в кожній пляшці.',
+  heroCta:'Відкрити колекцію',
+  marquee:'Спирт «Люкс»\nГірська вода\nГірський кришталь\n21 день витримки\nУкраїна · з 1998\nЯкість без компромісів',
+  barOn:false, barText:'', barLinkText:'', barLink:'', accent:'#c9a45c',
+  promoOn:false, promoEyebrow:'', promoTitle:'', promoText:'', promoBtn:'Детальніше', promoLink:'',
+  seoTitle:'Аркада — горілка якості без компромісів', seoDesc:'Офіційний сайт горілчаного бренду: продукція, новини, історія та технологія.',
+  ga4:'', pixel:'', gtm:'',
+  fb:'', ig:'', yt:'', tt:''
+};
+const S = { products:[], posts:[], mk:{...DEF_MK}, db:null, media:{}, user:null, canEdit:false, dbState:'loading', loaded:{p:false,b:false,m:false} };
+
+/* ---------------- bottle ---------------- */
+let bid=0;
+function bottle(shape){
+  shape = shape==='squat'?'squat':'tall'; const id='b'+(bid++);
+  const w = shape==='squat'?110:84;
+  const body = shape==='squat'
+   ? 'M20 110 Q20 92 40 88 L42 60 Q42 52 48 50 L62 50 Q68 52 68 60 L70 88 Q90 92 90 110 L90 268 Q90 280 78 280 L32 280 Q20 280 20 268 Z'
+   : 'M14 130 Q14 100 32 88 L34 40 L50 40 L52 88 Q70 100 70 130 L70 270 Q70 280 60 280 L24 280 Q14 280 14 270 Z';
+  const lx = shape==='squat'?26:20, lw = w-lx*2, cx=w/2, capW=shape==='squat'?26:20;
+  const T='transition:fill 1s cubic-bezier(.22,1,.36,1)';
+  const nm = esc((S.mk.brand||'АРКАДА').slice(0,12));
+  return `<svg viewBox="0 0 ${w} 290" xmlns="http://www.w3.org/2000/svg">
+  <defs><linearGradient id="h${id}" x1="0" x2="1"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".22" stop-color="#fff" stop-opacity=".4"/><stop offset=".36" stop-color="#fff" stop-opacity="0"/><stop offset=".85" stop-color="#fff" stop-opacity="0"/><stop offset=".93" stop-color="#fff" stop-opacity=".12"/></linearGradient>
+  <clipPath id="c${id}"><path d="${body}"/></clipPath></defs>
+  <path d="${body}" style="fill:var(--glass,rgba(255,255,255,.12));${T}" stroke="rgba(255,255,255,.22)"/>
+  <rect x="0" y="${shape==='squat'?100:118}" width="${w}" height="200" clip-path="url(#c${id})" style="fill:var(--liq);${T}"/>
+  <rect x="${lx}" y="170" width="${lw}" height="70" rx="2" style="fill:var(--lab);${T}"/>
+  <rect x="${lx}" y="178" width="${lw}" height="1.5" style="fill:var(--cap);${T}"/>
+  <rect x="${lx}" y="231" width="${lw}" height="1.5" style="fill:var(--cap);${T}"/>
+  <text x="${cx}" y="208" text-anchor="middle" font-family="Cormorant Garamond,serif" font-weight="700" font-size="${shape==='squat'?10:7.6}" letter-spacing="${shape==='squat'?1.4:.9}" style="fill:var(--cap);${T}">${nm}</text>
+  <text x="${cx}" y="222" text-anchor="middle" font-family="Manrope,sans-serif" font-size="4" letter-spacing="1.2" style="fill:var(--cap);opacity:.7">УКРАЇНА · 1998</text>
+  <rect x="${cx-capW/2}" y="${shape==='squat'?30:18}" width="${capW}" height="${shape==='squat'?24:26}" rx="2" style="fill:var(--cap);${T}"/>
+  <path d="${body}" fill="url(#h${id})" pointer-events="none"/>
+  </svg>`;
+}
+const hexRgb = h => { h=String(h||'#cccccc').replace('#',''); if(h.length===3) h=h.split('').map(c=>c+c).join(''); const n=parseInt(h,16)||0; return [n>>16&255,n>>8&255,n&255]; };
+const rgba = (h,a) => `rgba(${hexRgb(h).join(',')},${a})`;
+function colorsOf(p){
+  const liqA = p.liqA ?? .25, glass = p.glass||'clear';
+  const glow = rgba((liqA>.45 ? p.liqHex : p.cap)||'#c9a45c', .32);
+  return { liq: rgba(p.liqHex||'#dcebf5', liqA), glass: glass==='black'?'#0d0d0d':glass==='tint'?rgba(p.liqHex||'#5080e0',.3):'rgba(255,255,255,.12)', lab:p.lab||'#f3ece2', cap:p.cap||'#c9a45c', glow };
+}
+const vars = c => `--liq:${c.liq};--glass:${c.glass};--lab:${c.lab};--cap:${c.cap};--glow:${c.glow}`;
+const picHTML = p => blob(p.img) ? `<img src="${blob(p.img)}" alt="${esc(p.name)}">` : bottle(p.shape);
+const DEFAULT_C = {liq:'rgba(220,235,245,.22)',glass:'rgba(255,255,255,.12)',lab:'#f3ece2',cap:'#c9a45c',glow:'rgba(201,164,92,.28)'};
+
+/* ---------------- helpers ---------------- */
+let toastT;
+function toast(msg, err){ const t=$('#toast'); t.textContent=msg; t.classList.toggle('err',!!err); t.classList.add('on'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('on'),2600); }
+function confirmBox(title, text, yes='Видалити'){
+  return new Promise(res=>{ $('#cfT').textContent=title; $('#cfP').textContent=text; $('#cfYes').textContent=yes; $('#confirm').classList.add('on');
+    const done=v=>{ $('#confirm').classList.remove('on'); $('#cfYes').onclick=$('#cfNo').onclick=null; res(v); };
+    $('#cfYes').onclick=()=>done(true); $('#cfNo').onclick=()=>done(false); });
+}
+const fmtDate = d => { if(!d) return ''; const x=new Date(d); return isNaN(x)?'':x.toLocaleDateString('uk-UA',{day:'numeric',month:'long',year:'numeric'}); };
+const today = () => new Date().toISOString().slice(0,10);
+function md(src){
+  const lines = String(src||'').replace(/\r/g,'').split('\n'); let out='', list=false, para=[];
+  const inl = s => esc(s).replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\*(.+?)\*/g,'<em>$1</em>');
+  const flush=()=>{ if(para.length){ out+=`<p>${inl(para.join(' '))}</p>`; para=[]; } };
+  for(const l of lines){
+    if(/^##\s+/.test(l)){ flush(); if(list){out+='</ul>';list=false} out+=`<h3>${inl(l.replace(/^##\s+/,''))}</h3>`; }
+    else if(/^>\s?/.test(l)){ flush(); if(list){out+='</ul>';list=false} out+=`<blockquote>${inl(l.replace(/^>\s?/,''))}</blockquote>`; }
+    else if(/^[-•]\s+/.test(l)){ flush(); if(!list){out+='<ul>';list=true} out+=`<li>${inl(l.replace(/^[-•]\s+/,''))}</li>`; }
+    else if(!l.trim()){ flush(); if(list){out+='</ul>';list=false} }
+    else para.push(l);
+  }
+  flush(); if(list) out+='</ul>'; return out;
+}
+const visibleProducts = () => S.products.filter(p=>p.visible!==false).sort((a,b)=>(a.order??999)-(b.order??999));
+const publishedPosts = () => S.posts.filter(p=>p.status==='published').sort((a,b)=>String(b.date||'').localeCompare(String(a.date||'')));
+
+/* ---------------- gate / header ---------------- */
+$('#yes').onclick=()=>{document.body.classList.add('in');document.body.classList.remove('locked');setTimeout(()=>$('#gate').style.display='none',1300)};
+$('#no').onclick=()=>$('#nomsg').classList.add('on');
+const hdr=$('#hdr'); let lastY=0;
+addEventListener('scroll',()=>{
+  const y=scrollY; hdr.classList.toggle('solid',y>40);
+  hdr.classList.toggle('hide',y>lastY && y>400 && !$('#nav').classList.contains('open'));
+  lastY=y; $('#progress').style.width=(y/Math.max(1,document.documentElement.scrollHeight-innerHeight)*100)+'%';
+},{passive:true});
+$('#burger').onclick=()=>{$('#nav').classList.toggle('open');$('#burger').classList.toggle('x')};
+document.querySelectorAll('#nav a').forEach(a=>a.addEventListener('click',()=>{$('#nav').classList.remove('open');$('#burger').classList.remove('x')}));
+
+/* ---------------- reveal ---------------- */
+const io=new IntersectionObserver(es=>es.forEach(e=>{
+  if(!e.isIntersecting) return; e.target.classList.add('on'); io.unobserve(e.target);
+  e.target.querySelectorAll('[data-to]').forEach(count);
+}),{threshold:.12});
+const observeRv = root => (root||document).querySelectorAll('.rv:not(.on),.mask:not(.on)').forEach(el=>io.observe(el));
+function count(el){
+  const to=+el.dataset.to, pre=el.dataset.pre||'', suf=el.dataset.suf||'';
+  if(RM){el.textContent=pre+to+suf;return}
+  const from = el.dataset.plain!==undefined ? to-200 : 0, t0=performance.now(), dur=1800;
+  (function f(t){const k=Math.min(1,(t-t0)/dur), e=1-Math.pow(1-k,4); el.textContent=pre+Math.round(from+(to-from)*e)+suf; if(k<1) requestAnimationFrame(f)})(t0);
+}
+
+/* ---------------- hero ---------------- */
+const hbw=$('#hbw'); hbw.innerHTML=bottle(); hbw.setAttribute('style',vars(DEFAULT_C));
+if(!RM && FINE){
+  addEventListener('mousemove',e=>{
+    const x=(e.clientX/innerWidth-.5), y=(e.clientY/innerHeight-.5);
+    $('#hbottle').style.transition='opacity 1.2s, transform .9s cubic-bezier(.22,1,.36,1)';
+    $('#hbottle').style.transform=`translate(${x*-24}px,${y*-18}px) rotate(${x*4}deg)`;
+    $('#hglow').style.transform=`translate(calc(-50% + ${x*80}px),calc(-50% + ${y*60}px))`;
+  });
+}
+let hi=0;
+setInterval(()=>{ const vp=visibleProducts().filter(p=>!blob(p.img)); if(!vp.length) return; hi=(hi+1)%vp.length; hbw.setAttribute('style',vars(colorsOf(vp[hi]))); },2800);
+
+/* ---------------- marketing render ---------------- */
+let barClosed=false;
+function renderMk(){
+  const m=S.mk;
+  document.querySelectorAll('.brand-name').forEach(el=>el.textContent=m.brand||'АРКАДА');
+  $('#hEyebrow').textContent=m.heroEyebrow; $('#hL1').textContent=m.heroL1; $('#hL2').textContent=m.heroL2; $('#hL3').textContent=m.heroL3;
+  $('#hSub').textContent=m.heroSub; $('#hCta').firstChild.textContent=(m.heroCta||'Відкрити колекцію')+' ';
+  const words=String(m.marquee||'').split('\n').map(s=>s.trim()).filter(Boolean);
+  const mh=words.map(w=>`<span>${esc(w)} <b>✦</b></span>`).join(''); $('#mq').innerHTML=mh+mh;
+  document.documentElement.style.setProperty('--accent', /^#[0-9a-f]{3,8}$/i.test(m.accent)?m.accent:'#c9a45c');
+  const barOn = !!(m.barOn && m.barText && !barClosed);
+  $('#abar').classList.toggle('on',barOn); $('#abarText').textContent=m.barText||'';
+  $('#abarLink').textContent=m.barLinkText||''; $('#abarLink').href=safeUrl(m.barLink); $('#abarLink').hidden=!(m.barLinkText&&m.barLink);
+  document.documentElement.style.setProperty('--bar', barOn?'38px':'0px');
+  const pr = !!(m.promoOn && m.promoTitle);
+  $('#promoSec').hidden=!pr;
+  if(pr){ $('#prEyebrow').textContent=m.promoEyebrow||''; $('#prTitle').textContent=m.promoTitle; $('#prText').textContent=m.promoText||'';
+    const b=$('#prBtn'); b.innerHTML=`${esc(m.promoBtn||'Детальніше')} <span class="arr">→</span>`; b.href=safeUrl(m.promoLink); b.hidden=!m.promoLink; observeRv($('#promoSec')); }
+  document.title = m.seoTitle || 'Аркада';
+  let md_=document.querySelector('meta[name=description]'); md_.setAttribute('content', m.seoDesc||'');
+  const soc=[['Facebook',m.fb],['Instagram',m.ig],['YouTube',m.yt],['TikTok',m.tt]].filter(x=>x[1]);
+  $('#socials').innerHTML = soc.length ? soc.map(([n,u])=>`<li><a href="${esc(safeUrl(u))}" target="_blank" rel="noopener">${n}</a></li>`).join('') : '<li>Скоро</li>';
+}
+$('#abarX').onclick=()=>{barClosed=true;renderMk()};
+
+/* ---------------- products render ---------------- */
+let curCat='Усі';
+function renderProducts(){
+  const vp=visibleProducts();
+  const st=$('#statProducts'); st.dataset.to=vp.length; if(st.closest('.on')) st.textContent=vp.length;
+  // filters
+  const cats=['Усі',...CATS.filter(c=>vp.some(p=>p.cat===c)),...[...new Set(vp.map(p=>p.cat).filter(c=>c&&!CATS.includes(c)))]];
+  if(!cats.includes(curCat)) curCat='Усі';
+  $('#filters').innerHTML=vp.length?cats.map(c=>`<button class="chip${c===curCat?' on':''}" data-c="${esc(c)}">${esc(c)}</button>`).join(''):'';
+  // grid
+  const g=$('#grid');
+  if(!vp.length){ g.innerHTML=`<div class="empty" style="grid-column:1/-1">${S.dbState==='ready'?'Продукцію ще не додано. Додайте першу позицію в адмінці.':S.dbState==='loading'?'Завантаження колекції…':'Колекція тимчасово недоступна.'}</div>`; }
+  else g.innerHTML=vp.map((p,k)=>{ const c=colorsOf(p); return `<div class="card rv" data-cat="${esc(p.cat)}" data-id="${esc(p.id)}" style="${vars(c)};transition-delay:${(k%4)*.08}s">
+    ${p.tag?`<span class="tag">${esc(p.tag)}</span>`:''}
+    <div class="pic">${picHTML(p)}</div>
+    <div class="info"><div class="eyebrow">${esc(p.cat)}</div><h4>${esc(p.name)}</h4><div class="short">${esc(p.short)}</div>
+    <div class="meta"><span>${esc(p.abv)} · ${esc(p.vol)}</span><span class="plus">+</span></div></div></div>`; }).join('');
+  applyFilter(false);
+  g.querySelectorAll('.card').forEach(c=>{
+    io.observe(c);
+    if(!RM && FINE){
+      c.addEventListener('mousemove',e=>{const r=c.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5; c.style.transitionDelay='0s';c.style.transform=`rotateY(${x*10}deg) rotateX(${y*-10}deg) translateY(-6px)`});
+      c.addEventListener('mouseleave',()=>c.style.transform='');
+    }
+  });
+  renderStory();
+}
+function applyFilter(anim){
+  let k=0;
+  document.querySelectorAll('#grid .card').forEach(c=>{
+    const show=curCat==='Усі'||c.dataset.cat===curCat; c.classList.toggle('hidden',!show);
+    if(anim){ c.classList.remove('pop'); if(show){void c.offsetWidth;c.style.animationDelay=(k++*.06)+'s';c.classList.add('pop')} }
+  });
+}
+$('#filters').addEventListener('click',e=>{ const b=e.target.closest('.chip'); if(!b) return; curCat=b.dataset.c; document.querySelectorAll('.chip').forEach(x=>x.classList.toggle('on',x===b)); applyFilter(true); });
+$('#grid').addEventListener('click',e=>{ const c=e.target.closest('.card'); if(c) openProduct(c.dataset.id); });
+
+/* story */
+let sio=null, storyList=[], storyCur=-1;
+function renderStory(){
+  storyList=visibleProducts().filter(p=>p.story);
+  $('#story').hidden=!storyList.length;
+  if(sio) sio.disconnect();
+  if(!storyList.length) return;
+  $('#stot').textContent=String(storyList.length).padStart(2,'0');
+  $('#sdots').innerHTML=storyList.map(()=>'<i></i>').join('');
+  $('#sitems').innerHTML=storyList.map((p,i)=>`<div class="s-item" data-i="${i}">
+    <div class="eyebrow cat">${esc(p.cat)} · ${String(i+1).padStart(2,'0')}</div>
+    ${p.tag?`<span class="pill">${esc(p.tag)}</span>`:''}
+    <h3>${esc(p.name)}</h3><p>${esc(p.desc||p.short)}</p>
+    <div class="specs"><div><small>Міцність</small><b>${esc(p.abv)}</b></div><div><small>Об'єм</small><b>${esc(p.vol)}</b></div><div><small>Спирт</small><b>${esc(p.spirit||'Люкс')}</b></div></div></div>`).join('');
+  storyCur=-1; setStory(0);
+  sio=new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting){ document.querySelectorAll('.s-item').forEach(x=>x.classList.remove('on')); e.target.classList.add('on'); setStory(+e.target.dataset.i); } }),{rootMargin:'-45% 0px -45% 0px'});
+  document.querySelectorAll('.s-item').forEach(el=>sio.observe(el));
+}
+let sbKind='';
+function setStory(i){
+  const p=storyList[i]; if(!p) return; const c=colorsOf(p);
+  const kind = blob(p.img) ? 'img:'+p.img : 'svg:'+(p.shape||'tall');
+  if(kind!==sbKind){ $('#sb').innerHTML=picHTML(p); sbKind=kind; }
+  $('#stage').setAttribute('style',vars(c));
+  $('#sglow').style.background=`radial-gradient(circle,${c.glow},transparent 62%)`;
+  if(i!==storyCur){ const nm=$('#sname'); nm.style.opacity=0; setTimeout(()=>{nm.textContent=String(p.name||'').split(' ').pop();nm.style.opacity=1},300); }
+  storyCur=i;
+  $('#sidx').textContent=String(i+1).padStart(2,'0');
+  document.querySelectorAll('#sdots i').forEach((d,k)=>d.classList.toggle('on',k===i));
+  if(!RM) $('#sb').style.transform=`rotate(${i%2?4:-4}deg)`;
+}
+
+/* product modal */
+function openProduct(id){
+  const p=S.products.find(x=>x.id===id); if(!p) return; const c=colorsOf(p); const m=$('#mbox');
+  m.setAttribute('style',vars(c));
+  const notes=(p.notes||[]).filter(n=>n&&n.k);
+  m.innerHTML=`<button class="close" id="mclose" aria-label="Закрити">✕</button><div class="mpic">${picHTML(p)}</div>
+  <div class="mtxt"><div class="eyebrow">${esc(p.cat)}</div><h3>${esc(p.name)}</h3><p>${esc(p.desc||p.short)}</p>
+  <div class="mspecs"><div><small>Спирт</small><b>${esc(p.spirit||'Люкс')}</b></div><div><small>Міцність</small><b>${esc(p.abv)}</b></div><div><small>Об'єм</small><b>${esc(p.vol)}</b></div></div>
+  ${notes.length?`<ul class="notes">${notes.map(n=>`<li><span>${esc(n.k)}</span>${esc(n.v)}</li>`).join('')}</ul>`:''}
+  <a href="#catalog" class="btn fill" id="mbuy">До колекції <span class="arr">→</span></a></div>`;
+  $('#modal').classList.add('open'); document.body.classList.add('locked');
+  $('#mclose').onclick=closeProduct; $('#mbuy').onclick=closeProduct;
+}
+function closeProduct(){ $('#modal').classList.remove('open'); if(!$('#reader').classList.contains('open')) document.body.classList.remove('locked'); }
+$('#veil').onclick=closeProduct;
+
+/* ---------------- blog render ---------------- */
+let blogShown=4;
+const phColor = s => { let h=0; for(const ch of String(s)) h=(h*31+ch.charCodeAt(0))>>>0; return `hsla(${30+h%40},60%,55%,.35)`; };
+const coverHTML = p => blob(p.cover) ? `<img src="${blob(p.cover)}" alt="">` : `<div class="ph" style="--phc:${phColor(p.title)}">${esc((p.title||'А').trim().charAt(0))}</div>`;
+function renderBlog(){
+  const ps=publishedPosts(), el=$('#posts');
+  if(!ps.length){ el.innerHTML=`<div class="empty" style="grid-column:1/-1">${S.dbState==='ready'?'Тут з’являться новини та дописи.':'Завантаження…'}</div>`; $('#moreRow').hidden=true; return; }
+  el.innerHTML=ps.slice(0,blogShown).map((p,i)=>`<article class="post rv${i===0&&ps.length>2?' big':''} ${i%3===1?'d1':i%3===2?'d2':''}" data-id="${esc(p.id)}">
+    <div class="cover">${coverHTML(p)}</div>
+    <div class="pmeta"><b>${esc(p.category||'Новини')}</b><span>${esc(fmtDate(p.date))}</span></div>
+    <h4>${esc(p.title)}</h4><p>${esc(p.excerpt)}</p></article>`).join('');
+  $('#moreRow').hidden = ps.length<=blogShown;
+  observeRv(el);
+}
+$('#moreBtn').onclick=()=>{blogShown+=3;renderBlog()};
+$('#posts').addEventListener('click',e=>{ const a=e.target.closest('.post'); if(a) openPost(a.dataset.id); });
+function openPost(id){
+  const p=S.posts.find(x=>x.id===id); if(!p) return;
+  $('#readerBody').innerHTML=`${blob(p.cover)?`<div class="rcover"><div>${coverHTML(p)}</div></div>`:''}
+    <article><div class="eyebrow">${esc(p.category||'Новини')} · ${esc(fmtDate(p.date))}</div><h1>${esc(p.title)}</h1>
+    ${p.excerpt?`<p class="lead">${esc(p.excerpt)}</p>`:''}<div class="prose">${md(p.body)}</div></article>`;
+  const r=$('#reader'); r.scrollTop=0; r.classList.add('open'); r.setAttribute('aria-hidden','false'); document.body.classList.add('locked');
+}
+function closePost(){ const r=$('#reader'); r.classList.remove('open'); r.setAttribute('aria-hidden','true'); document.body.classList.remove('locked'); }
+$('#readerClose').onclick=closePost;
+addEventListener('keydown',e=>{ if(e.key!=='Escape') return; if($('#confirm').classList.contains('on')) return; if($('#modal').classList.contains('open')) closeProduct(); else if($('#reader').classList.contains('open')) closePost(); });
+
+/* ---------------- ice ---------------- */
+const iceB=$('#iceB'); iceB.innerHTML=bottle();
+const lerp=(a,b,k)=>a+(b-a)*k;
+const mix=(a,b,k)=>`rgba(${a.map((v,i)=>i<3?Math.round(lerp(v,b[i],k)):lerp(v,b[i],k).toFixed(2)).join(',')})`;
+function ice(v){
+  const k=v/100;
+  iceB.setAttribute('style',vars({liq:mix([225,235,245,.18],[40,95,210,.85],k),glass:mix([255,255,255,.1],[60,120,230,.38],k),lab:'#dfe9f7',cap:k>.6?'#1f4f9c':'#8a9bb5',glow:'transparent'}));
+  $('#iceStage').style.setProperty('--iceglow',mix([120,160,220,.05],[60,120,230,.35],k));
+  $('#frost').style.setProperty('--frost',k>.5?(k-.5)*2:0);
+  $('#tval').textContent=Math.round(lerp(20,4,k));
+  const m=$('#imsg');
+  if(k<.4){m.textContent='Пляшка прозора — горілка ще тепла.';m.classList.remove('ok')}
+  else if(k<.85){m.textContent='Пляшка починає синіти…';m.classList.remove('ok')}
+  else {m.textContent='Насичений синій — ідеальна температура подачі.';m.classList.add('ok')}
+}
+$('#range').addEventListener('input',e=>ice(+e.target.value)); ice(0);
+$('#frost').innerHTML=Array.from({length:40},()=>`<i style="left:${Math.random()*100}%;top:${-Math.random()*100}%;animation-duration:${4+Math.random()*6}s;animation-delay:${-Math.random()*8}s;opacity:${.3+Math.random()*.6}"></i>`).join('');
+new IntersectionObserver((es,o)=>es.forEach(e=>{if(e.isIntersecting&&!RM){o.disconnect();let v=0;const r=$('#range');const t=setInterval(()=>{v+=2;r.value=v;ice(v);if(v>=100){clearInterval(t);setTimeout(()=>{const b=setInterval(()=>{v-=2;r.value=v;ice(v);if(v<=0)clearInterval(b)},16)},900)}},16)}}),{threshold:.5}).observe($('#iceStage'));
+
+/* ---------------- history / footer ---------------- */
+const hz=$('#history'), hzt=$('#hzt');
+function hzScroll(){
+  if(innerWidth<=900){hzt.style.transform='';return}
+  const r=hz.getBoundingClientRect(), total=r.height-innerHeight, k=Math.min(1,Math.max(0,-r.top/total));
+  hzt.style.transform=`translateX(${-k*(hzt.scrollWidth-innerWidth)}px)`; $('#hzbar').style.width=k*100+'%';
+}
+addEventListener('scroll',hzScroll,{passive:true}); addEventListener('resize',hzScroll); hzScroll();
+addEventListener('scroll',()=>{ if(RM) return; const f=$('#fbig'), r=f.getBoundingClientRect(); if(r.top<innerHeight) f.style.transform=`translateX(${(r.top-innerHeight)*.15}px)`; },{passive:true});
+
+/* =================================================================
+   B2B: partners, export, brands, contacts + lead forms
+   ================================================================= */
+const COUNTRIES = {UA:['Україна',49,31],PL:['Польща',52,19.4],DE:['Німеччина',51,10.4],CZ:['Чехія',49.8,15.5],SK:['Словаччина',48.7,19.7],LT:['Литва',55.2,23.9],LV:['Латвія',56.9,24.6],EE:['Естонія',58.6,25],MD:['Молдова',47.4,28.4],RO:['Румунія',45.9,24.9],BG:['Болгарія',42.7,25.5],HU:['Угорщина',47.2,19.5],AT:['Австрія',47.5,14.5],CH:['Швейцарія',46.8,8.2],NL:['Нідерланди',52.1,5.3],BE:['Бельгія',50.6,4.6],FR:['Франція',46.6,2.2],IT:['Італія',42.8,12.5],ES:['Іспанія',40.4,-3.7],PT:['Португалія',39.6,-8],GB:['Велика Британія',54,-2],IE:['Ірландія',53.4,-8.2],DK:['Данія',56,10],SE:['Швеція',62,15],NO:['Норвегія',61,8.5],FI:['Фінляндія',64,26],GR:['Греція',39,22],CY:['Кіпр',35,33],TR:['Туреччина',39,35],GE:['Грузія',42.3,43.4],AM:['Вірменія',40,45],AZ:['Азербайджан',40.3,47.7],KZ:['Казахстан',48,67],IL:['Ізраїль',31,34.9],AE:['ОАЕ',24,54],US:['США',39.8,-98.6],CA:['Канада',56,-106],BR:['Бразилія',-10,-52],AR:['Аргентина',-34,-64],ZA:['ПАР',-30,25],CN:['Китай',35,104],JP:['Японія',36,138],KR:['Південна Корея',36.5,128],AU:['Австралія',-25,134],NZ:['Нова Зеландія',-41,174]};
+const flag = c => String.fromCodePoint(...[...c].map(x=>127397+x.charCodeAt(0)));
+const DEF_B2B = {partnersIntro:'',directions:[],benefits:[],partnerStats:[],exportIntro:'',countries:[],exportTerms:[],brands:[],address:'',phone:'',email:'',hours:'',departments:[]};
+S.b2b = {...DEF_B2B};
+const DIR_ICONS=[
+ '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 21V9l6-4v4l6-4v4l6-4v16H3Z"/><path d="M7 17h2M11 17h2M15 17h2"/></svg>',
+ '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M1 7h13v10H1zM14 10h4l3 3v4h-7"/><circle cx="5.5" cy="18" r="2"/><circle cx="17.5" cy="18" r="2"/></svg>',
+ '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M10 2h4v4l2 3v12a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1V9l2-3Z"/><path d="M8 13h8M10 16h4"/></svg>'];
+
+function renderB2B(){
+  const b=S.b2b;
+  // partners
+  $('#pIntro').textContent=b.partnersIntro||'';
+  $('#pDirs').innerHTML=(b.directions||[]).map((d,i)=>`<div class="dir rv ${['','d1','d2'][i%3]}"><span class="num">0${i+1}</span><div class="ic">${DIR_ICONS[i%3]}</div><h4>${esc(d.title)}</h4><p>${esc(d.text)}</p></div>`).join('');
+  $('#pBens').innerHTML=(b.benefits||[]).map(x=>`<div class="ben rv"><b>${esc(x.title)}</b><p>${esc(x.text)}</p></div>`).join('');
+  $('#pStats').innerHTML=(b.partnerStats||[]).map(x=>`<div class="rv"><b>${esc(x.value)}</b><span>${esc(x.label)}</span></div>`).join('');
+  $('#partners').hidden = !((b.directions||[]).length||(b.benefits||[]).length);
+  // export
+  const cs=(b.countries||[]).filter(c=>COUNTRIES[c]);
+  $('#expN').textContent=cs.length;
+  $('#eIntro').textContent=b.exportIntro||'';
+  $('#eCtry').innerHTML=cs.map(c=>`<span data-c="${c}">${flag(c)} ${esc(COUNTRIES[c][0])}</span>`).join('');
+  $('#eTerms').innerHTML=(b.exportTerms||[]).map(t=>`<div class="term"><b>${esc(t.title)}</b><p>${esc(t.text)}</p></div>`).join('');
+  $('#export').hidden=!cs.length && !b.exportIntro;
+  globe.setMarkers(cs);
+  // brands
+  const br=b.brands||[];
+  $('#brands').hidden=!br.length;
+  $('#brandsGrid').innerHTML=br.map((x,i)=>`<div class="brand rv ${['','d1','d2','d3'][i%4]}" style="--bc:${/^#[0-9a-f]{3,8}$/i.test(x.color)?x.color:'#c9a45c'}"><span class="bmark">${esc((x.name||'?').charAt(0))}</span>${x.tag?`<span class="tagb">${esc(x.tag)}</span>`:''}<div class="bn">${esc(x.name)}</div><p>${esc(x.desc)}</p></div>`).join('');
+  // contacts
+  const rows=[['Адреса',b.address,null],['Телефон',b.phone,b.phone?'tel:'+b.phone.replace(/[^\d+]/g,''):null],['Пошта',b.email,b.email?'mailto:'+b.email:null],['Графік',b.hours,null]].filter(r=>r[1]);
+  $('#ctMain').innerHTML=rows.map(([l,v,h])=>`<div class="ct-row"><small>${l}</small>${h?`<a href="${esc(h)}">${esc(v)}</a>`:`<span>${esc(v)}</span>`}</div>`).join('');
+  $('#ctDepts').innerHTML=(b.departments||[]).map(d=>`<div class="dept rv"><b>${esc(d.name)}</b>${d.note?`<p>${esc(d.note)}</p>`:''}${d.email?`<a href="mailto:${esc(d.email)}">${esc(d.email)}</a>`:''}${d.phone?`<a href="tel:${esc(String(d.phone).replace(/[^\d+]/g,''))}">${esc(d.phone)}</a>`:''}</div>`).join('');
+  renderForms();
+  observeRv();
+}
+
+/* ---- lead forms ---- */
+const FORMS = {
+  partner:{el:'#formPartner',title:'Стати партнером',sub:'Залиште заявку — менеджер відділу дистрибуції зв’яжеться з вами.',
+    fields:[['name','Ім’я','text',1],['company','Компанія','text',1],['email','Email','email',1],['phone','Телефон','tel',0],
+      ['kind','Напрям співпраці','select',1,()=>(S.b2b.directions||[]).map(d=>d.title).concat(['Інше'])],['region','Регіон / місто','text',0],['message','Коментар','textarea',0]]},
+  export:{el:'#formExport',title:'Запит на експорт',sub:'Вкажіть країну та обсяги — відповімо англійською чи українською.',
+    fields:[['company','Компанія','text',1],['country','Країна','text',1],['name','Контактна особа','text',1],['email','Email','email',1],
+      ['volume','Орієнтовний обсяг','select',0,()=>['Пробна партія','1–5 палет / міс.','5–20 палет / міс.','Понад 20 палет / міс.']],['phone','Телефон / WhatsApp','tel',0],['message','Про ваш ринок','textarea',0]]},
+  contact:{el:'#formContact',title:'Напишіть нам',sub:'Питання, пропозиції, співпраця зі ЗМІ — повідомлення потрапить у потрібний відділ.',
+    fields:[['name','Ім’я','text',1],['email','Email','email',1],['dept','Відділ','select',1,()=>(S.b2b.departments||[]).map(d=>d.name).concat(['Загальне питання'])],['phone','Телефон','tel',0],['message','Повідомлення','textarea',1]]}
+};
+const LEAD_LABEL={name:'Ім’я',company:'Компанія',email:'Email',phone:'Телефон',kind:'Напрям',region:'Регіон',message:'Повідомлення',country:'Країна',volume:'Обсяг',dept:'Відділ'};
+const formDone={};
+function renderForms(){
+  for(const [type,F] of Object.entries(FORMS)){
+    const el=$(F.el); if(!el) continue;
+    if(formDone[type]){ el.innerHTML=`<div class="ldone"><div class="ok">✓</div><h4>Дякуємо!</h4><p>Заявку отримано. Ми зв’яжемося з вами найближчим часом.</p><button class="btn" data-again="${type}">Надіслати ще одну</button></div>`; continue; }
+    if(el.dataset.built===type && el.querySelector('form')){ // refresh select options only
+      F.fields.filter(f=>f[2]==='select').forEach(f=>{ const s=el.querySelector(`[name=${f[0]}]`); const v=s.value; s.innerHTML='<option value="">Оберіть…</option>'+f[4]().map(o=>`<option${o===v?' selected':''}>${esc(o)}</option>`).join(''); });
+      continue; }
+    el.dataset.built=type;
+    el.innerHTML=`<h3>${F.title}</h3><p>${F.sub}</p><form class="lgrid" data-form="${type}" novalidate>
+      ${F.fields.map(([n,l,t,req,opts])=>`<div class="lf${t==='textarea'?' full':''}"><label for="lf-${type}-${n}">${l}${req?' *':''}</label>${
+        t==='textarea'?`<textarea id="lf-${type}-${n}" name="${n}" maxlength="2000" ${req?'required':''}></textarea>`:
+        t==='select'?`<select id="lf-${type}-${n}" name="${n}" ${req?'required':''}><option value="">Оберіть…</option>${opts().map(o=>`<option>${esc(o)}</option>`).join('')}</select>`:
+        `<input id="lf-${type}-${n}" name="${n}" type="${t}" maxlength="200" ${req?'required':''} autocomplete="${n==='email'?'email':n==='phone'?'tel':n==='name'?'name':n==='company'?'organization':'off'}">`}</div>`).join('')}
+      <label class="lconsent"><input type="checkbox" name="consent" required> Погоджуюсь на обробку персональних даних для відповіді на заявку</label>
+      <div class="lfoot"><span class="lmsg" data-msg></span><button class="btn fill" type="submit">Надіслати <span class="arr">→</span></button></div></form>`;
+  }
+}
+document.addEventListener('click',e=>{ const a=e.target.closest('[data-again]'); if(a){ formDone[a.dataset.again]=false; $(FORMS[a.dataset.again].el).dataset.built=''; renderForms(); } });
+document.addEventListener('submit',async e=>{
+  const f=e.target.closest('form[data-form]'); if(!f) return; e.preventDefault();
+  const type=f.dataset.form, F=FORMS[type], msg=f.querySelector('[data-msg]'), btn=f.querySelector('button[type=submit]');
+  const setMsg=(t,err)=>{msg.textContent=t;msg.classList.toggle('err',!!err)};
+  const data={}; let bad=null;
+  for(const [n,l,t,req] of F.fields){ const v=(f.elements[n].value||'').trim(); data[n]=v; if(req&&!v&&!bad) bad=f.elements[n]; }
+  if(bad){ bad.focus(); return setMsg('Заповніть обов’язкові поля',true); }
+  if(data.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)){ f.elements.email.focus(); return setMsg('Перевірте email',true); }
+  if(!f.elements.consent.checked) return setMsg('Потрібна згода на обробку даних',true);
+  if(!S.db || !S.user) return setMsg('Відправка недоступна в цьому перегляді',true);
+  const uid=await S.user.id();
+  if(!uid) return setMsg('Щоб надіслати заявку, увійдіть у свій акаунт',true);
+  btn.disabled=true; setMsg('Надсилаємо…');
+  try{
+    const ref=S.db.doc('leads/'+uid); const snap=await ref.get();
+    const items=snap.exists ? [...((snap.data()||{}).items||[])] : [];
+    if(items.length>=60) throw {code:'too_many'};
+    items.push({id:'l'+Date.now().toString(36)+Math.random().toString(36).slice(2,6), type, status:'new', createdAt:new Date().toISOString(), data});
+    await ref.set({items, updatedAt:new Date().toISOString()});
+    formDone[type]=true; renderForms();
+  }catch(err){
+    console.error(err); btn.disabled=false;
+    setMsg(err&&err.code==='invalid_argument'?'Немає прав на відправку — попросіть доступ «Учасник» до цієї сторінки':err&&err.code==='too_many'?'Забагато заявок з вашого акаунта':'Не вдалося надіслати. Спробуйте ще раз',true);
+  }
+});
+
+/* ---- globe ---- */
+const globe = (()=>{
+  const cv=$('#globe'), ctx=cv.getContext('2d'), tip=$('#gtip');
+  const N=1100, dots=[]; const ga=Math.PI*(3-Math.sqrt(5));
+  for(let i=0;i<N;i++){ const y=1-(i/(N-1))*2, r=Math.sqrt(1-y*y), th=ga*i; dots.push([Math.cos(th)*r,y,Math.sin(th)*r]); }
+  let markers=[], rot=-18*Math.PI/180, tilt=34*Math.PI/180, W=0, R=0, vis=false, drag=null, t0=performance.now(), hover=null, autoV=RM?0:.00007;
+  const home=COUNTRIES.UA;
+  const ll2v=(lat,lon)=>{ const la=lat*Math.PI/180, lo=lon*Math.PI/180; return [Math.cos(la)*Math.sin(lo), Math.sin(la), Math.cos(la)*Math.cos(lo)]; };
+  const proj=v=>{ // rotate around Y by rot, then X by tilt
+    let [x,y,z]=v; const c=Math.cos(rot), s=Math.sin(rot); [x,z]=[x*c+z*s, -x*s+z*c];
+    const ct=Math.cos(tilt), st=Math.sin(tilt); [y,z]=[y*ct-z*st, y*st+z*ct];
+    return [W/2+x*R, W/2-y*R, z]; };
+  function slerp(a,b,t){ const d=Math.acos(Math.max(-1,Math.min(1,a[0]*b[0]+a[1]*b[1]+a[2]*b[2]))); if(d<1e-6) return a; const s1=Math.sin((1-t)*d)/Math.sin(d), s2=Math.sin(t*d)/Math.sin(d); return [a[0]*s1+b[0]*s2,a[1]*s1+b[1]*s2,a[2]*s1+b[2]*s2]; }
+  function size(){ const r=cv.getBoundingClientRect(); const dpr=Math.min(2,devicePixelRatio||1); W=r.width; cv.width=W*dpr; cv.height=W*dpr; ctx.setTransform(dpr,0,0,dpr,0,0); R=W*.42; }
+  function frame(now){
+    if(!vis){ return; }
+    const dt=Math.min(50,now-t0); t0=now; if(!drag) rot+=autoV*dt;
+    ctx.clearRect(0,0,W,W);
+    // sphere rim
+    const g=ctx.createRadialGradient(W/2-R*.3,W/2-R*.35,R*.1,W/2,W/2,R); g.addColorStop(0,'rgba(236,210,154,.08)'); g.addColorStop(1,'rgba(236,210,154,.01)');
+    ctx.fillStyle=g; ctx.beginPath(); ctx.arc(W/2,W/2,R,0,7); ctx.fill();
+    ctx.strokeStyle='rgba(236,210,154,.18)'; ctx.lineWidth=1; ctx.stroke();
+    for(const d of dots){ const [x,y,z]=proj(d); if(z<-.05) continue; ctx.fillStyle=`rgba(236,210,154,${.08+z*.32})`; ctx.fillRect(x-.9,y-.9,1.8,1.8); }
+    const hv=ll2v(home[1],home[2]); const T=(now/1000);
+    markers.forEach((m,i)=>{ // arcs
+      const mv=ll2v(m[1],m[2]); const steps=40; const prog=((T*.25+i*.137)%1);
+      ctx.beginPath(); let started=false;
+      for(let k=0;k<=steps;k++){ const t=k/steps; let v=slerp(hv,mv,t); const lift=1+Math.sin(Math.PI*t)*.18; v=[v[0]*lift,v[1]*lift,v[2]*lift];
+        const [x,y,z]=proj(v); if(z<-.02){started=false;continue} if(!started){ctx.moveTo(x,y);started=true} else ctx.lineTo(x,y); }
+      ctx.strokeStyle='rgba(201,164,92,.35)'; ctx.lineWidth=1; ctx.stroke();
+      // travelling spark
+      let v=slerp(hv,mv,prog); const lift=1+Math.sin(Math.PI*prog)*.18; v=[v[0]*lift,v[1]*lift,v[2]*lift]; const [sx,sy,sz]=proj(v);
+      if(sz>0){ ctx.fillStyle='rgba(246,225,179,.95)'; ctx.beginPath(); ctx.arc(sx,sy,1.8,0,7); ctx.fill(); }
+    });
+    const pts=[];
+    markers.forEach((m,i)=>{ const [x,y,z]=proj(ll2v(m[1],m[2])); if(z<0) return; pts.push([x,y,m]);
+      const pulse=(T*.8+i*.21)%1; ctx.strokeStyle=`rgba(236,210,154,${(1-pulse)*.6})`; ctx.beginPath(); ctx.arc(x,y,3+pulse*12,0,7); ctx.stroke();
+      ctx.fillStyle=hover===m?'#fff':'#ecd29a'; ctx.beginPath(); ctx.arc(x,y,hover===m?4.5:3.2,0,7); ctx.fill(); });
+    { const [x,y,z]=proj(hv); if(z>0){ ctx.fillStyle='#c9a45c'; ctx.beginPath(); ctx.arc(x,y,6,0,7); ctx.fill(); ctx.strokeStyle='rgba(246,225,179,.9)'; ctx.lineWidth=2; ctx.beginPath(); ctx.arc(x,y,9,0,7); ctx.stroke(); ctx.lineWidth=1; } }
+    globe._pts=pts;
+    requestAnimationFrame(frame);
+  }
+  new IntersectionObserver(es=>es.forEach(e=>{ const was=vis; vis=e.isIntersecting; if(vis&&!was){ size(); t0=performance.now(); requestAnimationFrame(frame); } }),{threshold:.05}).observe(cv);
+  addEventListener('resize',()=>{ if(vis) size(); });
+  cv.addEventListener('pointerdown',e=>{ drag={x:e.clientX,r:rot}; cv.setPointerCapture(e.pointerId); });
+  cv.addEventListener('pointermove',e=>{
+    const r=cv.getBoundingClientRect(), mx=e.clientX-r.left, my=e.clientY-r.top;
+    if(drag){ rot=drag.r+(e.clientX-drag.x)/R; }
+    let best=null,bd=14; (globe._pts||[]).forEach(([x,y,m])=>{ const d=Math.hypot(x-mx,y-my); if(d<bd){bd=d;best=[x,y,m]} });
+    hover=best?best[2]:null;
+    if(best){ tip.textContent=flag(best[2][3])+' '+best[2][0]; tip.style.left=best[0]+'px'; tip.style.top=best[1]+'px'; tip.style.opacity=1; } else tip.style.opacity=0;
+    document.querySelectorAll('#eCtry span').forEach(s=>s.classList.toggle('hl',!!best&&s.dataset.c===best[2][3]));
+  });
+  const end=()=>{drag=null}; cv.addEventListener('pointerup',end); cv.addEventListener('pointercancel',end);
+  cv.addEventListener('pointerleave',()=>{ tip.style.opacity=0; hover=null; });
+  return { setMarkers(codes){ markers=codes.filter(c=>c!=='UA').map(c=>[...COUNTRIES[c],c]); }, _pts:[] };
+})();
+document.addEventListener('mouseover',e=>{ const s=e.target.closest('#eCtry span'); document.querySelectorAll('#eCtry span').forEach(x=>x.classList.toggle('hl',x===s)); });
+
+/* =================================================================
+   ADMIN
+   ================================================================= */
+const ICON = {
+  dash:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>',
+  prod:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 2h4v4l2 3v12a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1V9l2-3Z"/><path d="M8 13h8"/></svg>',
+  blog:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16v16H4z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>',
+  leads:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.5 5h13L22 12v7a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1v-7Z"/></svg>',
+  company:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 21V9l6-4v4l6-4v4l6-4v16H3Z"/></svg>',
+  mk:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 11v2a1 1 0 0 0 1 1h2l5 4V6L6 10H4a1 1 0 0 0-1 1Z"/><path d="M15 9a4 4 0 0 1 0 6M18 6a8 8 0 0 1 0 12"/></svg>'
+};
+const TABS=[['dash','Огляд'],['leads','Заявки'],['prod','Продукція'],['blog','Блог'],['company','Компанія'],['mk','Маркетинг']];
+const A = { tab:'dash', edit:null, draft:null, q:'', mkDraft:null, mkSection:'hero', busy:false };
+
+function openAdmin(tab){
+  if(!S.canEdit){ toast('Адмінка доступна лише редакторам',true); return; }
+  if(tab) A.tab=tab;
+  $('#admin').classList.add('open'); $('#admin').setAttribute('aria-hidden','false'); document.body.classList.add('locked');
+  renderAdmin();
+}
+function closeAdmin(){
+  if(A.edit && A.dirty){ confirmBox('Вийти без збереження?','Незбережені зміни буде втрачено.','Вийти').then(ok=>{ if(ok){A.edit=null;A.dirty=false;closeAdmin()} }); return; }
+  $('#admin').classList.remove('open'); $('#admin').setAttribute('aria-hidden','true');
+  if(!$('#reader').classList.contains('open') && !$('#modal').classList.contains('open')) document.body.classList.remove('locked');
+  if(location.hash==='#admin') history.replaceState(null,'',' ');
+}
+$('#admOpen').onclick=()=>openAdmin();
+
+function tabsHTML(){
+  const cnt={prod:S.products.length, blog:S.posts.length, leads:newLeads()||null};
+  return TABS.map(([k,n])=>`<button class="tab${A.tab===k?' on':''}" data-tab="${k}">${ICON[k]}<span>${n}</span>${cnt[k]!=null?`<span class="cnt">${cnt[k]}</span>`:''}</button>`).join('');
+}
+function renderAdmin(){
+  if(!$('#admin').classList.contains('open')) return;
+  $('#tabsSide').innerHTML=tabsHTML();
+  $('#tabsMob').innerHTML=tabsHTML()+'<button class="tab" data-exit>← Сайт</button>';
+  const m=$('#amain'); const keep=m.scrollTop;
+  if(A.tab==='dash') m.innerHTML=viewDash();
+  else if(A.tab==='prod') m.innerHTML = A.edit ? viewProductEdit() : viewProducts();
+  else if(A.tab==='blog') m.innerHTML = A.edit ? viewPostEdit() : viewPosts();
+  else if(A.tab==='leads') m.innerHTML=viewLeads();
+  else if(A.tab==='company') m.innerHTML=viewCompany();
+  else m.innerHTML=viewMk();
+  if(A.edit || A.tab==='mk' || A.tab==='company' || A.tab==='leads') m.scrollTop=keep;
+  afterRender();
+}
+function lockNote(){ return S.db ? '' : `<div class="locknote">⚠ База даних недоступна в цьому перегляді — зміни не збережуться.</div>`; }
+
+/* ---- dashboard ---- */
+function viewDash(){
+  const vis=S.products.filter(p=>p.visible!==false).length, pub=S.posts.filter(p=>p.status==='published').length, dr=S.posts.length-pub;
+  const recent=[...S.posts].sort((a,b)=>String(b.updatedAt||b.date||'').localeCompare(String(a.updatedAt||a.date||''))).slice(0,4);
+  const m=S.mk;
+  const chk=(on,t)=>`<div style="display:flex;gap:10px;align-items:center;padding:7px 0;border-bottom:1px dashed var(--line)"><span class="badge ${on?'ok':'mut'}">${on?'Увімк.':'Вимк.'}</span>${t}</div>`;
+  return `${lockNote()}<div class="atop"><div><h2>Огляд</h2><p>Що зараз на сайті та швидкі дії.</p></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="abtn" data-new="prod">+ Продукт</button><button class="abtn pri" data-new="blog">+ Новий допис</button></div></div>
+  <div class="kpis">
+    <div class="kpi"><small>Продукти на сайті</small><b>${vis}</b><span>з ${S.products.length} у каталозі</span></div>
+    <div class="kpi"><small>Опубліковані дописи</small><b>${pub}</b><span>${dr} у чернетках</span></div>
+    <div class="kpi" data-tab="leads" style="cursor:pointer"><small>Нові заявки</small><b>${newLeads()}</b><span>з ${allLeads().length} усього</span></div>
+    <div class="kpi"><small>Аналітика</small><b>${[m.ga4,m.pixel,m.gtm].filter(Boolean).length}/3</b><span>пікселів налаштовано</span></div>
+  </div>
+  <div class="two">
+    <div class="panel"><h3>Останні дописи</h3><p class="hint">Клацніть, щоб редагувати.</p>
+      <div class="list">${recent.length?recent.map(p=>`<div class="row" data-edit-post="${esc(p.id)}" style="cursor:pointer;grid-template-columns:52px 1fr auto"><div class="th">${blob(p.cover)?`<img src="${blob(p.cover)}" alt="">`:'✎'}</div><div class="t"><b>${esc(p.title||'Без назви')}</b><span>${esc(fmtDate(p.date))}</span></div><span class="badge ${p.status==='published'?'ok':'mut'}">${p.status==='published'?'Опубл.':'Чернетка'}</span></div>`).join(''):'<div class="empty" style="padding:24px">Дописів поки немає</div>'}</div></div>
+    <div class="panel"><h3>Маркетинг зараз</h3><p class="hint">Активні елементи на сайті.</p>
+      ${chk(m.barOn&&m.barText,'Рядок оголошення вгорі'+(m.barText?` — «${esc(m.barText.slice(0,40))}»`:''))}
+      ${chk(m.promoOn&&m.promoTitle,'Промо-банер'+(m.promoTitle?` — «${esc(m.promoTitle.slice(0,40))}»`:''))}
+      ${chk(!!m.ga4,'Google Analytics 4')}${chk(!!m.pixel,'Meta Pixel')}${chk(!!m.gtm,'Google Tag Manager')}
+      <div style="margin-top:14px"><button class="abtn sm" data-tab="mk">Налаштувати →</button></div></div>
+  </div>`;
+}
+
+/* ---- products list ---- */
+function viewProducts(){
+  const q=A.q.toLowerCase();
+  const list=[...S.products].sort((a,b)=>(a.order??999)-(b.order??999)).filter(p=>!q||[p.name,p.cat,p.tag].join(' ').toLowerCase().includes(q));
+  return `${lockNote()}<div class="atop"><div><h2>Продукція</h2><p>Порядок у списку = порядок на сайті.</p></div>
+   <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><input class="search" id="aq" placeholder="Пошук продукту…" value="${esc(A.q)}"><button class="abtn pri" data-new="prod">+ Додати продукт</button></div></div>
+   <div class="list">${list.length?list.map((p,i)=>`<div class="row">
+     <div class="th" style="${vars(colorsOf(p))}">${picHTML(p)}</div>
+     <div class="t"><b>${esc(p.name||'Без назви')}</b><span>${esc(p.cat||'—')} · ${esc(p.abv||'')} · ${esc(p.vol||'')}</span></div>
+     <div class="acts">
+       ${p.visible===false?'<span class="badge mut">Приховано</span>':'<span class="badge ok">На сайті</span>'}
+       ${p.story?'<span class="badge gold">Вітрина</span>':''}
+       ${q?'':`<button class="abtn sm" data-move="${esc(p.id)}" data-dir="-1" ${i===0?'disabled':''} title="Вище">↑</button><button class="abtn sm" data-move="${esc(p.id)}" data-dir="1" ${i===list.length-1?'disabled':''} title="Нижче">↓</button>`}
+       <button class="abtn sm" data-toggle-vis="${esc(p.id)}">${p.visible===false?'Показати':'Сховати'}</button>
+       <button class="abtn sm" data-edit-prod="${esc(p.id)}">Редагувати</button>
+     </div></div>`).join(''):`<div class="empty">${q?'Нічого не знайдено':'Каталог порожній. Додайте перший продукт.'}</div>`}</div>`;
+}
+const NEW_PRODUCT = () => ({name:'',cat:'Класика',abv:'40%',vol:'0,5 л',spirit:'Люкс',tag:'',short:'',desc:'',notes:[{k:'',v:''},{k:'',v:''}],shape:'tall',liqHex:'#dcebf5',liqA:.25,lab:'#f3ece2',cap:'#c9a45c',glass:'clear',visible:true,story:false,img:''});
+function viewProductEdit(){
+  const d=A.draft, isNew=A.edit==='new';
+  const notes=[...(d.notes||[])]; while(notes.length<3) notes.push({k:'',v:''});
+  return `${lockNote()}<div class="atop"><div><button class="abtn sm" data-back>← До списку</button><h2 style="margin-top:12px">${isNew?'Новий продукт':esc(d.name||'Продукт')}</h2></div></div>
+  <div class="editor">
+   <div>
+    <div class="panel"><h3>Основне</h3><p class="hint">Те, що бачать відвідувачі в каталозі та картці.</p>
+     <div class="form">
+      <div class="f full"><label>Назва *</label><input type="text" data-f="name" value="${esc(d.name)}" placeholder="Напр. Arkada Classic"></div>
+      <div class="f"><label>Категорія</label><input type="text" data-f="cat" list="catList" value="${esc(d.cat)}"><datalist id="catList">${CATS.map(c=>`<option value="${c}">`).join('')}</datalist></div>
+      <div class="f"><label>Мітка на картці</label><input type="text" data-f="tag" value="${esc(d.tag)}" placeholder="Новинка, Хіт…"></div>
+      <div class="f"><label>Міцність</label><input type="text" data-f="abv" value="${esc(d.abv)}"></div>
+      <div class="f"><label>Об'єм</label><input type="text" data-f="vol" value="${esc(d.vol)}" placeholder="0,5 · 0,7 л"></div>
+      <div class="f"><label>Спирт</label><input type="text" data-f="spirit" value="${esc(d.spirit)}"></div>
+      <div class="f"><label>&nbsp;</label><div style="display:flex;gap:18px;flex-wrap:wrap;padding-top:8px">
+        <label class="switch"><input type="checkbox" data-f="visible" ${d.visible!==false?'checked':''}><i></i>Показувати на сайті</label>
+        <label class="switch"><input type="checkbox" data-f="story" ${d.story?'checked':''}><i></i>У вітрині</label></div></div>
+      <div class="f full"><label>Короткий опис (картка каталогу)</label><input type="text" data-f="short" value="${esc(d.short)}" maxlength="140"></div>
+      <div class="f full"><label>Повний опис</label><textarea data-f="desc">${esc(d.desc)}</textarea></div>
+     </div></div>
+    <div class="panel"><h3>Смакові ноти</h3><p class="hint">Рядки в картці продукту. Порожні не показуються.</p>
+     <div class="form">${notes.map((n,i)=>`<div class="f"><label>Назва ${i+1}</label><input type="text" data-note-k="${i}" value="${esc(n.k)}" placeholder="Аромат"></div><div class="f"><label>Значення ${i+1}</label><input type="text" data-note-v="${i}" value="${esc(n.v)}" placeholder="Зерно, солод"></div>`).join('')}</div></div>
+    <div class="panel"><h3>Вигляд пляшки</h3><p class="hint">Поки немає фото — сайт малює пляшку з цих кольорів. Завантажене фото (PNG на прозорому фоні) замінить малюнок.</p>
+     <div class="colors">
+      <div class="f"><label>Рідина</label><input type="color" data-f="liqHex" value="${esc(d.liqHex)}"></div>
+      <div class="f"><label>Насиченість: <span id="liqAv">${Math.round((d.liqA??.25)*100)}%</span></label><input type="range" data-f="liqA" min="5" max="95" value="${Math.round((d.liqA??.25)*100)}"></div>
+      <div class="f"><label>Етикетка</label><input type="color" data-f="lab" value="${esc(d.lab)}"></div>
+      <div class="f"><label>Кришка й текст</label><input type="color" data-f="cap" value="${esc(d.cap)}"></div>
+     </div>
+     <div class="form" style="margin-top:14px">
+      <div class="f"><label>Скло</label><select data-f="glass"><option value="clear"${d.glass==='clear'?' selected':''}>Прозоре</option><option value="tint"${d.glass==='tint'?' selected':''}>Тоноване</option><option value="black"${d.glass==='black'?' selected':''}>Чорне</option></select></div>
+      <div class="f"><label>Форма</label><select data-f="shape"><option value="tall"${d.shape!=='squat'?' selected':''}>Висока</option><option value="squat"${d.shape==='squat'?' selected':''}>Широка (преміум)</option></select></div>
+      <div class="f full"><label>Фото пляшки</label><div class="upl"><div class="thumb">${blob(d.img)?`<img src="${blob(d.img)}" alt="">`:'немає'}</div>
+        ${S.db?`<label class="abtn sm" style="cursor:pointer">Завантажити<input type="file" accept="image/png,image/webp,image/jpeg" data-upload="img" hidden></label>`:'<span class="note">Завантаження доступне редакторам</span>'}
+        ${d.img?'<button class="abtn sm" data-clear-img="img">Прибрати фото</button>':''}</div></div>
+     </div></div>
+   </div>
+   <div class="preview"><div class="pv" id="pv" style="${vars(colorsOf(d))}">${picHTML(d)}</div><small>Попередній перегляд оновлюється одразу</small></div>
+  </div>
+  <div class="savebar"><span class="l">${A.dirty?'Є незбережені зміни':'Без змін'}</span><div style="display:flex;gap:8px">
+    ${isNew?'':'<button class="abtn danger" data-del-prod>Видалити</button>'}
+    <button class="abtn" data-back>Скасувати</button><button class="abtn pri" data-save-prod ${A.busy?'disabled':''}>${A.busy?'Збереження…':'Зберегти'}</button></div></div>`;
+}
+
+/* ---- posts ---- */
+function viewPosts(){
+  const q=A.q.toLowerCase();
+  const list=[...S.posts].sort((a,b)=>String(b.date||'').localeCompare(String(a.date||''))).filter(p=>!q||[p.title,p.category,p.excerpt].join(' ').toLowerCase().includes(q));
+  return `${lockNote()}<div class="atop"><div><h2>Блог</h2><p>Новини, рецепти, анонси. Чернетки не видно на сайті.</p></div>
+   <div style="display:flex;gap:8px;flex-wrap:wrap"><input class="search" id="aq" placeholder="Пошук допису…" value="${esc(A.q)}"><button class="abtn pri" data-new="blog">+ Новий допис</button></div></div>
+   <div class="list">${list.length?list.map(p=>`<div class="row">
+     <div class="th">${blob(p.cover)?`<img src="${blob(p.cover)}" alt="">`:`<span style="font-family:var(--serif);font-size:24px;color:var(--gold2)">${esc((p.title||'?').charAt(0))}</span>`}</div>
+     <div class="t"><b>${esc(p.title||'Без назви')}</b><span>${esc(p.category||'Новини')} · ${esc(fmtDate(p.date))}</span></div>
+     <div class="acts"><span class="badge ${p.status==='published'?'ok':'mut'}">${p.status==='published'?'Опубліковано':'Чернетка'}</span>
+       <button class="abtn sm" data-toggle-pub="${esc(p.id)}">${p.status==='published'?'Зняти':'Опублікувати'}</button>
+       <button class="abtn sm" data-edit-post="${esc(p.id)}">Редагувати</button></div></div>`).join(''):`<div class="empty">${q?'Нічого не знайдено':'Дописів ще немає. Напишіть перший.'}</div>`}</div>`;
+}
+const NEW_POST = () => ({title:'',category:'Новини',date:today(),excerpt:'',body:'',cover:'',status:'draft'});
+function viewPostEdit(){
+  const d=A.draft, isNew=A.edit==='new';
+  return `${lockNote()}<div class="atop"><div><button class="abtn sm" data-back>← До списку</button><h2 style="margin-top:12px">${isNew?'Новий допис':'Редагування допису'}</h2></div>
+   <span class="badge ${d.status==='published'?'ok':'mut'}">${d.status==='published'?'Опубліковано':'Чернетка'}</span></div>
+  <div class="editor">
+   <div>
+    <div class="panel"><div class="form">
+      <div class="f full"><label>Заголовок *</label><input type="text" data-f="title" value="${esc(d.title)}" placeholder="Про що цей допис?"></div>
+      <div class="f"><label>Рубрика</label><input type="text" data-f="category" list="pcatList" value="${esc(d.category)}"><datalist id="pcatList"><option value="Новини"><option value="Рецепти"><option value="Події"><option value="Культура подачі"></datalist></div>
+      <div class="f"><label>Дата публікації</label><input type="date" data-f="date" value="${esc(d.date)}"></div>
+      <div class="f full"><label>Анонс (1–2 речення)</label><textarea data-f="excerpt" style="min-height:70px">${esc(d.excerpt)}</textarea></div>
+      <div class="f full"><label>Текст допису</label><textarea class="tall" data-f="body" placeholder="Пишіть звичайним текстом.">${esc(d.body)}</textarea>
+        <span class="note">Порожній рядок — новий абзац · <b>## Заголовок</b> · <b>- пункт списку</b> · <b>&gt; цитата</b> · <b>**жирний**</b></span></div>
+    </div></div>
+   </div>
+   <div class="preview" style="align-items:stretch">
+     <label style="font-size:12px;color:var(--muted);font-weight:600">Обкладинка</label>
+     <div class="pv" style="height:180px;border-radius:14px;overflow:hidden;position:relative;background:var(--bg2)">${blob(d.cover)?`<img src="${blob(d.cover)}" alt="" style="width:100%;height:100%;object-fit:cover">`:`<div class="ph" style="--phc:${phColor(d.title)}">${esc((d.title||'А').charAt(0))}</div>`}</div>
+     <div class="upl">${S.db?`<label class="abtn sm" style="cursor:pointer">Завантажити фото<input type="file" accept="image/png,image/webp,image/jpeg" data-upload="cover" hidden></label>`:'<span class="note">Завантаження доступне редакторам</span>'}${d.cover?'<button class="abtn sm" data-clear-img="cover">Прибрати</button>':''}</div>
+     <div style="border-top:1px solid var(--line);padding-top:12px;margin-top:4px"><label style="font-size:12px;color:var(--muted);font-weight:600">Як виглядатиме в стрічці</label>
+       <div style="margin-top:8px"><div class="eyebrow" style="font-size:9px">${esc(d.category||'Новини')} · ${esc(fmtDate(d.date))}</div><div style="font-family:var(--serif);font-size:22px;font-weight:600;line-height:1.1;margin:4px 0">${esc(d.title||'Заголовок')}</div><div style="font-size:12px;color:var(--muted)">${esc(d.excerpt||'Анонс допису')}</div></div></div>
+   </div>
+  </div>
+  <div class="savebar"><span class="l">${A.dirty?'Є незбережені зміни':'Без змін'}</span><div style="display:flex;gap:8px;flex-wrap:wrap">
+    ${isNew?'':'<button class="abtn danger" data-del-post>Видалити</button>'}
+    <button class="abtn" data-save-post="draft" ${A.busy?'disabled':''}>Зберегти чернетку</button>
+    <button class="abtn pri" data-save-post="published" ${A.busy?'disabled':''}>${d.status==='published'?'Оновити':'Опублікувати'}</button></div></div>`;
+}
+
+/* ---- marketing ---- */
+const MK_SECTIONS=[['hero','Головний екран'],['promo','Банер і оголошення'],['seo','SEO'],['analytics','Аналітика'],['social','Соцмережі'],['utm','UTM-посилання']];
+function viewMk(){
+  if(!A.mkDraft) A.mkDraft={...S.mk};
+  const d=A.mkDraft, sec=A.mkSection;
+  const T=(f,l,ph='',full=false,max='')=>`<div class="f${full?' full':''}"><label>${l}</label><input type="text" data-mk="${f}" value="${esc(d[f])}" placeholder="${esc(ph)}" ${max?`maxlength="${max}"`:''}></div>`;
+  const SW=(f,l)=>`<label class="switch"><input type="checkbox" data-mk="${f}" ${d[f]?'checked':''}><i></i>${l}</label>`;
+  let body='';
+  if(sec==='hero') body=`<div class="panel"><h3>Головний екран</h3><p class="hint">Перше, що бачить відвідувач.</p><div class="form">
+    ${T('brand','Назва бренду','АРКАДА')}${T('heroEyebrow','Надзаголовок')}
+    ${T('heroL1','Заголовок — рядок 1')}${T('heroL2','Рядок 2 (золотий)')}${T('heroL3','Рядок 3 (золотий)')}${T('heroCta','Текст кнопки')}
+    <div class="f full"><label>Підзаголовок</label><textarea data-mk="heroSub">${esc(d.heroSub)}</textarea></div>
+    <div class="f full"><label>Біжучий рядок (кожна фраза з нового рядка)</label><textarea data-mk="marquee">${esc(d.marquee)}</textarea></div></div></div>`;
+  else if(sec==='promo') body=`<div class="panel"><h3>Рядок оголошення</h3><p class="hint">Тонка смужка над шапкою сайту: акції, події, доставка.</p>
+    <div style="margin-bottom:14px">${SW('barOn','Показувати рядок оголошення')}</div><div class="form">
+    ${T('barText','Текст','Знижка −15% на подарункові набори до кінця місяця',true,'120')}${T('barLinkText','Текст посилання','Детальніше')}${T('barLink','Посилання','https://…')}
+    <div class="f"><label>Акцентний колір</label><input type="color" data-mk="accent" value="${esc(d.accent||'#c9a45c')}" style="height:42px;border:1px solid var(--line);border-radius:10px;background:var(--bg2);padding:3px;width:100%"></div></div></div>
+    <div class="panel"><h3>Промо-банер</h3><p class="hint">Великий блок одразу після головного екрана.</p>
+    <div style="margin-bottom:14px">${SW('promoOn','Показувати промо-банер')}</div><div class="form">
+    ${T('promoEyebrow','Надзаголовок','Лімітована серія')}${T('promoTitle','Заголовок','Arkada Reserve уже в продажу')}
+    <div class="f full"><label>Текст</label><textarea data-mk="promoText">${esc(d.promoText)}</textarea></div>
+    ${T('promoBtn','Текст кнопки')}${T('promoLink','Посилання кнопки','https://…')}</div></div>`;
+  else if(sec==='seo'){ const tl=(d.seoTitle||'').length, dl=(d.seoDesc||'').length;
+    body=`<div class="panel"><h3>SEO</h3><p class="hint">Як сайт виглядає в Google і при пересиланні посилання.</p><div class="form">
+    <div class="f full"><label>Заголовок сторінки <span style="color:${tl>60?'var(--bad)':'var(--muted)'}">(${tl}/60)</span></label><input type="text" data-mk="seoTitle" value="${esc(d.seoTitle)}"></div>
+    <div class="f full"><label>Опис <span style="color:${dl>160?'var(--bad)':'var(--muted)'}">(${dl}/160)</span></label><textarea data-mk="seoDesc">${esc(d.seoDesc)}</textarea></div></div></div>
+    <div class="panel"><h3>Попередній перегляд у пошуку</h3><p class="hint">Приблизно так.</p><div class="seo-prev"><div class="u">arkada.ua</div><div class="tt" id="seoT">${esc(d.seoTitle||'Заголовок')}</div><div class="dd" id="seoD">${esc(d.seoDesc||'Опис сторінки')}</div></div></div>`; }
+  else if(sec==='analytics') body=`<div class="panel"><h3>Аналітика та пікселі</h3><p class="hint">Ідентифікатори зберігаються тут і підключаються на робочому сайті. У цьому прототипі скрипти не завантажуються.</p><div class="form">
+    ${T('ga4','Google Analytics 4 (Measurement ID)','G-XXXXXXXXXX')}${T('gtm','Google Tag Manager','GTM-XXXXXXX')}${T('pixel','Meta Pixel ID','123456789012345')}</div></div>`;
+  else if(sec==='social') body=`<div class="panel"><h3>Соцмережі</h3><p class="hint">Посилання в підвалі сайту. Порожні не показуються.</p><div class="form">
+    ${T('fb','Facebook','https://facebook.com/…')}${T('ig','Instagram','https://instagram.com/…')}${T('yt','YouTube','https://youtube.com/@…')}${T('tt','TikTok','https://tiktok.com/@…')}</div></div>`;
+  else if(sec==='utm') body=`<div class="panel"><h3>Конструктор UTM-посилань</h3><p class="hint">Для реклами та розсилок: щоб в аналітиці було видно, звідки прийшли відвідувачі. Нічого не зберігає.</p><div class="form">
+    <div class="f full"><label>Адреса сторінки</label><input type="url" id="utmU" value="https://arkada.ua/" ></div>
+    <div class="f"><label>Джерело (utm_source)</label><input type="text" id="utmS" placeholder="instagram"></div>
+    <div class="f"><label>Канал (utm_medium)</label><input type="text" id="utmM" placeholder="social, email, cpc"></div>
+    <div class="f"><label>Кампанія (utm_campaign)</label><input type="text" id="utmC" placeholder="reserve_launch"></div>
+    <div class="f"><label>Оголошення (utm_content)</label><input type="text" id="utmT" placeholder="story_1"></div>
+    <div class="f full"><label>Готове посилання (виділіть і скопіюйте)</label><div class="utm-out" id="utmOut"></div></div></div></div>`;
+  const dirty = JSON.stringify(d)!==JSON.stringify({...DEF_MK,...S.mk});
+  return `${lockNote()}<div class="atop"><div><h2>Маркетинг</h2><p>Тексти головної, акції, SEO, аналітика.</p></div></div>
+   <div class="filters" style="margin-bottom:18px">${MK_SECTIONS.map(([k,n])=>`<button class="chip${sec===k?' on':''}" data-mksec="${k}">${n}</button>`).join('')}</div>
+   ${body}
+   ${sec==='utm'?'':`<div class="savebar"><span class="l">${dirty?'Є незбережені зміни':'Усе збережено'}</span><div style="display:flex;gap:8px"><button class="abtn" data-mk-reset ${dirty?'':'disabled'}>Скасувати зміни</button><button class="abtn pri" data-save-mk ${A.busy||!dirty?'disabled':''}>${A.busy?'Збереження…':'Зберегти й опублікувати'}</button></div></div>`}`;
+}
+
+
+/* images are stored compressed in the db (keeps the page shareable) */
+function compressImage(file, maxSide){
+  return new Promise((res,rej)=>{
+    const url=URL.createObjectURL(file), im=new Image();
+    im.onload=()=>{
+      URL.revokeObjectURL(url);
+      let side=maxSide, q=.86, out='';
+      const cv=document.createElement('canvas'), cx=cv.getContext('2d');
+      const webp = (()=>{ const t=document.createElement('canvas'); t.width=t.height=1; return t.toDataURL('image/webp').startsWith('data:image/webp'); })();
+      for(let i=0;i<9;i++){
+        const k=Math.min(1, side/Math.max(im.width,im.height));
+        cv.width=Math.max(1,Math.round(im.width*k)); cv.height=Math.max(1,Math.round(im.height*k));
+        cx.clearRect(0,0,cv.width,cv.height); cx.drawImage(im,0,0,cv.width,cv.height);
+        out = cv.toDataURL(webp?'image/webp':'image/jpeg', q);
+        if(out.length < 230000) return res(out);
+        if(q>.6) q-=.1; else side=Math.round(side*.8);
+      }
+      out.length<250000 ? res(out) : rej(new Error('too_big'));
+    };
+    im.onerror=()=>{ URL.revokeObjectURL(url); rej(new Error('decode')); };
+    im.src=url;
+  });
+}
+async function dropMedia(oldId, newId){
+  if(!oldId || oldId===newId) return;
+  try{ await S.db.doc('media/'+oldId).delete(); }catch(e){ console.warn(e); }
+}
+
+/* ---- admin events ---- */
+function afterRender(){
+  const q=$('#aq'); if(q){ q.oninput=()=>{A.q=q.value;const pos=q.selectionStart;renderAdmin();const n=$('#aq');n.focus();n.setSelectionRange(pos,pos)}; }
+  if(A.mkSection==='utm' && A.tab==='mk'){ const up=()=>{ let u=$('#utmU').value.trim()||'https://arkada.ua/'; const p=[['utm_source','#utmS'],['utm_medium','#utmM'],['utm_campaign','#utmC'],['utm_content','#utmT']].map(([k,s])=>[k,$(s).value.trim()]).filter(x=>x[1]);
+      $('#utmOut').textContent = p.length ? u+(u.includes('?')?'&':'?')+p.map(([k,v])=>k+'='+encodeURIComponent(v.toLowerCase().replace(/\s+/g,'_'))).join('&') : u; };
+    ['#utmU','#utmS','#utmM','#utmC','#utmT'].forEach(s=>$(s).oninput=up); up(); }
+}
+function updateSavebar(){ const l=document.querySelector('.savebar .l'); if(l) l.textContent=A.dirty?'Є незбережені зміни':'Без змін'; }
+$('#admin').addEventListener('input',e=>{
+  const t=e.target;
+  if(t.dataset.f && A.draft){
+    let v = t.type==='checkbox'?t.checked : t.type==='range'? +t.value/100 : t.value;
+    A.draft[t.dataset.f]=v; A.dirty=true;
+    if(t.dataset.f==='liqA') $('#liqAv').textContent=t.value+'%';
+    const pv=$('#pv'); if(pv){ pv.setAttribute('style',vars(colorsOf(A.draft))); if(t.dataset.f==='shape') pv.innerHTML=picHTML(A.draft); }
+    if(A.tab==='blog' && ['title','category','date','excerpt'].includes(t.dataset.f) && e.type==='input' && t.tagName!=='SELECT'){ /* light refresh of feed preview */ const box=t.closest('.editor').querySelector('.preview>div:last-child'); if(box) box.innerHTML=`<label style="font-size:12px;color:var(--muted);font-weight:600">Як виглядатиме в стрічці</label><div style="margin-top:8px"><div class="eyebrow" style="font-size:9px">${esc(A.draft.category||'Новини')} · ${esc(fmtDate(A.draft.date))}</div><div style="font-family:var(--serif);font-size:22px;font-weight:600;line-height:1.1;margin:4px 0">${esc(A.draft.title||'Заголовок')}</div><div style="font-size:12px;color:var(--muted)">${esc(A.draft.excerpt||'Анонс допису')}</div></div>`; }
+    updateSavebar();
+  }
+  if(t.dataset.noteK!=null || t.dataset.noteV!=null){
+    const i=+(t.dataset.noteK??t.dataset.noteV); A.draft.notes=A.draft.notes||[]; while(A.draft.notes.length<=i) A.draft.notes.push({k:'',v:''});
+    A.draft.notes[i][t.dataset.noteK!=null?'k':'v']=t.value; A.dirty=true; updateSavebar();
+  }
+  if(t.dataset.mk && A.mkDraft){
+    A.mkDraft[t.dataset.mk] = t.type==='checkbox'?t.checked:t.value;
+    if(t.dataset.mk==='seoTitle'||t.dataset.mk==='seoDesc'){ renderAdmin(); const n=document.querySelector(`[data-mk="${t.dataset.mk}"]`); if(n){n.focus();n.setSelectionRange(n.value.length,n.value.length)} return; }
+    const dirty = JSON.stringify(A.mkDraft)!==JSON.stringify({...DEF_MK,...S.mk});
+    const l=document.querySelector('.savebar .l'); if(l) l.textContent=dirty?'Є незбережені зміни':'Усе збережено';
+    const sb=document.querySelector('[data-save-mk]'); if(sb) sb.disabled=!dirty||A.busy;
+    const rb=document.querySelector('[data-mk-reset]'); if(rb) rb.disabled=!dirty;
+  }
+});
+$('#admin').addEventListener('change',async e=>{
+  const t=e.target; if(t.dataset.f && t.type==='checkbox'){ /* handled in input */ }
+  if(t.dataset.mk && t.type==='checkbox'){ A.mkDraft[t.dataset.mk]=t.checked; renderAdmin(); }
+  if(t.dataset.upload){
+    const file=t.files&&t.files[0]; if(!file) return;
+    if(!S.db){ toast('Завантаження недоступне',true); return; }
+    if(!/^image\/(png|jpe?g|webp)$/.test(file.type)){ toast('Потрібен файл PNG, JPG або WebP',true); return; }
+    toast('Обробка фото…');
+    try{
+      const data=await compressImage(file, t.dataset.upload==='cover'?1400:900);
+      const ref=await S.db.collection('media').add({data, createdAt:new Date().toISOString()});
+      S.media[ref.id]=data; A.draft[t.dataset.upload]=ref.id; A.dirty=true; renderAdmin(); toast('Фото додано — не забудьте зберегти');
+    }catch(err){ console.error(err); toast(err&&err.code==='quota_exceeded'?'Досягнуто ліміту сховища':'Не вдалося обробити фото',true); }
+  }
+});
+$('#admin').addEventListener('click',async e=>{
+  const b=e.target.closest('button,[data-edit-post],[data-edit-prod]'); if(!b) return;
+  const D=b.dataset;
+  if(D.exit!=null) return closeAdmin();
+  if(D.tab){ const go=()=>{A.tab=D.tab;A.edit=null;A.draft=null;A.dirty=false;A.q='';renderAdmin();$('#amain').scrollTop=0;}; if(A.edit&&A.dirty){ if(await confirmBox('Вийти без збереження?','Незбережені зміни буде втрачено.','Вийти')) go(); } else go(); return; }
+  if(D.new){ A.tab=D.new; A.edit='new'; A.draft=D.new==='prod'?NEW_PRODUCT():NEW_POST(); A.dirty=false; renderAdmin(); $('#amain').scrollTop=0; return; }
+  if(D.back!=null){ if(A.dirty && !(await confirmBox('Скасувати зміни?','Незбережені зміни буде втрачено.','Скасувати зміни'))) return; A.edit=null;A.draft=null;A.dirty=false;renderAdmin();$('#amain').scrollTop=0; return; }
+  if(D.editProd){ const p=S.products.find(x=>x.id===D.editProd); if(!p) return; A.tab='prod'; A.edit=p.id; A.draft=JSON.parse(JSON.stringify({...NEW_PRODUCT(),...p})); delete A.draft.id; A.dirty=false; renderAdmin(); $('#amain').scrollTop=0; return; }
+  if(D.editPost){ const p=S.posts.find(x=>x.id===D.editPost); if(!p) return; A.tab='blog'; A.edit=p.id; A.draft=JSON.parse(JSON.stringify({...NEW_POST(),...p})); delete A.draft.id; A.dirty=false; renderAdmin(); $('#amain').scrollTop=0; return; }
+  if(D.clearImg){ A.draft[D.clearImg]=''; A.dirty=true; renderAdmin(); return; }
+  if(D.mksec){ A.mkSection=D.mksec; renderAdmin(); return; }
+  if(D.mkReset!=null){ A.mkDraft={...DEF_MK,...S.mk}; renderAdmin(); return; }
+  if(!S.db){ if(D.saveProd!=null||D.savePost||D.saveMk!=null||D.move||D.toggleVis||D.togglePub||D.delProd!=null||D.delPost!=null) toast('База даних недоступна — зміни не збережено',true); return; }
+  try{
+    if(D.saveProd!=null){
+      const d=A.draft; if(!String(d.name||'').trim()){ toast('Вкажіть назву продукту',true); return; }
+      A.busy=true; renderAdmin();
+      const body={...d, name:d.name.trim(), notes:(d.notes||[]).filter(n=>n.k||n.v), liqA:+d.liqA||.25, updatedAt:new Date().toISOString()};
+      const oldImg = A.edit==='new' ? '' : (S.products.find(x=>x.id===A.edit)||{}).img;
+      if(A.edit==='new'){ body.order = S.products.reduce((m,p)=>Math.max(m,p.order??0),0)+1; await S.db.collection('products').add(body); }
+      else await S.db.doc('products/'+A.edit).set(body);
+      await dropMedia(oldImg, body.img);
+      A.busy=false; A.edit=null; A.draft=null; A.dirty=false; toast('Продукт збережено'); renderAdmin(); return;
+    }
+    if(D.delProd!=null){ if(!(await confirmBox('Видалити продукт?',`«${A.draft.name||'Без назви'}» зникне з сайту назавжди.`))) return; const im=(S.products.find(x=>x.id===A.edit)||{}).img; await S.db.doc('products/'+A.edit).delete(); await dropMedia(im,''); A.edit=null;A.draft=null;A.dirty=false; toast('Продукт видалено'); renderAdmin(); return; }
+    if(D.toggleVis){ const p=S.products.find(x=>x.id===D.toggleVis); await S.db.doc('products/'+p.id).update({visible:p.visible===false}); toast(p.visible===false?'Продукт показано на сайті':'Продукт приховано'); return; }
+    if(D.move){
+      const list=[...S.products].sort((a,b)=>(a.order??999)-(b.order??999)); const i=list.findIndex(p=>p.id===D.move), j=i+(+D.dir); if(j<0||j>=list.length) return;
+      // normalise orders, then swap
+      for(let k=0;k<list.length;k++) if(list[k].order!==k+1 && k!==i && k!==j) await S.db.doc('products/'+list[k].id).update({order:k+1});
+      await S.db.doc('products/'+list[i].id).update({order:j+1}); await S.db.doc('products/'+list[j].id).update({order:i+1}); return;
+    }
+    if(D.savePost){
+      const d=A.draft; if(!String(d.title||'').trim()){ toast('Вкажіть заголовок',true); return; }
+      A.busy=true; renderAdmin();
+      const body={...d, title:d.title.trim(), status:D.savePost, date:d.date||today(), updatedAt:new Date().toISOString()};
+      const oldCv = A.edit==='new' ? '' : (S.posts.find(x=>x.id===A.edit)||{}).cover;
+      if(A.edit==='new') await S.db.collection('posts').add(body); else await S.db.doc('posts/'+A.edit).set(body);
+      await dropMedia(oldCv, body.cover);
+      A.busy=false; A.edit=null;A.draft=null;A.dirty=false; toast(D.savePost==='published'?'Допис опубліковано':'Чернетку збережено'); renderAdmin(); return;
+    }
+    if(D.delPost!=null){ if(!(await confirmBox('Видалити допис?',`«${A.draft.title||'Без назви'}» буде видалено назавжди.`))) return; const cv=(S.posts.find(x=>x.id===A.edit)||{}).cover; await S.db.doc('posts/'+A.edit).delete(); await dropMedia(cv,''); A.edit=null;A.draft=null;A.dirty=false; toast('Допис видалено'); renderAdmin(); return; }
+    if(D.togglePub){ const p=S.posts.find(x=>x.id===D.togglePub); const st=p.status==='published'?'draft':'published'; await S.db.doc('posts/'+p.id).update({status:st,updatedAt:new Date().toISOString()}); toast(st==='published'?'Допис опубліковано':'Допис знято з публікації'); return; }
+    if(D.saveMk!=null){ A.busy=true; renderAdmin(); await S.db.doc('settings/marketing').set({...A.mkDraft,updatedAt:new Date().toISOString()}); A.busy=false; toast('Налаштування опубліковано'); renderAdmin(); return; }
+  }catch(err){
+    A.busy=false; console.error(err);
+    const c=err&&err.code;
+    toast(c==='invalid_argument'?'Немає прав на зміни — потрібен доступ редактора':c==='quota_exceeded'?'Досягнуто ліміту бази даних':c==='resource_exhausted'?'Забагато дій — спробуйте за хвилину':'Не вдалося зберегти. Спробуйте ще раз',true);
+    renderAdmin();
+  }
+});
+addEventListener('hashchange',()=>{ if(location.hash==='#admin') openAdmin(); });
+
+/* ---- leads (admin) ---- */
+S.leadDocs=[];
+const LEAD_TYPES={partner:['🤝','Партнерство'],export:['🌍','Експорт'],contact:['✉','Контакти']};
+const LEAD_ST={new:['new','Нова'],work:['work','В роботі'],done:['mut','Закрита']};
+const allLeads = () => S.leadDocs.flatMap(d=>(d.items||[]).map(it=>({...it,uid:d.uid}))).sort((a,b)=>String(b.createdAt).localeCompare(String(a.createdAt)));
+const newLeads = () => allLeads().filter(l=>l.status==='new').length;
+function fmtDT(d){ const x=new Date(d); return isNaN(x)?'':x.toLocaleString('uk-UA',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}); }
+function viewLeads(){
+  A.leadType=A.leadType||'all'; A.leadSt=A.leadSt||'all';
+  const all=allLeads(), list=all.filter(l=>(A.leadType==='all'||l.type===A.leadType)&&(A.leadSt==='all'||l.status===A.leadSt));
+  const cnt=t=>all.filter(l=>t==='all'||l.type===t).length;
+  return `${lockNote()}<div class="atop"><div><h2>Заявки</h2><p>Звернення з форм «Партнерство», «Експорт» і «Контакти».</p></div></div>
+  <div class="filters" style="margin-bottom:10px">${[['all','Усі'],...Object.entries(LEAD_TYPES).map(([k,v])=>[k,v[1]])].map(([k,n])=>`<button class="chip${A.leadType===k?' on':''}" data-ltype="${k}">${n} · ${cnt(k)}</button>`).join('')}</div>
+  <div class="filters" style="margin-bottom:20px">${[['all','Будь-який статус'],...Object.entries(LEAD_ST).map(([k,v])=>[k,v[1]])].map(([k,n])=>`<button class="chip${A.leadSt===k?' on':''}" data-lst="${k}" style="padding:7px 14px;font-size:12px">${n}</button>`).join('')}</div>
+  <div class="list">${list.length?list.map(l=>{ const T=LEAD_TYPES[l.type]||['•',l.type], st=LEAD_ST[l.status]||LEAD_ST.new, d=l.data||{}, key=esc(l.uid+'|'+l.id);
+    const who=d.company||d.name||'Без імені', sub=[d.name&&d.company?d.name:'',d.email,d.country].filter(Boolean).join(' · ');
+    return `<div class="lead${l.status==='new'?' new':''}${A.openLead===l.id?' open':''}">
+      <div class="lh" data-lopen="${esc(l.id)}"><div class="lt">${T[0]}</div><div><b>${esc(who)}</b><span>${esc(T[1])} · ${esc(fmtDT(l.createdAt))}${sub?' · '+esc(sub):''}</span></div><span class="badge ${st[0]}">${st[1]}</span></div>
+      <div class="lb"><dl>${Object.entries(d).filter(([k,v])=>v).map(([k,v])=>`<dt>${esc(LEAD_LABEL[k]||k)}</dt><dd>${k==='email'?`<a href="mailto:${esc(v)}" style="color:var(--gold2)">${esc(v)}</a>`:k==='phone'?`<a href="tel:${esc(String(v).replace(/[^\d+]/g,''))}" style="color:var(--gold2)">${esc(v)}</a>`:esc(v)}</dd>`).join('')}</dl>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><label style="font-size:12px;color:var(--muted)">Статус</label>
+        <select class="st-sel" data-lstatus="${key}">${Object.entries(LEAD_ST).map(([k,v])=>`<option value="${k}"${l.status===k?' selected':''}>${v[1]}</option>`).join('')}</select>
+        ${d.email?`<a class="abtn sm" href="mailto:${esc(d.email)}?subject=${encodeURIComponent('Re: заявка — '+(S.mk.brand||'Аркада'))}">Відповісти листом</a>`:''}
+        <button class="abtn sm danger" data-ldel="${key}">Видалити</button></div></div></div>`; }).join(''):`<div class="empty">${all.length?'Немає заявок за цим фільтром':'Заявок поки немає. Вони з’являться тут, щойно хтось заповнить форму на сайті.'}</div>`}</div>`;
+}
+async function writeLead(key, fn){
+  const [uid,id]=key.split('|'); const doc=S.leadDocs.find(d=>d.uid===uid); if(!doc) return;
+  const items=(doc.items||[]).map(x=>({...x})); const i=items.findIndex(x=>x.id===id); if(i<0) return;
+  const res=fn(items,i); if(res===false) return;
+  await S.db.doc('leads/'+uid).set({items, updatedAt:new Date().toISOString()});
+}
+
+/* ---- company content (admin) ---- */
+const CO_SECTIONS=[['partners','Партнерство'],['export','Експорт'],['brands','Бренди'],['contacts','Контакти']];
+function listEd(key, fields, addLabel){
+  const arr=A.b2bDraft[key]||[]; const c4=fields.length>=3;
+  return `<div class="list" style="gap:10px">${arr.map((row,i)=>`<div class="lrow-edit${c4?' c4':''}">${fields.map(([k,l,t])=>`<div class="f"><label>${l}</label>${t==='textarea'?`<textarea data-bl="${key}" data-bi="${i}" data-bk="${k}">${esc(row[k])}</textarea>`:t==='color'?`<input type="color" data-bl="${key}" data-bi="${i}" data-bk="${k}" value="${esc(row[k]||'#c9a45c')}" style="height:40px;width:100%;border:1px solid var(--line);border-radius:10px;background:var(--card);padding:3px">`:`<input type="text" data-bl="${key}" data-bi="${i}" data-bk="${k}" value="${esc(row[k])}">`}</div>`).join('')}
+    <div class="ra"><button class="abtn sm" data-bmove="${key}|${i}|-1" ${i===0?'disabled':''} title="Вище">↑</button><button class="abtn sm" data-bmove="${key}|${i}|1" ${i===arr.length-1?'disabled':''} title="Нижче">↓</button><button class="abtn sm danger" data-bdel="${key}|${i}" title="Видалити">✕</button></div></div>`).join('')}</div>
+    <button class="abtn sm" style="margin-top:10px" data-badd="${key}">+ ${addLabel}</button>`;
+}
+function viewCompany(){
+  if(!A.b2bDraft) A.b2bDraft=JSON.parse(JSON.stringify(S.b2b));
+  const d=A.b2bDraft, sec=A.coSection=A.coSection||'partners';
+  const T=(f,l,ph='')=>`<div class="f"><label>${l}</label><input type="text" data-b2b="${f}" value="${esc(d[f])}" placeholder="${esc(ph)}"></div>`;
+  let body='';
+  if(sec==='partners') body=`<div class="panel"><h3>Вступ</h3><p class="hint">Короткий текст біля заголовка розділу.</p><div class="form"><div class="f full"><textarea data-b2b="partnersIntro">${esc(d.partnersIntro)}</textarea></div></div></div>
+    <div class="panel"><h3>Напрями співпраці</h3><p class="hint">Великі картки. Їхні назви також з’являються у формі заявки.</p>${listEd('directions',[['title','Назва'],['text','Опис','textarea']],'Додати напрям')}</div>
+    <div class="panel"><h3>Переваги для партнерів</h3><p class="hint">Список «Чому з нами вигідно».</p>${listEd('benefits',[['title','Перевага'],['text','Пояснення','textarea']],'Додати перевагу')}</div>
+    <div class="panel"><h3>Цифри</h3><p class="hint">Великі числа під переліком переваг.</p>${listEd('partnerStats',[['value','Значення'],['label','Підпис']],'Додати цифру')}</div>`;
+  else if(sec==='export'){ const on=new Set(d.countries||[]);
+    body=`<div class="panel"><h3>Вступ</h3><div class="form"><div class="f full"><textarea data-b2b="exportIntro">${esc(d.exportIntro)}</textarea></div></div></div>
+    <div class="panel"><h3>Країни присутності · ${[...on].filter(c=>c!=='UA').length}</h3><p class="hint">Позначені країни з’являться на глобусі та у списку.</p><div class="cpick">${Object.entries(COUNTRIES).filter(([c])=>c!=='UA').sort((a,b)=>a[1][0].localeCompare(b[1][0],'uk')).map(([c,v])=>`<button class="${on.has(c)?'on':''}" data-bctry="${c}">${flag(c)} ${esc(v[0])}</button>`).join('')}</div></div>
+    <div class="panel"><h3>Умови для імпортерів</h3><p class="hint">Короткі пункти під списком країн.</p>${listEd('exportTerms',[['title','Пункт'],['text','Пояснення','textarea']],'Додати пункт')}</div>`; }
+  else if(sec==='brands') body=`<div class="panel"><h3>Бренди заводу</h3><p class="hint">Картки в розділі «Бренди заводу». Колір задає світіння картки.</p>${listEd('brands',[['name','Назва'],['tag','Мітка'],['desc','Опис','textarea'],['color','Колір','color']],'Додати бренд')}</div>`;
+  else body=`<div class="panel"><h3>Основні контакти</h3><div class="form">${T('address','Адреса')}${T('phone','Телефон')}${T('email','Загальна пошта')}${T('hours','Графік роботи','Пн–Пт, 9:00–18:00')}</div></div>
+    <div class="panel"><h3>Відділи</h3><p class="hint">Картки відділів. Їхні назви також є у списку «Відділ» у формі зв’язку.</p>${listEd('departments',[['name','Відділ'],['email','Email'],['phone','Телефон'],['note','Чим допоможуть','textarea']],'Додати відділ')}</div>`;
+  const dirty=JSON.stringify(d)!==JSON.stringify(S.b2b);
+  return `${lockNote()}<div class="atop"><div><h2>Компанія</h2><p>Партнерство, експорт, бренди та контакти.</p></div></div>
+   <div class="filters" style="margin-bottom:18px">${CO_SECTIONS.map(([k,n])=>`<button class="chip${sec===k?' on':''}" data-cosec="${k}">${n}</button>`).join('')}</div>
+   ${body}
+   <div class="savebar"><span class="l" data-codirty>${dirty?'Є незбережені зміни':'Усе збережено'}</span><div style="display:flex;gap:8px"><button class="abtn" data-co-reset ${dirty?'':'disabled'}>Скасувати зміни</button><button class="abtn pri" data-save-co ${A.busy||!dirty?'disabled':''}>${A.busy?'Збереження…':'Зберегти й опублікувати'}</button></div></div>`;
+}
+function coDirtyUI(){ const dirty=JSON.stringify(A.b2bDraft)!==JSON.stringify(S.b2b); const l=document.querySelector('[data-codirty]'); if(l) l.textContent=dirty?'Є незбережені зміни':'Усе збережено'; const s=document.querySelector('[data-save-co]'); if(s) s.disabled=!dirty||A.busy; const r=document.querySelector('[data-co-reset]'); if(r) r.disabled=!dirty; }
+$('#admin').addEventListener('input',e=>{
+  const t=e.target; if(!A.b2bDraft) return;
+  if(t.dataset.b2b){ A.b2bDraft[t.dataset.b2b]=t.value; coDirtyUI(); }
+  if(t.dataset.bl){ const arr=A.b2bDraft[t.dataset.bl]=A.b2bDraft[t.dataset.bl]||[]; arr[+t.dataset.bi][t.dataset.bk]=t.value; coDirtyUI(); }
+});
+$('#admin').addEventListener('change',async e=>{
+  const t=e.target;
+  if(t.dataset.lstatus){ if(!S.db) return; try{ await writeLead(t.dataset.lstatus,(it,i)=>{ it[i].status=t.value; }); toast('Статус оновлено'); }catch(err){ console.error(err); toast('Не вдалося оновити статус',true); } }
+});
+$('#admin').addEventListener('click',async e=>{
+  const b=e.target.closest('button,[data-lopen]'); if(!b) return; const D=b.dataset;
+  if(D.ltype){ A.leadType=D.ltype; renderAdmin(); return; }
+  if(D.lst){ A.leadSt=D.lst; renderAdmin(); return; }
+  if(D.lopen){ A.openLead = A.openLead===D.lopen?null:D.lopen; renderAdmin(); return; }
+  if(D.cosec){ A.coSection=D.cosec; renderAdmin(); return; }
+  if(D.coReset!=null){ A.b2bDraft=JSON.parse(JSON.stringify(S.b2b)); renderAdmin(); return; }
+  if(D.badd){ const tpl={directions:{title:'',text:''},benefits:{title:'',text:''},partnerStats:{value:'',label:''},exportTerms:{title:'',text:''},brands:{name:'',tag:'',desc:'',color:'#c9a45c'},departments:{name:'',email:'',phone:'',note:''}}[D.badd]; (A.b2bDraft[D.badd]=A.b2bDraft[D.badd]||[]).push({...tpl}); renderAdmin(); return; }
+  if(D.bdel){ const [k,i]=D.bdel.split('|'); A.b2bDraft[k].splice(+i,1); renderAdmin(); return; }
+  if(D.bmove){ const [k,i,dir]=D.bmove.split('|'); const a=A.b2bDraft[k], x=+i, y=x+(+dir); [a[x],a[y]]=[a[y],a[x]]; renderAdmin(); return; }
+  if(D.bctry){ const s=new Set(A.b2bDraft.countries||[]); s.has(D.bctry)?s.delete(D.bctry):s.add(D.bctry); A.b2bDraft.countries=[...s]; renderAdmin(); return; }
+  if(!S.db){ if(D.saveCo!=null||D.ldel) toast('База даних недоступна — зміни не збережено',true); return; }
+  try{
+    if(D.saveCo!=null){ A.busy=true; renderAdmin(); const body=JSON.parse(JSON.stringify(A.b2bDraft)); await S.db.doc('settings/b2b').set({...body,updatedAt:new Date().toISOString()}); A.busy=false; toast('Розділи компанії оновлено'); renderAdmin(); return; }
+    if(D.ldel){ if(!(await confirmBox('Видалити заявку?','Заявку буде видалено назавжди.'))) return; await writeLead(D.ldel,(it,i)=>{ it.splice(i,1); }); toast('Заявку видалено'); return; }
+  }catch(err){ A.busy=false; console.error(err); toast('Не вдалося зберегти. Спробуйте ще раз',true); renderAdmin(); }
+});
+
+/* ---------------- boot ---------------- */
+renderMk(); renderProducts(); renderBlog(); renderB2B(); observeRv();
+(async()=>{
+  const C = window.claude;
+  if(!C || typeof C.use!=='function'){ S.dbState='off'; renderProducts(); renderBlog(); return; }
+  const [db,user] = await Promise.all([C.use('db'), C.use('user')]);
+  S.db=db; S.user=user;
+  if(!db){ S.dbState='off'; renderProducts(); renderBlog(); }
+  else{
+    const fail = what => err => { console.error(what,err); if(err&&err.code==='revoked'){ S.dbState='off'; } };
+    db.collection('products').onSnapshot(s=>{ S.products=s.docs.map(d=>({id:d.id,...d.data()})); S.loaded.p=true; S.dbState='ready'; renderProducts(); renderAdmin(); }, fail('products'));
+    db.collection('posts').onSnapshot(s=>{ S.posts=s.docs.map(d=>({id:d.id,...d.data()})); S.loaded.b=true; S.dbState='ready'; renderBlog(); renderAdmin(); }, fail('posts'));
+    db.collection('media').onSnapshot(s=>{ const m={}; s.docs.forEach(d=>{ const x=d.data(); if(x&&typeof x.data==='string'&&x.data.startsWith('data:image/')) m[d.id]=x.data; }); S.media=m; sbKind=''; renderProducts(); renderBlog(); renderAdmin(); }, fail('media'));
+    db.doc('settings/b2b').onSnapshot(s=>{ const prev=JSON.stringify(S.b2b); const nb={...DEF_B2B,...(s.exists?s.data():{})}; delete nb.updatedAt; S.b2b=nb; if(!A.b2bDraft || JSON.stringify(A.b2bDraft)===prev) A.b2bDraft=JSON.parse(JSON.stringify(nb)); renderB2B(); renderAdmin(); }, fail('b2b'));
+    db.doc('settings/marketing').onSnapshot(s=>{ S.mk={...DEF_MK,...(s.exists?s.data():{})}; delete S.mk.updatedAt; if(!A.mkDraft || JSON.stringify(A.mkDraft)===JSON.stringify(A._mkBase)) A.mkDraft={...S.mk}; A._mkBase={...S.mk}; renderMk(); renderProducts(); renderAdmin(); }, fail('settings'));
+  }
+  S.canEdit = !!(user && await user.canEdit());
+  if(S.canEdit){ $('#admOpen').classList.add('on'); if(db) db.collection('leads').onSnapshot(s=>{ S.leadDocs=s.docs.map(d=>({uid:d.id,...d.data()})); renderAdmin(); }, e=>console.error('leads',e)); if(location.hash==='#admin') openAdmin(); }
+})();
+</script>
+</body>
+</html>
+
+</body></html>

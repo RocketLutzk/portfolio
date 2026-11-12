@@ -10,18 +10,18 @@ Portfolio of a web developer and digital marketer from Lviv, Ukraine: websites, 
 
 | Проєкт | Що це | Посилання |
 |---|---|---|
-| Аркада | Сайт бренду напоїв з адмінкою | [Демо](https://claude.ai/artifact/2sXWzdhUBNz7gLMAdkKZGf) · [Код](https://github.com/RocketLutzk/hetman) |
-| Аркада 3D | WebGL-промосторінка | [Демо](https://claude.ai/artifact/SwyB31B3BsgLms7wjJQ1JF) |
-| Мідний контур | ERP для виробництва | [Демо](https://claude.ai/artifact/95bcBuQyrPSfmb3RDvmXH3) |
+| Аркада | Сайт бренду напоїв з адмінкою | [Демо](https://rocketlutzk.github.io/portfolio/arkada/) · [Код](https://github.com/RocketLutzk/hetman) |
+| Аркада 3D | WebGL-промосторінка | [Демо](https://rocketlutzk.github.io/portfolio/arkada-3d/) |
+| Мідний контур | ERP для виробництва | [Демо](https://rocketlutzk.github.io/portfolio/erp/) |
 | Global Auto Logistic | Екосистема з 7 продуктів для пригону авто: сайт, CRM, кабінет, водій, монітор лотів, оцінка ремонту, лендинги | [Хаб](https://rocketlutzk.github.io/portfolio/gal/hub.html) |
-| Eko Modda | Інтернет-магазин меблів | [Демо](https://claude.ai/artifact/BzQTmbmc4JA8dkgGUfNoeS) |
-| RMauto | Сайт автомайданчика | [Демо](https://claude.ai/artifact/L6jLRaWzT8SNTtYSfSMG2f) · [Код](https://github.com/RocketLutzk/rmauto) |
-| Леоплит | Каталог плит із картою розкрою | [Демо](https://claude.ai/artifact/87kZ7mvwhDW6Xx4QkbR5jW) |
-| Ліцей Стернюка | Шкільний сайт | [Демо](https://claude.ai/artifact/MQnJHVEZKK5j6YWSTqSpz4) |
-| Lumen Vault | Демо крипто-казино з бек-офісом | [Демо](https://claude.ai/artifact/5QS8JvnKh1oiFabtmNMcEU) · [Код](https://github.com/RocketLutzk/lumen) |
-| Розводка | Калькулятор сантехніки за планом | [Демо](https://claude.ai/artifact/9RmYxEBycAxSSJy6TmAV63) · [Код](https://github.com/RocketLutzk/rozvodka) |
-| Будкошторис | Кошторис будинку | [Демо](https://claude.ai/artifact/NRQB7XVuqdKo2gGAb9vysk) |
-| Ситно | Планувальник харчування | [Демо](https://claude.ai/artifact/B5xZ1pwM3xZdcJTYE2DMsb) · [Код](https://github.com/RocketLutzk/sytno) |
+| Eko Modda | Інтернет-магазин меблів | [Демо](https://rocketlutzk.github.io/portfolio/eko-modda/) |
+| RMauto | Сайт автомайданчика | [Демо](https://rocketlutzk.github.io/portfolio/rmauto/) · [Код](https://github.com/RocketLutzk/rmauto) |
+| Леоплит | Каталог плит із картою розкрою | [Демо](https://rocketlutzk.github.io/portfolio/leoplyt/) |
+| Ліцей Стернюка | Шкільний сайт | [Демо](https://rocketlutzk.github.io/portfolio/lyceum/) |
+| Lumen Vault | Демо крипто-казино з бек-офісом | [Демо](https://rocketlutzk.github.io/portfolio/lumen/) · [Код](https://github.com/RocketLutzk/lumen) |
+| Розводка | Калькулятор сантехніки за планом | [Демо](https://rocketlutzk.github.io/portfolio/rozvodka/) · [Код](https://github.com/RocketLutzk/rozvodka) |
+| Будкошторис | Кошторис будинку | [Демо](https://rocketlutzk.github.io/portfolio/budkoshtorys/) |
+| Ситно | Планувальник харчування | [Демо](https://rocketlutzk.github.io/portfolio/sytno/) · [Код](https://github.com/RocketLutzk/sytno) |
 | Polysim | Симулятор ставок Polymarket | [Дашборд](https://rocketlutzk.github.io/polysim/) · [Код](https://github.com/RocketLutzk/polysim) |
 | TradeSim | Тестування торгових стратегій | [Дашборд](https://rocketlutzk.github.io/tradesim/) · [Код](https://github.com/RocketLutzk/tradesim) |
 
@@ -34,6 +34,7 @@ Portfolio of a web developer and digital marketer from Lviv, Ukraine: websites, 
 - `projects.js` — дані всіх проєктів (тексти UA/EN, посилання)
 - `mock.css` — стилі мініатюр
 - `gal/` — прототипи Global Auto Logistic (вхід: `gal/hub.html`)
+- `arkada/`, `arkada-concept/`, `arkada-3d/`, `erp/`, `eko-modda/`, `rmauto/`, `leoplyt/`, `lyceum/`, `lumen/`, `rozvodka/`, `budkoshtorys/`, `sytno/` — живі демо проєктів
 
 ## Контакти
 

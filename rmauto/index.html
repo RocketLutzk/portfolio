@@ -1,0 +1,909 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>RMauto</title>
+</head>
+<body>
+<title>RMauto</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;800;900&family=Manrope:wght@400;500;600;700;800&display=swap">
+<style>
+/* Layout: night car lot — near-black ground, signal-orange accent, pennant-string hero, ticker band, TikTok reel strip; one 1240px column that stacks on phones */
+:root{
+  --bg:#0F1114; --surface:#171A1F; --surface-2:#1F2329; --line:#2A2E35; --line-2:#3A3F47;
+  --fg:#F2F1EE; --soft:#CACCD1; --muted:#A9ACB3; --faint:#8B8F97;
+  --accent:#FF6A1A; --accent-2:#FFB23F; --on-accent:#140C07;
+  --pink:#FF3D6E; --cyan:#2EE6DF;
+  --ok-bg:#16241A; --ok-line:#2F5A3A; --ok-fg:#C9EDD1;
+  --display:"Unbounded","Arial Black",system-ui,sans-serif;
+  --body:"Manrope","Segoe UI",system-ui,sans-serif;
+  --ease:cubic-bezier(.2,.8,.2,1);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.55 var(--body);overflow-x:hidden}
+a{color:var(--accent)}
+h1,h2,h3{text-wrap:balance}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.wrap{max-width:1240px;margin:0 auto;padding-inline:24px}
+.display{font-family:var(--display);font-weight:800;letter-spacing:-.025em}
+.muted{color:var(--muted)}
+.num{font-variant-numeric:tabular-nums}
+.eyebrow{display:inline-flex;align-items:center;gap:10px;font-size:13px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+
+/* Buttons */
+.btn{position:relative;overflow:hidden;display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:50px;padding:0 22px;border-radius:14px;font-weight:800;font-size:15px;text-decoration:none;cursor:pointer;border:0;transition:transform .25s var(--ease),box-shadow .25s var(--ease),background .2s}
+.btn svg{transition:transform .25s var(--ease)}
+.btn:hover svg.go{transform:translateX(4px)}
+.btn:active{transform:scale(.97)}
+.btn-accent{background:var(--accent);color:var(--on-accent);box-shadow:0 8px 28px -10px rgba(255,106,26,.7)}
+.btn-accent:hover{transform:translateY(-2px);box-shadow:0 14px 34px -10px rgba(255,106,26,.85)}
+.btn-accent::after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.45) 50%,transparent 70%);transform:translateX(-120%);transition:transform .7s var(--ease)}
+.btn-accent:hover::after{transform:translateX(120%)}
+.btn-ghost{background:transparent;color:var(--fg);border:1px solid var(--line-2)}
+.btn-ghost:hover{border-color:var(--fg);transform:translateY(-2px)}
+.btn-dark{background:var(--bg);color:var(--fg)}
+.btn-dark:hover{transform:translateY(-2px)}
+.btn-tt{background:var(--fg);color:var(--bg)}
+.btn-tt:hover{transform:translateY(-2px);box-shadow:-3px 3px 0 var(--pink),3px -3px 0 var(--cyan)}
+
+/* Scroll progress */
+.progress{position:fixed;top:0;left:0;right:0;height:3px;z-index:50;background:linear-gradient(90deg,var(--accent),var(--accent-2));transform-origin:0 50%;transform:scaleX(0);display:none}
+
+/* Header */
+.hdr{position:sticky;top:env(safe-area-inset-top,0px);z-index:40;background:rgba(15,17,20,.82);backdrop-filter:blur(14px) saturate(1.4);-webkit-backdrop-filter:blur(14px) saturate(1.4);border-bottom:1px solid transparent;transition:border-color .3s,background .3s}
+.hdr.scrolled{border-color:var(--line);background:rgba(15,17,20,.94)}
+.hdr .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:76px;transition:min-height .3s var(--ease)}
+.hdr.scrolled .wrap{min-height:62px}
+.logo{font-family:var(--display);font-weight:900;font-size:25px;color:var(--fg);text-decoration:none;letter-spacing:-.03em;display:inline-flex;align-items:baseline}
+.logo span{color:var(--accent);display:inline-block;transition:transform .35s var(--ease)}
+.logo:hover span{transform:translateX(3px) skewX(-10deg)}
+.nav{display:flex;gap:26px}
+.nav a{position:relative;color:var(--soft);text-decoration:none;font-weight:700;font-size:15px;padding:6px 0}
+.nav a::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;background:var(--accent);transform:scaleX(0);transform-origin:right;transition:transform .3s var(--ease)}
+.nav a:hover{color:var(--fg)}
+.nav a:hover::after{transform:scaleX(1);transform-origin:left}
+.nav .tt-link{color:var(--fg)}
+.hdr-right{display:flex;align-items:center;gap:14px}
+.phone{font-weight:800;color:var(--fg);text-decoration:none;white-space:nowrap}
+.burger{display:none;width:46px;height:46px;border-radius:14px;border:1px solid var(--line-2);background:transparent;cursor:pointer;align-items:center;justify-content:center}
+.burger i{display:block;width:18px;height:2px;background:var(--fg);position:relative;transition:background .2s}
+.burger i::before,.burger i::after{content:"";position:absolute;left:0;width:18px;height:2px;background:var(--fg);transition:transform .3s var(--ease)}
+.burger i::before{top:-6px}.burger i::after{top:6px}
+.burger[aria-expanded="true"] i{background:transparent}
+.burger[aria-expanded="true"] i::before{transform:translateY(6px) rotate(45deg)}
+.burger[aria-expanded="true"] i::after{transform:translateY(-6px) rotate(-45deg)}
+.mnav{display:grid;grid-template-rows:0fr;transition:grid-template-rows .4s var(--ease);background:var(--surface)}
+.mnav>div{overflow:hidden;display:flex;flex-direction:column;padding-inline:16px}
+.mnav.open{grid-template-rows:1fr;border-top:1px solid var(--line)}
+.mnav a{padding:15px 0;color:var(--fg);text-decoration:none;font-weight:800;font-size:19px;border-bottom:1px solid var(--line)}
+.mnav a:last-child{border-bottom:0;margin-bottom:12px}
+
+/* Hero */
+.hero{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:48px;align-items:center;padding-block:56px 40px}
+.live{width:9px;height:9px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 0 rgba(255,106,26,.7);animation:ping 1.8s infinite}
+.hero h1{font-size:clamp(34px,5.4vw,68px);line-height:1.02;margin:16px 0 20px}
+.ln{display:block;overflow:hidden;padding-bottom:.06em}
+.ln>span{display:inline-block;animation:up .9s var(--ease) both}
+.ln:nth-child(2)>span{animation-delay:.1s}
+.ln:nth-child(3)>span{animation-delay:.2s}
+.hl{position:relative;color:var(--accent);white-space:nowrap}
+.hl::after{content:"";position:absolute;left:0;right:0;bottom:.02em;height:.12em;background:var(--accent-2);border-radius:4px;transform-origin:left;animation:draw .8s .75s var(--ease) both;opacity:.85}
+.hero p.lead{font-size:18px;max-width:520px;margin:0 0 26px;animation:fade .8s .35s both}
+.search{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:14px;display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;animation:fade .8s .45s both}
+.field{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:700;color:var(--muted)}
+.field input,.field select{height:50px;border-radius:12px;border:1px solid #30353C;background:var(--bg);color:var(--fg);padding:0 14px;font-size:16px;width:100%;transition:border-color .2s,box-shadow .2s}
+.field input:focus,.field select:focus{border-color:var(--accent);box-shadow:0 0 0 4px rgba(255,106,26,.18);outline:none}
+.search .btn{align-self:end}
+.tt-badge{margin-top:18px;display:inline-flex;align-items:center;gap:12px;padding:8px 16px 8px 8px;border-radius:999px;background:var(--surface);border:1px solid var(--line);text-decoration:none;color:var(--fg);font-weight:700;font-size:14px;animation:fade .8s .55s both;transition:transform .25s var(--ease),border-color .2s}
+.tt-badge:hover{transform:translateY(-2px);border-color:var(--line-2)}
+.tt-badge b{display:inline-flex;width:34px;height:34px;border-radius:50%;background:var(--fg);color:var(--bg);align-items:center;justify-content:center;box-shadow:-2px 2px 0 var(--pink),2px -2px 0 var(--cyan)}
+
+/* Hero scene */
+.scene{position:relative;aspect-ratio:4/3;border-radius:28px;overflow:hidden;background:radial-gradient(120% 90% at 75% 20%,#2A1A10 0%,#15171B 55%,#111316 100%);border:1px solid var(--line);max-width:100%;animation:fade 1s .15s both}
+.scene>svg{position:absolute;inset:0;width:100%;height:100%}
+.flag{transform-box:fill-box;transform-origin:50% 0;animation:sway 2.6s ease-in-out infinite alternate}
+.road-dash{stroke-dasharray:46 34;animation:dash .6s linear infinite}
+.car-bob{animation:bob .5s ease-in-out infinite alternate}
+.wheel{transform-box:fill-box;transform-origin:center;animation:spin .55s linear infinite}
+.speed{animation:speed 1.1s linear infinite}
+.speed:nth-of-type(2){animation-delay:.35s}.speed:nth-of-type(3){animation-delay:.7s}
+.lamp{animation:flicker 4s infinite}
+.float{position:absolute;display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:14px;background:rgba(23,26,31,.88);border:1px solid var(--line-2);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);font-size:13px;font-weight:700;animation:float 3.2s ease-in-out infinite alternate;box-shadow:0 10px 30px -12px rgba(0,0,0,.7)}
+.float small{display:block;color:var(--faint);font-size:11px;font-weight:700}
+.float .big{font-family:var(--display);font-weight:800;font-size:18px}
+.f1{top:7%;left:6%}
+.f2{top:30%;right:5%;animation-delay:-1.2s}
+.f3{bottom:7%;left:6%;animation-delay:-2s;font-size:11px;color:var(--faint);background:rgba(15,17,20,.7)}
+.ico{width:30px;height:30px;border-radius:9px;background:var(--accent);color:var(--on-accent);display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto}
+
+/* Ticker */
+.ticker-wrap{overflow:hidden;padding-block:24px 8px}
+.ticker{background:var(--accent);color:var(--on-accent);transform:rotate(-1.6deg);margin-inline:-20px;overflow:hidden;border-block:3px solid var(--bg);box-shadow:0 10px 40px -16px rgba(255,106,26,.7)}
+.ticker-track{display:flex;width:max-content;animation:marquee 26s linear infinite}
+.ticker:hover .ticker-track{animation-play-state:paused}
+.ticker span{display:inline-flex;align-items:center;gap:26px;padding:15px 13px;font-family:var(--display);font-weight:800;font-size:clamp(16px,2vw,22px);letter-spacing:-.01em;white-space:nowrap;text-transform:uppercase}
+.ticker span::after{content:"";width:12px;height:12px;background:var(--on-accent);transform:rotate(45deg);border-radius:2px}
+
+/* Stats */
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;padding-block:56px 24px}
+.stat{padding:22px 4px;border-top:1px solid var(--line-2)}
+.stat b{display:block;font-family:var(--display);font-weight:800;font-size:clamp(30px,3.6vw,46px);letter-spacing:-.03em;line-height:1}
+.stat b em{font-style:normal;color:var(--accent)}
+.stat span{display:block;margin-top:8px;color:var(--muted);font-size:15px}
+
+/* Services */
+.services{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;padding-block:32px 72px}
+.svc{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:24px;display:flex;flex-direction:column;gap:12px;overflow:hidden;transition:transform .35s var(--ease),border-color .3s}
+.svc::before{content:"";position:absolute;width:180px;height:180px;right:-70px;top:-70px;border-radius:50%;background:radial-gradient(circle,rgba(255,106,26,.28),transparent 70%);opacity:0;transition:opacity .4s}
+.svc:hover{transform:translateY(-6px);border-color:var(--line-2)}
+.svc:hover::before{opacity:1}
+.svc i{width:46px;height:46px;border-radius:14px;background:#2A1A10;color:var(--accent);display:flex;align-items:center;justify-content:center;transition:transform .45s var(--ease),background .3s,color .3s}
+.svc:hover i{transform:rotate(-8deg) scale(1.08);background:var(--accent);color:var(--on-accent)}
+.svc b{font-family:var(--display);font-weight:600;font-size:17px}
+.svc span{font-size:15px;color:var(--muted)}
+
+/* Catalog */
+.catalog{background:#13151A;border-block:1px solid var(--line);padding-block:72px}
+.cat-head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:20px;margin-bottom:26px}
+.cat-head h2{font-size:clamp(28px,3.6vw,46px);margin:0 0 6px}
+.tools{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{min-height:44px;padding:0 18px;border-radius:999px;border:1px solid var(--line-2);background:transparent;color:var(--soft);font-weight:700;font-size:14px;cursor:pointer;white-space:nowrap;transition:background .25s,color .25s,border-color .25s,transform .2s}
+.chip:hover{border-color:var(--fg);color:var(--fg)}
+.chip:active{transform:scale(.95)}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.sort{height:44px;border-radius:999px;border:1px solid var(--line-2);background:var(--bg);padding:0 16px;font-weight:700;font-size:14px;cursor:pointer}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(285px,1fr));gap:22px}
+.card{position:relative;background:var(--surface);border:1px solid #262A31;border-radius:22px;overflow:hidden;display:flex;flex-direction:column;text-decoration:none;color:var(--fg);transition:transform .4s var(--ease),border-color .3s,box-shadow .4s var(--ease);animation:pop .55s var(--ease) backwards;animation-delay:calc(var(--i,0) * 70ms)}
+.card:hover{transform:translateY(-6px);border-color:var(--line-2);box-shadow:0 24px 50px -24px rgba(0,0,0,.9),0 0 0 1px rgba(255,106,26,.15)}
+.photo{position:relative;aspect-ratio:16/10;overflow:hidden;display:flex;align-items:center;justify-content:center;color:#5D626B;background:radial-gradient(90% 80% at 72% 18%,hsl(var(--h,24) 70% 32% / .55),transparent 62%),var(--surface-2)}
+.photo .glyph{transition:transform .6s var(--ease)}
+.card:hover .photo .glyph{transform:translateX(14px) scale(1.06)}
+.photo::after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 35%,rgba(255,255,255,.12) 50%,transparent 65%);transform:translateX(-100%);transition:transform .9s var(--ease)}
+.card:hover .photo::after{transform:translateX(100%)}
+.ph-label{position:absolute;left:14px;bottom:12px;font-size:11px;font-weight:700;color:var(--faint)}
+.badge{position:absolute;top:12px;left:12px;z-index:2;background:var(--accent);color:var(--on-accent);font-size:11px;font-weight:800;padding:6px 10px;border-radius:8px;text-transform:uppercase;letter-spacing:.06em}
+.badge.drop{background:var(--accent-2)}
+.badge.tt{left:auto;right:12px;background:rgba(15,17,20,.85);color:var(--fg);display:flex;gap:6px;align-items:center;text-transform:none;letter-spacing:0}
+.count{position:absolute;right:12px;bottom:12px;background:rgba(15,17,20,.85);color:var(--fg);font-size:12px;font-weight:700;padding:4px 9px;border-radius:7px}
+.card-body{padding:18px 20px 20px;display:flex;flex-direction:column;gap:12px;flex-grow:1}
+.card-body h3{margin:0;font-size:19px}
+.tags{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;font-size:13px;color:var(--soft)}
+.tags span{background:var(--surface-2);border-radius:9px;padding:8px 10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card-foot{margin-top:auto;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.price{font-family:var(--display);font-weight:800;font-size:23px}
+.old{display:block;font-size:13px;color:var(--faint);text-decoration:line-through;font-family:var(--body);font-weight:600}
+.more{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line-2);border-radius:12px;padding:10px 14px;font-weight:800;font-size:14px;transition:background .25s,color .25s,border-color .25s}
+.card:hover .more{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.card.sold .photo,.card.sold .card-body{filter:grayscale(1);opacity:.6}
+.sold-stamp{position:absolute;top:50%;left:50%;z-index:3;transform:translate(-50%,-80%) rotate(-12deg);border:3px solid var(--accent);color:var(--accent);font-family:var(--display);font-weight:900;font-size:26px;padding:6px 18px;border-radius:10px;letter-spacing:.06em;text-transform:uppercase;background:rgba(15,17,20,.75)}
+.empty{grid-column:1/-1;padding:44px;text-align:center;color:var(--muted);border:1px dashed var(--line-2);border-radius:18px}
+
+/* TikTok */
+.tiktok{padding-block:88px 72px;position:relative;overflow:hidden}
+.tt-head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:24px;margin-bottom:30px}
+.tt-head h2{font-size:clamp(34px,5vw,64px);margin:10px 0 10px;line-height:1}
+.glitch{position:relative;display:inline-block;text-shadow:-3px 0 var(--pink),3px 0 var(--cyan);animation:glitch 3.5s infinite}
+.tt-head p{margin:0;max-width:520px;color:var(--muted);font-size:17px}
+.tt-row{display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;padding:8px 2px 18px;scrollbar-width:thin;scrollbar-color:var(--line-2) transparent}
+.reel{flex:0 0 228px;scroll-snap-align:start;position:relative;aspect-ratio:9/16;border-radius:22px;overflow:hidden;text-decoration:none;color:var(--fg);background:linear-gradient(180deg,transparent 45%,rgba(0,0,0,.85)),radial-gradient(100% 70% at 50% 30%,hsl(var(--h) 65% 30% / .7),transparent 70%),var(--surface-2);border:1px solid var(--line);transition:transform .45s var(--ease),box-shadow .45s var(--ease)}
+.reel:hover{transform:translateY(-8px) rotate(-1deg);box-shadow:-6px 6px 0 var(--pink),6px -6px 0 var(--cyan)}
+.reel .rglyph{position:absolute;top:30%;left:50%;transform:translate(-50%,-50%);color:rgba(255,255,255,.18)}
+.reel .play{position:absolute;top:44%;left:50%;width:60px;height:60px;margin:-30px 0 0 -30px;border-radius:50%;background:rgba(255,255,255,.16);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;transition:transform .35s var(--ease),background .3s}
+.reel:hover .play{transform:scale(1.15);background:var(--accent);color:var(--on-accent)}
+.reel .handle{position:absolute;top:14px;left:14px;font-size:12px;font-weight:800;display:flex;gap:6px;align-items:center}
+.reel .cap{position:absolute;left:14px;right:14px;bottom:16px;display:flex;flex-direction:column;gap:8px}
+.reel .cap b{font-size:15px;line-height:1.3}
+.reel .cap small{display:flex;align-items:center;gap:6px;color:var(--soft);font-size:12px;font-weight:700}
+.eq{display:inline-flex;gap:2px;align-items:flex-end;height:12px}
+.eq i{width:3px;background:var(--accent);border-radius:2px;animation:eq .9s ease-in-out infinite alternate}
+.eq i:nth-child(2){animation-delay:-.3s}.eq i:nth-child(3){animation-delay:-.6s}
+.tt-nav{display:flex;gap:8px}
+.round{width:48px;height:48px;border-radius:50%;border:1px solid var(--line-2);background:transparent;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:background .25s,color .25s,border-color .25s}
+.round:hover{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.promo{margin-top:22px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px;padding:18px 22px;border-radius:18px;border:1px dashed var(--line-2);background:var(--surface)}
+.promo b{font-size:17px}
+.code{font-family:var(--display);font-weight:800;letter-spacing:.06em;padding:8px 14px;border-radius:10px;background:var(--bg);border:1px solid var(--line-2);cursor:pointer;transition:border-color .2s,transform .2s}
+.code:hover{border-color:var(--accent);transform:scale(1.03)}
+
+/* Steps */
+.how{padding-block:24px 72px}
+.how h2{font-size:clamp(26px,3.4vw,42px);margin:0 0 30px}
+.steps{position:relative;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px;counter-reset:s}
+.steps::before{content:"";position:absolute;top:27px;left:28px;right:28px;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent-2));transform-origin:left;opacity:.6}
+.step{position:relative;display:flex;flex-direction:column;gap:10px}
+.step::before{counter-increment:s;content:counter(s);width:56px;height:56px;border-radius:50%;background:var(--bg);border:2px solid var(--accent);display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:800;font-size:20px;color:var(--accent);position:relative;transition:background .3s,color .3s,transform .4s var(--ease)}
+.step:hover::before{background:var(--accent);color:var(--on-accent);transform:scale(1.1) rotate(-6deg)}
+.step b{font-size:17px}
+.step span{color:var(--muted);font-size:15px}
+
+/* Trade-in */
+.tradein{padding-block:8px 72px}
+.tradein-box{position:relative;overflow:hidden;background:var(--accent);color:var(--on-accent);border-radius:28px;padding:clamp(26px,4vw,56px);display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:24px}
+.tradein-box::before{content:"";position:absolute;inset:-50%;background:repeating-linear-gradient(-45deg,rgba(0,0,0,.06) 0 22px,transparent 22px 44px);animation:stripes 18s linear infinite}
+.tradein-box>*{position:relative}
+.tradein-box h2{margin:0 0 10px;font-size:clamp(24px,3.2vw,40px);line-height:1.08}
+.tradein-box p{margin:0;max-width:560px;font-size:17px;font-weight:600}
+
+/* Contacts */
+.contacts{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;padding-bottom:88px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:28px}
+.panel h2{margin:0 0 18px;font-size:28px}
+form.lead{display:flex;flex-direction:column;gap:14px}
+.ok{background:var(--ok-bg);border:1px solid var(--ok-line);color:var(--ok-fg);border-radius:14px;padding:20px;font-weight:600;animation:pop .5s var(--ease)}
+.info{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-bottom:16px}
+.info small{display:block;color:var(--faint);font-weight:700;font-size:12px;margin-bottom:2px}
+.map{min-height:250px;border-radius:22px;border:1px dashed var(--line-2);background:var(--surface);display:flex;align-items:center;justify-content:center;color:var(--faint);font-weight:700;font-size:14px}
+.ftr{border-top:1px solid var(--line)}
+.ftr .wrap{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:14px;padding-block:28px;font-size:14px;color:var(--faint)}
+.socials{display:flex;gap:10px}
+.socials a{color:var(--soft);text-decoration:none;font-weight:700;border:1px solid var(--line-2);border-radius:999px;padding:8px 14px;transition:color .2s,border-color .2s}
+.socials a:hover{color:var(--fg);border-color:var(--fg)}
+
+/* Car page */
+.crumbs{display:flex;flex-wrap:wrap;gap:8px;font-size:14px;color:var(--faint);padding-block:22px}
+.crumbs a{color:var(--faint)}
+.car-top{display:grid;grid-template-columns:minmax(0,1.75fr) minmax(0,1fr);gap:32px;align-items:start}
+.stage{position:relative;aspect-ratio:16/10;border-radius:24px;overflow:hidden;max-width:100%;touch-action:pan-y;border:1px solid var(--line)}
+.stage .photo{position:absolute;inset:0;aspect-ratio:auto;flex-direction:column;gap:12px;font-size:14px;font-weight:700}
+.shot-in-r{animation:slideR .45s var(--ease)}
+.shot-in-l{animation:slideL .45s var(--ease)}
+.arrow{position:absolute;z-index:3;top:50%;transform:translateY(-50%);width:50px;height:50px;border-radius:50%;border:0;background:rgba(15,17,20,.85);color:var(--fg);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s,color .2s,transform .2s}
+.arrow:hover{background:var(--accent);color:var(--on-accent)}
+.arrow:active{transform:translateY(-50%) scale(.92)}
+.arrow.l{left:14px}.arrow.r{right:14px}
+.stage .count{z-index:3;font-size:13px;right:14px;bottom:14px;padding:6px 12px}
+.thumbs{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:8px;margin-top:12px}
+.thumb{aspect-ratio:4/3;min-height:44px;border-radius:11px;border:1px solid #30353C;background:var(--surface);color:var(--faint);font-size:11px;font-weight:700;cursor:pointer;padding:2px;transition:border-color .2s,transform .2s,color .2s}
+.thumb:hover{transform:translateY(-2px);color:var(--fg)}
+.thumb[aria-current="true"]{border:2px solid var(--accent);color:var(--fg)}
+.dots{display:none;justify-content:center;gap:6px;margin-top:12px}
+.dots span{width:8px;height:8px;border-radius:999px;background:var(--line-2);transition:width .3s var(--ease),background .3s}
+.dots span.on{width:24px;background:var(--accent)}
+.side{position:sticky;top:90px;display:flex;flex-direction:column;gap:16px}
+.side h1{font-size:30px;margin:0;line-height:1.1}
+.big-price{font-family:var(--display);font-weight:800;font-size:38px;line-height:1.1}
+.kv{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;font-size:14px}
+.kv div{background:var(--surface-2);border-radius:11px;padding:10px 12px}
+.kv small{display:block;color:var(--faint);font-size:12px;font-weight:700}
+.calc{border:1px solid var(--line);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px;background:var(--bg)}
+.calc-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.calc-top b{font-family:var(--display);font-size:24px;font-weight:800;color:var(--accent)}
+.calc label{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:700;color:var(--muted)}
+.calc .row{display:flex;justify-content:space-between}
+input[type=range]{accent-color:var(--accent);width:100%;height:28px}
+.calc select{height:44px;border-radius:10px;border:1px solid #30353C;background:var(--surface);padding:0 10px}
+.calc .note{font-size:12px;color:var(--faint)}
+.side-btns{display:flex;flex-direction:column;gap:10px}
+.mini-row{display:flex;gap:10px}
+.mini-row .btn{flex:1;min-height:46px;font-size:14px;padding:0 12px}
+.car-info{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:32px;padding-block:48px}
+.car-info h2,.similar h2{font-size:22px;margin:0 0 16px;font-family:var(--display);font-weight:600}
+dl.specs{margin:0;border:1px solid var(--line);border-radius:18px;overflow:hidden}
+dl.specs div{display:flex;justify-content:space-between;gap:16px;padding:13px 18px;border-bottom:1px solid var(--line);transition:background .2s}
+dl.specs div:hover{background:var(--surface)}
+dl.specs div:last-child{border-bottom:0}
+dl.specs dt{color:var(--faint)}dl.specs dd{margin:0;font-weight:700;text-align:right}
+.opts{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.opts span{display:inline-flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:8px 12px;font-size:14px;color:var(--soft)}
+.opts span svg{color:var(--accent)}
+.tt-review{margin-top:26px;display:flex;gap:16px;align-items:center;padding:14px;border-radius:18px;background:var(--surface);border:1px solid var(--line);text-decoration:none;color:var(--fg);transition:transform .3s var(--ease),box-shadow .3s}
+.tt-review:hover{transform:translateY(-3px);box-shadow:-4px 4px 0 var(--pink),4px -4px 0 var(--cyan)}
+.tt-review .mini{flex:0 0 72px;aspect-ratio:9/16;border-radius:12px;background:radial-gradient(circle at 50% 30%,rgba(255,106,26,.45),transparent 70%),var(--surface-2);display:flex;align-items:center;justify-content:center}
+.similar{padding-bottom:80px}
+
+/* Mobile bars */
+.mbar{display:none}
+.fab{display:none}
+.toast{position:fixed;left:50%;bottom:24px;z-index:60;transform:translate(-50%,140%);background:var(--fg);color:var(--bg);padding:12px 20px;border-radius:999px;font-weight:800;font-size:14px;transition:transform .45s var(--ease),opacity .3s,visibility .45s;opacity:0;visibility:hidden;pointer-events:none;max-width:calc(100% - 32px);text-align:center}
+.toast.show{transform:translate(-50%,0);opacity:1;visibility:visible}
+
+/* Keyframes */
+@keyframes up{from{transform:translateY(105%)}to{transform:none}}
+@keyframes fade{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes draw{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes ping{0%{box-shadow:0 0 0 0 rgba(255,106,26,.7)}80%,100%{box-shadow:0 0 0 12px rgba(255,106,26,0)}}
+@keyframes sway{from{transform:rotate(-7deg)}to{transform:rotate(7deg)}}
+@keyframes dash{to{stroke-dashoffset:80}}
+@keyframes bob{from{transform:translateY(0)}to{transform:translateY(-2.5px)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes speed{0%{transform:translateX(40px);opacity:0}30%{opacity:1}100%{transform:translateX(-120px);opacity:0}}
+@keyframes flicker{0%,92%,100%{opacity:1}94%{opacity:.4}96%{opacity:1}97%{opacity:.5}}
+@keyframes float{from{transform:translateY(0)}to{transform:translateY(-10px)}}
+@keyframes marquee{to{transform:translateX(-50%)}}
+@keyframes pop{from{opacity:0;transform:translateY(24px) scale(.97)}to{opacity:1;transform:none}}
+@keyframes glitch{0%,86%,100%{text-shadow:-3px 0 var(--pink),3px 0 var(--cyan);transform:none}88%{text-shadow:-6px 2px var(--pink),5px -2px var(--cyan);transform:translateX(2px)}90%{text-shadow:4px -1px var(--pink),-4px 1px var(--cyan);transform:translateX(-2px)}92%{text-shadow:-3px 0 var(--pink),3px 0 var(--cyan);transform:none}}
+@keyframes eq{from{height:3px}to{height:12px}}
+@keyframes stripes{to{transform:translateX(62px)}}
+@keyframes slideR{from{opacity:.2;transform:translateX(40px)}to{opacity:1;transform:none}}
+@keyframes slideL{from{opacity:.2;transform:translateX(-40px)}to{opacity:1;transform:none}}
+@keyframes rise{from{opacity:0;translate:0 46px}to{opacity:1;translate:0 0}}
+@keyframes grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes ring{0%{box-shadow:0 0 0 0 rgba(255,106,26,.6)}100%{box-shadow:0 0 0 18px rgba(255,106,26,0)}}
+
+/* Scroll-driven extras (Chrome, Edge, Safari 26+); other browsers simply show everything static */
+@supports (animation-timeline: view()){
+  @media (prefers-reduced-motion:no-preference){
+    .progress{display:block;animation:grow linear both;animation-timeline:scroll(root)}
+    .rv{animation:rise linear both;animation-timeline:view();animation-range:entry 0% entry 55%}
+    .steps::before{animation:grow linear both;animation-timeline:view();animation-range:entry 20% cover 45%}
+  }
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+
+/* Tablets */
+@media (max-width:980px){
+  .services,.stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .steps{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:32px}
+  .steps::before{display:none}
+  .car-top{grid-template-columns:minmax(0,1fr)}
+  .side{position:static}
+  .nav{gap:18px}
+}
+/* Phones */
+@media (max-width:760px){
+  .wrap{padding-inline:16px}
+  .nav,.phone,.hdr .btn{display:none}
+  .burger{display:inline-flex}
+  .hdr .wrap{min-height:64px}
+  .hero{grid-template-columns:minmax(0,1fr);gap:26px;padding-block:26px 16px}
+  .hero p.lead{font-size:16px}
+  .stats{padding-block:36px 8px;gap:4px 16px}
+  .services{grid-template-columns:minmax(0,1fr);gap:10px;padding-block:20px 40px}
+  .svc{flex-direction:row;align-items:flex-start;gap:14px;padding:16px}
+  .svc i{flex:0 0 44px}
+  .catalog{padding-block:40px}
+  .tools{width:100%}
+  .chips{flex-wrap:nowrap;overflow-x:auto;width:100%;padding-bottom:4px;scrollbar-width:none}
+  .sort{width:100%}
+  .grid{grid-template-columns:minmax(0,1fr);gap:14px}
+  .tiktok{padding-block:56px 40px}
+  .tt-nav{display:none}
+  .reel{flex-basis:62%}
+  .steps{grid-template-columns:minmax(0,1fr);row-gap:20px}
+  .step{flex-direction:row;align-items:flex-start;gap:16px}
+  .step::before{flex:0 0 48px;width:48px;height:48px;font-size:17px}
+  .tradein{padding-bottom:40px}
+  .contacts{grid-template-columns:minmax(0,1fr);padding-bottom:48px}
+  .panel{padding:20px}
+  .info{grid-template-columns:minmax(0,1fr)}
+  .stage{border-radius:0;border:0;margin-inline:-16px;max-width:none;aspect-ratio:4/3}
+  .thumbs{display:none}
+  .dots{display:flex}
+  .side-btns{display:none}
+  .car-info{grid-template-columns:minmax(0,1fr);padding-block:28px;gap:28px}
+  .similar .grid{grid-auto-flow:column;grid-auto-columns:80%;grid-template-columns:none;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:8px}
+  .similar .card{scroll-snap-align:start}
+  .mbar{display:flex;gap:10px;position:fixed;left:0;right:0;bottom:0;z-index:30;background:rgba(15,17,20,.94);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid var(--line);padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px))}
+  .mbar .btn{flex:1}
+  body.has-bar{padding-bottom:84px}
+  .fab{display:flex;position:fixed;right:16px;bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:30;width:60px;height:60px;border-radius:50%;background:var(--accent);color:var(--on-accent);align-items:center;justify-content:center;animation:ring 1.8s infinite;box-shadow:0 10px 30px -8px rgba(255,106,26,.8)}
+  body.has-bar .fab{display:none}
+  .toast{bottom:100px}
+}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="car" viewBox="0 0 220 90"><g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 62h12m44 0h84m44 0h12V48c0-6-4-10-10-11l-30-5-24-18c-4-3-8-4-13-4H78c-6 0-11 2-15 6L46 32l-24 4c-6 1-10 5-10 11z"/><circle cx="46" cy="64" r="14"/><circle cx="174" cy="64" r="14"/></g></symbol>
+  <symbol id="check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="left" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="right" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="arrow" viewBox="0 0 24 24"><path d="M5 12h14m-5-6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="play" viewBox="0 0 24 24"><path d="M8 5.5v13l10.5-6.5z" fill="currentColor"/></symbol>
+  <symbol id="note" viewBox="0 0 24 24"><path d="M9 18V5l11-2v13M9 18a3 3 0 1 1-3-3 3 3 0 0 1 3 3Zm11-2a3 3 0 1 1-3-3 3 3 0 0 1 3 3Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="phone" viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="share" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></g></symbol>
+  <symbol id="shield" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/></symbol>
+  <symbol id="card" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="2" y="5" width="20" height="14" rx="3"/><path d="M2 10h20M6 15h4"/></g></symbol>
+  <symbol id="swap" viewBox="0 0 24 24"><path d="M7 4 3 8l4 4M3 8h14M17 20l4-4-4-4m4 4H7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="doc" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/></g></symbol>
+</svg>
+
+<div class="progress" aria-hidden="true"></div>
+
+<header class="hdr" id="hdr">
+  <div class="wrap">
+    <a class="logo" href="#home" aria-label="RMauto, на головну">RM<span>auto</span></a>
+    <nav class="nav" aria-label="Головне меню">
+      <a href="#catalog">Каталог</a><a href="#tiktok" class="tt-link">TikTok</a><a href="#services">Послуги</a><a href="#tradein">Викуп</a><a href="#contacts">Контакти</a>
+    </nav>
+    <div class="hdr-right">
+      <a class="phone" href="tel:+380000000000">[ВАШ ТЕЛЕФОН]</a>
+      <a class="btn btn-accent" href="#contacts">Зворотний дзвінок</a>
+      <button class="burger" id="burger" type="button" aria-label="Меню" aria-expanded="false" aria-controls="mnav"><i></i></button>
+    </div>
+  </div>
+  <nav class="mnav" id="mnav" aria-label="Мобільне меню">
+    <div>
+      <a href="#catalog">Каталог авто</a><a href="#tiktok">Ми в TikTok</a><a href="#services">Послуги</a><a href="#tradein">Викуп авто</a><a href="#contacts">Контакти</a>
+      <a href="tel:+380000000000" style="color:var(--accent)">Подзвонити: [ВАШ ТЕЛЕФОН]</a>
+    </div>
+  </nav>
+</header>
+
+<!-- ============ HOME ============ -->
+<main id="view-home">
+  <section class="wrap hero" id="home">
+    <div>
+      <div class="eyebrow"><span class="live"></span>Нові авто щотижня · [ВАШЕ МІСТО]</div>
+      <h1 class="display">
+        <span class="ln"><span>Перевірені авто</span></span>
+        <span class="ln"><span>з пробігом.</span></span>
+        <span class="ln"><span class="hl">Без сюрпризів.</span></span>
+      </h1>
+      <p class="lead muted">Кожне авто проходить діагностику перед продажем. Допоможемо з кредитом, обміном та оформленням документів.</p>
+      <form class="search" id="search">
+        <label class="field" for="f-brand">Марка
+          <select id="f-brand"><option value="">Усі марки</option></select>
+        </label>
+        <label class="field" for="f-price">Ціна до, $
+          <input id="f-price" type="number" inputmode="numeric" min="0" step="500" placeholder="20 000">
+        </label>
+        <button class="btn btn-accent" type="submit">Знайти авто <svg class="go" width="18" height="18"><use href="#arrow"/></svg></button>
+      </form>
+      <a class="tt-badge" href="#tiktok"><b><svg width="16" height="16"><use href="#note"/></svg></b>Огляди авто щотижня в TikTok <svg class="go" width="16" height="16"><use href="#arrow"/></svg></a>
+    </div>
+
+    <div class="scene" aria-label="Анімована ілюстрація автомайданчика">
+      <svg viewBox="0 0 640 480" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <defs>
+          <radialGradient id="glow" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#FF6A1A" stop-opacity=".55"/><stop offset="1" stop-color="#FF6A1A" stop-opacity="0"/></radialGradient>
+          <radialGradient id="pool" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#FFB23F" stop-opacity=".22"/><stop offset="1" stop-color="#FFB23F" stop-opacity="0"/></radialGradient>
+        </defs>
+        <circle cx="470" cy="150" r="170" fill="url(#glow)"/>
+        <g class="lamp"><line x1="96" y1="120" x2="96" y2="360" stroke="#2C3038" stroke-width="6"/><rect x="74" y="112" width="44" height="12" rx="4" fill="#FFB23F"/></g>
+        <ellipse cx="96" cy="350" rx="110" ry="26" fill="url(#pool)"/>
+        <path d="M0 40 Q320 150 640 40" fill="none" stroke="#5A5F68" stroke-width="2"/>
+        <g id="flags"></g>
+        <rect x="0" y="360" width="640" height="120" fill="#16191E"/>
+        <line x1="0" y1="362" x2="640" y2="362" stroke="#2C3038" stroke-width="3"/>
+        <line class="road-dash" x1="-80" y1="425" x2="720" y2="425" stroke="#FF6A1A" stroke-width="6" stroke-linecap="round" opacity=".85"/>
+        <g stroke="#CACCD1" stroke-width="4" stroke-linecap="round" opacity=".7">
+          <line class="speed" x1="80" y1="268" x2="150" y2="268"/>
+          <line class="speed" x1="60" y1="300" x2="160" y2="300"/>
+          <line class="speed" x1="90" y1="332" x2="140" y2="332"/>
+        </g>
+        <g transform="translate(170 228) scale(1.62)">
+          <ellipse cx="110" cy="80" rx="104" ry="7" fill="#000" opacity=".45"/>
+          <g class="car-bob">
+            <path d="M12 62h12m44 0h84m44 0h12V48c0-6-4-10-10-11l-30-5-24-18c-4-3-8-4-13-4H78c-6 0-11 2-15 6L46 32l-24 4c-6 1-10 5-10 11z" fill="#20242A" stroke="#F2F1EE" stroke-width="2.6" stroke-linejoin="round"/>
+            <path d="M70 31l14-14c3-3 6-4 10-4h28c4 0 7 1 10 3l17 15z" fill="#2E3540" stroke="#F2F1EE" stroke-width="1.6" stroke-linejoin="round" opacity=".9"/>
+            <line x1="108" y1="13" x2="108" y2="31" stroke="#F2F1EE" stroke-width="1.6"/>
+            <rect x="196" y="40" width="12" height="5" rx="2" fill="#FFB23F"/>
+            <rect x="12" y="40" width="9" height="5" rx="2" fill="#FF3D6E"/>
+            <line x1="30" y1="44" x2="200" y2="44" stroke="#FF6A1A" stroke-width="2"/>
+          </g>
+          <g class="wheel"><circle cx="46" cy="64" r="15" fill="#0F1114" stroke="#F2F1EE" stroke-width="2.6"/><circle cx="46" cy="64" r="6" fill="#5A5F68"/><path d="M46 51v26M33 64h26M37 55l18 18M55 55 37 73" stroke="#8B8F97" stroke-width="1.6"/></g>
+          <g class="wheel"><circle cx="174" cy="64" r="15" fill="#0F1114" stroke="#F2F1EE" stroke-width="2.6"/><circle cx="174" cy="64" r="6" fill="#5A5F68"/><path d="M174 51v26M161 64h26M165 55l18 18M183 55l-18 18" stroke="#8B8F97" stroke-width="1.6"/></g>
+        </g>
+      </svg>
+      <div class="float f1"><span class="ico"><svg width="16" height="16"><use href="#check"/></svg></span><div><small>Перевірено</small>Діагностика перед продажем</div></div>
+      <div class="float f2"><div><small>Toyota Camry · 2019</small><span class="big num">$22 900</span></div></div>
+      <div class="float f3">[ТУТ МОЖЕ БУТИ ВІДЕО З МАЙДАНЧИКА]</div>
+    </div>
+  </section>
+
+  <div class="ticker-wrap" aria-hidden="true"><div class="ticker"><div class="ticker-track" id="ticker"></div></div></div>
+
+  <section class="wrap stats rv" aria-label="RMauto в цифрах">
+    <div class="stat"><b class="num"><span data-count="0" id="stat-stock">6</span></b><span>авто в наявності зараз</span></div>
+    <div class="stat"><b class="num"><span data-count="350">350</span><em>+</em></b><span>проданих авто</span></div>
+    <div class="stat"><b class="num"><span data-count="7">7</span></b><span>років на ринку</span></div>
+    <div class="stat"><b class="num"><span data-count="25">25</span><em>K+</em></b><span>підписників у TikTok</span></div>
+  </section>
+
+  <section class="wrap services" id="services" aria-label="Послуги">
+    <div class="svc rv"><i><svg width="22" height="22"><use href="#shield"/></svg></i><div><b>Діагностика</b><br><span>Перевіряємо двигун, ходову та історію авто перед продажем.</span></div></div>
+    <div class="svc rv"><i><svg width="22" height="22"><use href="#card"/></svg></i><div><b>Кредит і лізинг</b><br><span>Підберемо програму від банків-партнерів.</span></div></div>
+    <div class="svc rv"><i><svg width="22" height="22"><use href="#swap"/></svg></i><div><b>Трейд-ін</b><br><span>Здайте своє авто в рахунок оплати за інше.</span></div></div>
+    <div class="svc rv"><i><svg width="22" height="22"><use href="#doc"/></svg></i><div><b>Оформлення</b><br><span>Супровід у сервісному центрі МВС.</span></div></div>
+  </section>
+
+  <section class="catalog" id="catalog">
+    <div class="wrap">
+      <div class="cat-head rv">
+        <div><h2 class="display">Авто в наявності</h2><div class="muted" id="found"></div></div>
+        <div class="tools">
+          <div class="chips" id="chips" role="group" aria-label="Тип кузова"></div>
+          <label for="sort" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Сортування</label>
+          <select class="sort" id="sort">
+            <option value="new">Спочатку нові надходження</option>
+            <option value="cheap">Спочатку дешевші</option>
+            <option value="exp">Спочатку дорожчі</option>
+            <option value="year">Новіші за роком</option>
+            <option value="km">Менший пробіг</option>
+          </select>
+        </div>
+      </div>
+      <div class="grid" id="grid"></div>
+    </div>
+  </section>
+
+  <section class="tiktok" id="tiktok">
+    <div class="wrap">
+      <div class="tt-head rv">
+        <div>
+          <div class="eyebrow"><span class="live"></span>Нові відео щотижня</div>
+          <h2 class="display">Ми в <span class="glitch">TikTok</span></h2>
+          <p>Огляди авто за хвилину, чесні ціни та закулісся майданчика. Побачили авто у відео — воно, найімовірніше, ще чекає на вас тут.</p>
+        </div>
+        <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+          <div class="tt-nav"><button class="round" type="button" id="tt-prev" aria-label="Попередні відео"><svg width="20" height="20"><use href="#left"/></svg></button><button class="round" type="button" id="tt-next" aria-label="Наступні відео"><svg width="20" height="20"><use href="#right"/></svg></button></div>
+          <a class="btn btn-tt" href="https://www.tiktok.com/" target="_blank" rel="noopener"><svg width="18" height="18"><use href="#note"/></svg>Підписатися @[ВАШ_TIKTOK]</a>
+        </div>
+      </div>
+      <div class="tt-row" id="tt-row"></div>
+      <div class="promo rv">
+        <div><b>Прийшли з TikTok?</b><div class="muted" style="font-size:15px">Назвіть код на майданчику й отримайте [ВАШ БОНУС: знижку, мийку, повний бак].</div></div>
+        <button class="code" type="button" id="promo-code" aria-label="Скопіювати промокод RMTIKTOK">RMTIKTOK</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap how" aria-label="Як купити авто">
+    <h2 class="display rv">Як купити авто в RMauto</h2>
+    <div class="steps rv">
+      <div class="step"><div><b>Обираєте авто</b><br><span>На сайті, у TikTok або одразу на майданчику.</span></div></div>
+      <div class="step"><div><b>Огляд і тест-драйв</b><br><span>Записуєтесь на зручний час і їдете на тест-драйв.</span></div></div>
+      <div class="step"><div><b>Перевірка</b><br><span>VIN, пробіг, технічний стан — до того, як ви платите.</span></div></div>
+      <div class="step"><div><b>Оформлення</b><br><span>Документи в сервісному центрі МВС, і авто ваше.</span></div></div>
+    </div>
+  </section>
+
+  <section class="wrap tradein" id="tradein">
+    <div class="tradein-box rv">
+      <div>
+        <h2 class="display">Продаєте своє авто? Викупимо або обміняємо.</h2>
+        <p>Оцінимо машину на майданчику та запропонуємо ціну в день звернення. Можна зарахувати як частину оплати за інше авто.</p>
+      </div>
+      <a class="btn btn-dark" href="#contacts">Оцінити моє авто <svg class="go" width="18" height="18"><use href="#arrow"/></svg></a>
+    </div>
+  </section>
+
+  <section class="wrap contacts" id="contacts">
+    <div class="panel rv">
+      <h2 class="display">Залишіть заявку</h2>
+      <div class="ok" id="lead-ok" role="status" hidden>Дякуємо! Менеджер RMauto зателефонує вам найближчим часом.</div>
+      <form class="lead" id="lead">
+        <label class="field" for="l-name">Ім'я<input id="l-name" type="text" required autocomplete="name"></label>
+        <label class="field" for="l-phone">Телефон<input id="l-phone" type="tel" required placeholder="+380" autocomplete="tel"></label>
+        <label class="field" for="l-topic">Що вас цікавить
+          <select id="l-topic"><option>Купівля авто</option><option>Кредит</option><option>Обмін / трейд-ін</option><option>Викуп мого авто</option></select>
+        </label>
+        <button class="btn btn-accent" type="submit">Надіслати заявку <svg class="go" width="18" height="18"><use href="#arrow"/></svg></button>
+      </form>
+    </div>
+    <div class="rv">
+      <div class="panel info">
+        <div><small>Адреса</small>[АДРЕСА МАЙДАНЧИКА]</div>
+        <div><small>Телефон</small>[ВАШ ТЕЛЕФОН]</div>
+        <div><small>Графік</small>[ГОДИНИ РОБОТИ]</div>
+        <div><small>TikTok / Instagram</small>@[ВАШ_TIKTOK]</div>
+      </div>
+      <div class="map">[КАРТА — GOOGLE MAPS]</div>
+    </div>
+  </section>
+</main>
+
+<!-- ============ CAR PAGE ============ -->
+<main id="view-car" hidden>
+  <div class="wrap">
+    <nav class="crumbs" aria-label="Навігація"><a href="#home">Головна</a><span>/</span><a href="#catalog">Каталог</a><span>/</span><span id="c-crumb" style="color:var(--soft)"></span></nav>
+    <div class="car-top">
+      <section aria-label="Фотогалерея">
+        <div class="stage" id="stage">
+          <div class="photo" id="shot"><svg class="glyph" width="230" height="94" aria-hidden="true"><use href="#car"/></svg><span id="shot-label"></span></div>
+          <span class="badge" id="c-badge">Перевірено</span>
+          <button class="arrow l" id="prev" type="button" aria-label="Попереднє фото"><svg width="22" height="22"><use href="#left"/></svg></button>
+          <button class="arrow r" id="next" type="button" aria-label="Наступне фото"><svg width="22" height="22"><use href="#right"/></svg></button>
+          <span class="count num" id="shot-count"></span>
+        </div>
+        <div class="thumbs" id="thumbs"></div>
+        <div class="dots" id="dots" aria-hidden="true"></div>
+      </section>
+      <aside class="side">
+        <div class="panel" style="display:flex;flex-direction:column;gap:18px">
+          <div><h1 class="display" id="c-name"></h1><div class="muted" id="c-sub"></div></div>
+          <div><div class="big-price num" id="c-price"></div><div class="muted" style="font-size:14px">≈ [ЦІНА В ГРН] · торг на огляді</div></div>
+          <div class="kv" id="c-kv"></div>
+          <div class="calc" aria-label="Кредитний калькулятор">
+            <div class="calc-top"><span style="font-weight:800">Кредит</span><b class="num" id="k-pay"></b></div>
+            <label for="k-down"><span class="row"><span>Перший внесок</span><span class="num" id="k-down-val" style="color:var(--fg)"></span></span>
+              <input id="k-down" type="range" min="10" max="70" step="5" value="30">
+            </label>
+            <label for="k-term">Термін
+              <select id="k-term"><option value="12">12 місяців</option><option value="24">24 місяці</option><option value="36" selected>36 місяців</option><option value="48">48 місяців</option><option value="60">60 місяців</option></select>
+            </label>
+            <span class="note">Орієнтовно, за ставки 15% річних. Точні умови — у менеджера.</span>
+          </div>
+          <div class="side-btns">
+            <a class="btn btn-accent" href="#contacts">Записатися на огляд <svg class="go" width="18" height="18"><use href="#arrow"/></svg></a>
+            <a class="btn btn-ghost" href="tel:+380000000000"><svg width="18" height="18"><use href="#phone"/></svg>[ВАШ ТЕЛЕФОН]</a>
+          </div>
+          <div class="mini-row">
+            <a class="btn btn-ghost" id="c-tt" href="https://www.tiktok.com/" target="_blank" rel="noopener"><svg width="16" height="16"><use href="#note"/></svg>Відеоогляд</a>
+            <button class="btn btn-ghost" type="button" id="share"><svg width="16" height="16"><use href="#share"/></svg>Поділитися</button>
+          </div>
+        </div>
+        <div class="panel muted" style="padding:18px 22px;font-size:14px"><b style="color:var(--fg)">Де подивитись:</b> [АДРЕСА МАЙДАНЧИКА] · [ГОДИНИ РОБОТИ]</div>
+      </aside>
+    </div>
+    <div class="car-info">
+      <section class="rv"><h2>Характеристики</h2><dl class="specs" id="c-specs"></dl></section>
+      <section class="rv">
+        <h2>Опис</h2>
+        <p class="muted" style="margin:0 0 22px;line-height:1.7">[ОПИС АВТО: стан кузова та салону, історія обслуговування, кількість власників, що замінено, чи були ДТП.]</p>
+        <h3 style="margin:0;font-size:17px">Комплектація</h3>
+        <div class="opts" id="c-opts"></div>
+        <a class="tt-review" id="c-tt2" href="https://www.tiktok.com/" target="_blank" rel="noopener">
+          <span class="mini"><svg width="22" height="22"><use href="#play"/></svg></span>
+          <span><b style="display:block">Дивіться огляд цього авто в TikTok</b><span class="muted" style="font-size:14px" id="c-tt-cap"></span></span>
+        </a>
+      </section>
+    </div>
+    <section class="similar rv"><h2>Схожі авто</h2><div class="grid" id="c-similar"></div></section>
+  </div>
+  <div class="mbar">
+    <a class="btn btn-ghost" href="tel:+380000000000"><svg width="18" height="18"><use href="#phone"/></svg>Дзвінок</a>
+    <a class="btn btn-accent" href="#contacts" style="flex:1.5">Записатися на огляд</a>
+  </div>
+</main>
+
+<footer class="ftr">
+  <div class="wrap">
+    <a class="logo" href="#home" style="font-size:20px">RM<span>auto</span></a>
+    <div class="socials"><a href="https://www.tiktok.com/" target="_blank" rel="noopener">TikTok</a><a href="https://www.instagram.com/" target="_blank" rel="noopener">Instagram</a><a href="https://t.me/" target="_blank" rel="noopener">Telegram</a></div>
+    <span>© 2026 RMauto. Усі права захищено.</span>
+  </div>
+</footer>
+
+<a class="fab" href="tel:+380000000000" aria-label="Подзвонити в RMauto"><svg width="24" height="24"><use href="#phone"/></svg></a>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+  /* Example stock — replace with real cars (or load from the admin panel later) */
+  var CARS = [
+    {id:1,brand:'Toyota',name:'Toyota Camry',year:2019,type:'Седан',km:78,fuel:'Бензин',gear:'Автомат',drive:'Передній',engine:'2.5 л',price:22900,hot:true,h:22,added:6},
+    {id:2,brand:'Volkswagen',name:'Volkswagen Tiguan',year:2018,type:'Кросовер',km:96,fuel:'Дизель',gear:'Автомат',drive:'Повний',engine:'2.0 л',price:21500,h:205,added:4,tt:true},
+    {id:3,brand:'Skoda',name:'Skoda Octavia Combi',year:2017,type:'Універсал',km:142,fuel:'Дизель',gear:'Механіка',drive:'Передній',engine:'1.6 л',price:12800,h:140,added:1,sold:true},
+    {id:4,brand:'Hyundai',name:'Hyundai Tucson',year:2020,type:'Кросовер',km:54,fuel:'Бензин',gear:'Автомат',drive:'Передній',engine:'2.0 л',price:23700,hot:true,h:350,added:5,tt:true},
+    {id:5,brand:'Volkswagen',name:'Volkswagen Golf',year:2016,type:'Хетчбек',km:121,fuel:'Бензин',gear:'Робот',drive:'Передній',engine:'1.4 л',price:10900,h:45,added:2},
+    {id:6,brand:'BMW',name:'BMW 320d',year:2018,type:'Седан',km:110,fuel:'Дизель',gear:'Автомат',drive:'Задній',engine:'2.0 л',price:19400,old:20500,h:230,added:3,tt:true}
+  ];
+  var REELS = [
+    {cap:'Toyota Camry 2019 за 60 секунд',h:22},
+    {cap:'Що ми перевіряємо перед продажем',h:205},
+    {cap:'Golf 2016: ціна vs стан',h:45},
+    {cap:'Як проходить трейд-ін у RMauto',h:290},
+    {cap:'Тест-драйв Hyundai Tucson',h:350},
+    {cap:'Продали за 2 дні: BMW 320d',h:230}
+  ];
+  var TICKER = ['Перевірені авто','Кредит від банків-партнерів','Трейд-ін','Викуп за 1 день','Огляди в TikTok','Тест-драйв'];
+  var SHOTS = [['Вигляд спереду','Перед'],['Вигляд збоку','Бік'],['Вигляд ззаду','Зад'],['Салон','Салон'],['Панель приладів','Панель'],['Задній ряд','Ряд 2'],['Багажник','Багаж.'],['Двигун','Двигун']];
+  var OPTS = ['Клімат-контроль','Камера заднього виду','Підігрів сидінь','Круїз-контроль','Мультимедіа','LED-фари','Датчики паркування','Безключовий доступ'];
+  var TYPES = ['Усі','Седан','Кросовер','Хетчбек','Універсал'];
+  var RATE = 0.15; // example annual rate for the calculator
+
+  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var state = {type:'Усі', brand:'', max:0, sort:'new', shot:0, car:null};
+  var $ = function(id){return document.getElementById(id)};
+  var money = function(n){return '$' + Math.round(n).toLocaleString('uk-UA').replace(/\s/g,' ')};
+
+  /* Toast */
+  var tTimer;
+  function toast(msg){
+    var t = $('toast'); t.textContent = msg; t.classList.add('show');
+    clearTimeout(tTimer); tTimer = setTimeout(function(){t.classList.remove('show')}, 2600);
+  }
+  function copy(text, okMsg){
+    try{
+      navigator.clipboard.writeText(text).then(function(){toast(okMsg)}, function(){toast('Скопіюйте: ' + text)});
+    }catch(e){ toast('Скопіюйте: ' + text); }
+  }
+
+  /* Hero pennants */
+  (function(){
+    var cols = ['#FF6A1A','#F2F1EE','#FFB23F'], out = '';
+    for(var k=0;k<12;k++){
+      var t = 0.04 + k*0.084, x = 640*t, y = 40 + 220*t*(1-t);
+      out += '<polygon class="flag" style="animation-delay:' + (-k*0.37).toFixed(2) + 's" points="' + (x-11) + ',' + y + ' ' + (x+11) + ',' + y + ' ' + x + ',' + (y+30) + '" fill="' + cols[k%3] + '"/>';
+    }
+    $('flags').innerHTML = out;
+  })();
+
+  /* Ticker (duplicated for a seamless loop) */
+  var tick = TICKER.map(function(w){return '<span>' + w + '</span>'}).join('');
+  $('ticker').innerHTML = tick + tick;
+
+  /* Count-up stats: final values are in the markup, animation only replays them */
+  $('stat-stock').textContent = CARS.filter(function(c){return !c.sold}).length;
+  $('stat-stock').dataset.count = $('stat-stock').textContent;
+  if(!reduce && 'IntersectionObserver' in window){
+    var io = new IntersectionObserver(function(es){
+      es.forEach(function(e){
+        if(!e.isIntersecting) return; io.unobserve(e.target);
+        var el = e.target, end = +el.dataset.count, t0 = performance.now();
+        (function f(now){
+          var p = Math.min(1, (now - t0)/1400), v = Math.round(end * (1 - Math.pow(1-p, 3)));
+          el.textContent = v; if(p < 1) requestAnimationFrame(f);
+        })(t0);
+      });
+    }, {threshold:.6});
+    document.querySelectorAll('[data-count]').forEach(function(el){ io.observe(el); });
+  }
+
+  /* Catalog */
+  function card(c, i){
+    var badges = '';
+    if(c.hot) badges += '<span class="badge">Новинка</span>';
+    else if(c.old) badges += '<span class="badge drop">Знижка ' + money(c.old - c.price) + '</span>';
+    if(c.tt) badges += '<span class="badge tt"><svg width="12" height="12"><use href="#note"/></svg>Є відео</span>';
+    return '<a class="card' + (c.sold ? ' sold' : '') + '" style="--i:' + (i||0) + '" href="#car-' + c.id + '" aria-label="' + c.name + ' ' + c.year + (c.sold ? ', продано' : ', ' + money(c.price)) + '">' +
+      (c.sold ? '<span class="sold-stamp">Продано</span>' : '') +
+      '<span class="photo" style="--h:' + c.h + '"><svg class="glyph" width="150" height="62" aria-hidden="true"><use href="#car"/></svg><span class="ph-label">[ФОТО]</span>' + badges + '<span class="count">1 / 8</span></span>' +
+      '<span class="card-body"><span><h3>' + c.name + '</h3><span class="muted" style="font-size:14px">' + c.year + ' · ' + c.type + ' · ' + c.engine + '</span></span>' +
+      '<span class="tags"><span>' + c.km + ' тис. км</span><span>' + c.fuel + '</span><span>' + c.gear + '</span></span>' +
+      '<span class="card-foot"><span><span class="price num">' + money(c.price) + '</span>' + (c.old && !c.sold ? '<span class="old num">' + money(c.old) + '</span>' : '') + '</span>' +
+      '<span class="more">' + (c.sold ? 'Схожі' : 'Детальніше') + ' <svg width="14" height="14"><use href="#arrow"/></svg></span></span></span></a>';
+  }
+
+  var brands = CARS.map(function(c){return c.brand}).filter(function(b,i,a){return a.indexOf(b)===i});
+  $('f-brand').innerHTML += brands.map(function(b){return '<option>' + b + '</option>'}).join('');
+
+  function renderChips(){
+    $('chips').innerHTML = TYPES.map(function(t){
+      return '<button type="button" class="chip" aria-pressed="' + (t===state.type) + '" data-t="' + t + '">' + t + '</button>';
+    }).join('');
+  }
+  var SORTS = {
+    new:function(a,b){return b.added-a.added}, cheap:function(a,b){return a.price-b.price},
+    exp:function(a,b){return b.price-a.price}, year:function(a,b){return b.year-a.year}, km:function(a,b){return a.km-b.km}
+  };
+  function renderGrid(){
+    var list = CARS.filter(function(c){
+      return (state.type==='Усі' || c.type===state.type) && (!state.brand || c.brand===state.brand) && (!state.max || c.price<=state.max);
+    }).sort(function(a,b){ return (a.sold?1:0)-(b.sold?1:0) || SORTS[state.sort](a,b); });
+    var avail = list.filter(function(c){return !c.sold}).length;
+    $('found').textContent = 'Знайдено: ' + avail + (list.length > avail ? ' · ще ' + (list.length-avail) + ' продано' : '');
+    $('grid').innerHTML = list.length ? list.map(card).join('') :
+      '<div class="empty">Нічого не знайдено. Змініть марку, ціну або тип кузова.</div>';
+  }
+  $('chips').addEventListener('click', function(e){
+    var b = e.target.closest('.chip'); if(!b) return;
+    state.type = b.dataset.t; renderChips(); renderGrid();
+  });
+  $('sort').addEventListener('change', function(){ state.sort = this.value; renderGrid(); });
+  $('search').addEventListener('submit', function(e){
+    e.preventDefault();
+    state.brand = $('f-brand').value; state.max = parseInt($('f-price').value,10) || 0;
+    renderGrid(); $('catalog').scrollIntoView({behavior: reduce ? 'auto' : 'smooth'});
+  });
+  $('lead').addEventListener('submit', function(e){
+    e.preventDefault(); $('lead').hidden = true; $('lead-ok').hidden = false;
+  });
+
+  /* TikTok reels */
+  $('tt-row').innerHTML = REELS.map(function(r){
+    return '<a class="reel" style="--h:' + r.h + '" href="https://www.tiktok.com/" target="_blank" rel="noopener">' +
+      '<span class="handle"><svg width="14" height="14"><use href="#note"/></svg>@[ВАШ_TIKTOK]</span>' +
+      '<svg class="rglyph" width="150" height="62" aria-hidden="true"><use href="#car"/></svg>' +
+      '<span class="play"><svg width="24" height="24"><use href="#play"/></svg></span>' +
+      '<span class="cap"><b>' + r.cap + '</b><small><span class="eq"><i></i><i></i><i></i></span>[ПЕРЕГЛЯДИ] · [ВІДЕО 9:16]</small></span></a>';
+  }).join('');
+  $('tt-prev').addEventListener('click', function(){ $('tt-row').scrollBy({left:-480, behavior:'smooth'}); });
+  $('tt-next').addEventListener('click', function(){ $('tt-row').scrollBy({left:480, behavior:'smooth'}); });
+  $('promo-code').addEventListener('click', function(){ copy('RMTIKTOK', 'Промокод RMTIKTOK скопійовано'); });
+
+  /* Header + mobile menu */
+  var hdr = $('hdr');
+  addEventListener('scroll', function(){ hdr.classList.toggle('scrolled', scrollY > 10); }, {passive:true});
+  $('burger').addEventListener('click', function(){
+    var open = $('mnav').classList.toggle('open'); this.setAttribute('aria-expanded', open);
+  });
+  $('mnav').addEventListener('click', function(e){
+    if(e.target.closest('a')){ $('mnav').classList.remove('open'); $('burger').setAttribute('aria-expanded','false'); }
+  });
+
+  /* Gallery */
+  function renderShot(dir){
+    var n = SHOTS.length, i = state.shot, s = $('shot');
+    $('shot-label').textContent = '[ФОТО: ' + SHOTS[i][0].toUpperCase() + ']';
+    $('shot-count').textContent = (i+1) + ' / ' + n;
+    $('thumbs').innerHTML = SHOTS.map(function(x,k){
+      return '<button type="button" class="thumb" data-k="' + k + '" aria-label="Фото ' + (k+1) + ': ' + x[0] + '" aria-current="' + (k===i) + '">' + x[1] + '</button>';
+    }).join('');
+    $('dots').innerHTML = SHOTS.map(function(x,k){return '<span' + (k===i?' class="on"':'') + '></span>'}).join('');
+    if(dir){ s.classList.remove('shot-in-r','shot-in-l'); void s.offsetWidth; s.classList.add(dir > 0 ? 'shot-in-r' : 'shot-in-l'); }
+  }
+  function step(d){ state.shot = (state.shot + d + SHOTS.length) % SHOTS.length; renderShot(d); }
+  $('prev').addEventListener('click', function(){step(-1)});
+  $('next').addEventListener('click', function(){step(1)});
+  $('thumbs').addEventListener('click', function(e){
+    var b = e.target.closest('.thumb'); if(!b) return;
+    var k = +b.dataset.k, d = k > state.shot ? 1 : -1; if(k === state.shot) return;
+    state.shot = k; renderShot(d);
+  });
+  var x0 = null;
+  $('stage').addEventListener('touchstart', function(e){ x0 = e.touches[0].clientX; }, {passive:true});
+  $('stage').addEventListener('touchend', function(e){
+    if(x0===null) return; var dx = e.changedTouches[0].clientX - x0; x0 = null;
+    if(Math.abs(dx) > 40) step(dx < 0 ? 1 : -1);
+  });
+  document.addEventListener('keydown', function(e){
+    if($('view-car').hidden || /INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName)) return;
+    if(e.key==='ArrowLeft') step(-1); if(e.key==='ArrowRight') step(1);
+  });
+
+  /* Credit calculator */
+  function calc(){
+    if(!state.car) return;
+    var P = state.car.price, d = +$('k-down').value, n = +$('k-term').value, r = RATE/12;
+    var L = P * (1 - d/100), pay = L * r / (1 - Math.pow(1 + r, -n));
+    $('k-down-val').textContent = d + '% · ' + money(P*d/100);
+    $('k-pay').textContent = money(pay) + ' / міс';
+  }
+  $('k-down').addEventListener('input', calc);
+  $('k-term').addEventListener('change', calc);
+  $('share').addEventListener('click', function(){ copy(location.href, 'Посилання на авто скопійовано'); });
+
+  function renderCar(c){
+    state.car = c; state.shot = 0;
+    document.title = c.name + ' ' + c.year + ' — RMauto';
+    $('c-crumb').textContent = c.name + ' ' + c.year;
+    $('c-name').textContent = c.name;
+    $('c-sub').textContent = c.year + ' · ' + c.type + ' · ' + c.engine;
+    $('c-price').innerHTML = (c.sold ? '<span style="color:var(--accent)">Продано</span>' : money(c.price)) + (c.old && !c.sold ? ' <span class="old" style="display:inline;font-size:16px">' + money(c.old) + '</span>' : '');
+    $('c-badge').textContent = c.sold ? 'Продано' : (c.hot ? 'Новинка · перевірено' : 'Перевірено');
+    $('shot').style.setProperty('--h', c.h);
+    $('c-kv').innerHTML = [['Пробіг',c.km+' тис. км'],['Пальне',c.fuel],['Коробка',c.gear],['Привід',c.drive]]
+      .map(function(p){return '<div><small>' + p[0] + '</small>' + p[1] + '</div>'}).join('');
+    $('c-specs').innerHTML = [['Рік випуску',c.year],['Пробіг',c.km+' тис. км'],['Двигун',c.engine+', '+c.fuel.toLowerCase()],['Коробка передач',c.gear],['Привід',c.drive],['Тип кузова',c.type],['Колір','[КОЛІР]'],['Кількість власників','[К-СТЬ]'],['Розмитнений','[ТАК / НІ]'],['VIN','[VIN-КОД]']]
+      .map(function(p){return '<div><dt>' + p[0] + '</dt><dd>' + p[1] + '</dd></div>'}).join('');
+    $('c-opts').innerHTML = OPTS.map(function(o){return '<span><svg width="14" height="14"><use href="#check"/></svg>' + o + '</span>'}).join('');
+    $('c-tt-cap').textContent = c.name + ' ' + c.year + ' — повний огляд за хвилину';
+    var sim = CARS.filter(function(x){return x.id!==c.id && !x.sold}).sort(function(a,b){return Math.abs(a.price-c.price)-Math.abs(b.price-c.price)}).slice(0,3);
+    $('c-similar').innerHTML = sim.map(card).join('');
+    renderShot(0); calc();
+  }
+
+  /* Router: #car-N opens a car page, any other hash is a section of the home page */
+  function route(){
+    var h = (location.hash || '').slice(1);
+    var m = /^car-(\d+)$/.exec(h);
+    var c = m && CARS.filter(function(x){return x.id===+m[1]})[0];
+    var wasCar = !$('view-car').hidden;
+    $('view-home').hidden = !!c; $('view-car').hidden = !c;
+    document.body.classList.toggle('has-bar', !!c);
+    if(c){ renderCar(c); window.scrollTo(0,0); return; }
+    document.title = 'RMauto';
+    var el = h && h !== 'home' && $(h);
+    if(el) requestAnimationFrame(function(){ el.scrollIntoView({behavior: (wasCar || reduce) ? 'auto' : 'smooth'}); });
+    else if(wasCar || h === 'home') window.scrollTo({top:0, behavior: (wasCar || reduce) ? 'auto' : 'smooth'});
+  }
+  function navigate(){
+    if(document.startViewTransition && !reduce) document.startViewTransition(route);
+    else route();
+  }
+  document.addEventListener('click', function(e){
+    var a = e.target.closest('a[href^="#"]'); if(!a) return;
+    if(a.getAttribute('href') === location.hash){ e.preventDefault(); navigate(); }
+  });
+  addEventListener('hashchange', navigate);
+
+  renderChips(); renderGrid(); route();
+})();
+</script>
+
+</body>
+</html>

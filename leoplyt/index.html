@@ -1,0 +1,836 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Леоплит — прототип сайту</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Onest:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: workshop sheet — every product is drawn as a real slab with its thickness, the cutting map is the hero */
+:root{
+  --bg:#ECEFED; --surface:#FFFFFF; --soft:#E1E6E3; --ink:#18201E; --muted:#59645F; --line:#D0D7D3;
+  --accent:#C9481A; --accent-ink:#FFFFFF; --accent-soft:#F6DED3; --ok:#2C7A4B; --warn:#9A6A0C; --bad:#B3261E;
+  --f-display:"Unbounded", "Arial Black", system-ui, sans-serif;
+  --f-body:"Onest", "Segoe UI", system-ui, sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, "SFMono-Regular", Consolas, monospace;
+  --r:10px; --gutter:clamp(16px,4vw,40px);
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#111514; --surface:#191F1D; --soft:#222A27; --ink:#E5EAE7; --muted:#9AA6A1; --line:#2D3633;
+  --accent:#EE6A30; --accent-ink:#140B06; --accent-soft:#3A2116; --ok:#5DBE85; --warn:#E0AA3E; --bad:#F2867C; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#111514; --surface:#191F1D; --soft:#222A27; --ink:#E5EAE7; --muted:#9AA6A1; --line:#2D3633;
+  --accent:#EE6A30; --accent-ink:#140B06; --accent-soft:#3A2116; --ok:#5DBE85; --warn:#E0AA3E; --bad:#F2867C; color-scheme:dark}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1260px;margin-inline:auto;padding-inline:var(--gutter)}
+h1,h2,h3{font-family:var(--f-display);font-weight:700;line-height:1.08;text-wrap:balance;margin:0;letter-spacing:-.01em}
+h2{font-size:clamp(26px,4.2vw,44px)}
+h3{font-size:18px;font-weight:500}
+p{margin:0}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+.muted{color:var(--muted)}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+.btn{display:inline-flex;align-items:center;gap:8px;border:0;border-radius:999px;padding:12px 20px;font-weight:600;cursor:pointer;text-decoration:none;transition:transform .15s,background .15s}
+.btn:active{transform:scale(.97)}
+.btn-primary{background:var(--accent);color:var(--accent-ink)}
+.btn-primary:hover{filter:brightness(1.07)}
+.btn-ghost{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 1.5px var(--line)}
+.btn-ghost:hover{box-shadow:inset 0 0 0 1.5px var(--ink)}
+.chip{display:inline-flex;align-items:center;gap:6px;border:1.5px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 12px;font-size:14px;cursor:pointer;transition:all .15s}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.chip:hover{border-color:var(--ink)}
+
+/* prototype strip */
+.proto{background:var(--ink);color:var(--bg);font-size:13px;text-align:center;padding:7px 16px}
+.proto b{color:var(--accent)}
+
+/* header */
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:40;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;gap:20px;height:66px}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink);font-family:var(--f-display);font-weight:700;font-size:19px;letter-spacing:.02em}
+.logo svg{width:30px;height:30px}
+nav.main{display:flex;gap:4px;margin-left:12px}
+nav.main a{color:var(--ink);text-decoration:none;padding:8px 12px;border-radius:999px;font-size:15px;font-weight:500}
+nav.main a:hover{background:var(--soft)}
+.top .right{margin-left:auto;display:flex;align-items:center;gap:10px}
+.phone-top{font-family:var(--f-mono);font-size:14px;text-align:right;line-height:1.25}
+.phone-top small{display:block;color:var(--muted);font-family:var(--f-body);font-size:12px}
+.cart-btn{position:relative;width:44px;height:44px;border-radius:50%;border:1.5px solid var(--line);background:var(--surface);display:grid;place-items:center;cursor:pointer}
+.cart-btn .n{position:absolute;top:-4px;right:-4px;background:var(--accent);color:var(--accent-ink);font-size:11px;font-weight:700;min-width:20px;height:20px;border-radius:10px;display:grid;place-items:center;padding:0 5px}
+.burger{display:none;width:44px;height:44px;border-radius:50%;border:1.5px solid var(--line);background:var(--surface);cursor:pointer}
+.mnav{display:none}
+@media (max-width:960px){nav.main,.phone-top{display:none}.burger{display:grid;place-items:center}
+  .mnav:not([hidden]){display:grid;gap:2px;padding:8px var(--gutter) 16px;border-top:1px solid var(--line)}
+  .mnav a{padding:12px 4px;color:var(--ink);text-decoration:none;font-weight:500;border-bottom:1px solid var(--line)}}
+
+/* hero */
+.hero{padding-block:clamp(36px,6vw,72px) clamp(32px,5vw,56px)}
+.hero .wrap{display:grid;grid-template-columns:1.05fr 1fr;gap:clamp(28px,4vw,56px);align-items:center}
+.hero h1{font-size:clamp(34px,5.6vw,68px);margin-block:14px 18px}
+.hero h1 em{font-style:normal;color:var(--accent)}
+.hero .lead{font-size:clamp(16px,1.6vw,19px);color:var(--muted);max-width:52ch}
+.hero .ctas{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+.stats{display:grid;grid-template-columns:repeat(4,auto);gap:10px 28px;margin-top:34px;padding-top:22px;border-top:1px solid var(--line)}
+.stats b{display:block;font-family:var(--f-display);font-size:22px;font-weight:500}
+.stats span{font-size:13px;color:var(--muted)}
+.map-card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px 16px 12px;min-width:0}
+.map-card .cap{display:flex;justify-content:space-between;gap:10px;font-family:var(--f-mono);font-size:12px;color:var(--muted);margin-bottom:10px;flex-wrap:wrap}
+.map-card svg{width:100%;height:auto;display:block;border-radius:4px}
+.cut{stroke:var(--accent);stroke-width:9;fill:none}
+.anim .cut{stroke-dasharray:var(--l);stroke-dashoffset:var(--l);animation:draw .7s cubic-bezier(.6,.1,.3,1) forwards;animation-delay:var(--d)}
+.anim .part{opacity:.0;animation:pop .5s ease forwards;animation-delay:var(--d)}
+@keyframes draw{to{stroke-dashoffset:0}}
+@keyframes pop{from{opacity:0}to{opacity:1}}
+@media (max-width:860px){.hero .wrap{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}}
+
+.brands{border-block:1px solid var(--line);padding-block:18px}
+.brands .wrap{display:flex;gap:14px 40px;align-items:center;flex-wrap:wrap;justify-content:space-between}
+.brands span{font-family:var(--f-display);font-size:clamp(15px,1.8vw,20px);color:var(--muted);font-weight:500}
+.brands small{font-size:13px;color:var(--muted)}
+
+section.block{padding-block:clamp(48px,7vw,90px)}
+.head{display:flex;justify-content:space-between;align-items:end;gap:20px;flex-wrap:wrap;margin-bottom:28px}
+.head p{max-width:56ch;color:var(--muted);margin-top:12px}
+
+/* catalog */
+.cats{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;margin-bottom:20px;scrollbar-width:thin}
+.cats .chip{white-space:nowrap;padding:9px 16px;font-size:15px}
+.cats .chip i{font-style:normal;font-family:var(--f-mono);font-size:12px;opacity:.6}
+.cat-layout{display:grid;grid-template-columns:250px 1fr;gap:28px;align-items:start}
+.filters{position:sticky;top:calc(env(safe-area-inset-top,0px) + 84px);display:grid;gap:22px;min-width:0}
+.fgroup h4{margin:0 0 10px;font-size:12px;font-family:var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:500}
+.fgroup .opts{display:flex;flex-wrap:wrap;gap:6px}
+.fgroup .chip{font-size:13px;padding:5px 11px}
+.fhead{display:none}
+.toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:18px}
+.search{flex:1 1 220px;display:flex;align-items:center;gap:8px;background:var(--surface);border:1.5px solid var(--line);border-radius:999px;padding:0 14px;min-width:0}
+.search input{border:0;background:transparent;outline:0;padding:10px 0;width:100%;min-width:0}
+.select{background:var(--surface);border:1.5px solid var(--line);border-radius:999px;padding:9px 14px}
+.fbtn{display:none}
+.count{font-size:14px;color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:26px 20px}
+.card{display:flex;flex-direction:column;gap:10px;min-width:0}
+.card.enter{animation:rise .35s ease both}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.sheet-btn{all:unset;cursor:pointer;display:block;position:relative;padding:6px 0 calc(var(--t) + 8px)}
+.slab{position:relative;border-radius:3px;overflow:hidden;box-shadow:0 var(--t) 0 var(--edge),0 calc(var(--t) + 10px) 18px -10px rgba(0,0,0,.35);transition:transform .25s cubic-bezier(.3,.7,.3,1),box-shadow .25s}
+.slab img{display:block;width:100%;height:100%;object-fit:cover}
+.sheet-btn:hover .slab,.sheet-btn:focus-visible .slab{transform:translateY(-6px) rotate(-.6deg);box-shadow:0 calc(var(--t) + 2px) 0 var(--edge),0 calc(var(--t) + 22px) 26px -12px rgba(0,0,0,.45)}
+.dims{position:absolute;left:8px;bottom:calc(var(--t) + 16px);font-family:var(--f-mono);font-size:11px;background:rgba(18,22,21,.78);color:#fff;padding:3px 7px;border-radius:4px;opacity:0;transition:opacity .2s}
+.sheet-btn:hover .dims,.sheet-btn:focus-visible .dims{opacity:1}
+.badges{position:absolute;top:14px;left:8px;display:flex;gap:4px}
+.badge{font-family:var(--f-mono);font-size:10.5px;font-weight:500;background:var(--surface);color:var(--ink);padding:2px 6px;border-radius:4px;box-shadow:0 1px 2px rgba(0,0,0,.15)}
+.card h3{font-family:var(--f-body);font-size:16px;font-weight:600;line-height:1.3}
+.card .sub{font-family:var(--f-mono);font-size:12px;color:var(--muted);display:flex;gap:4px 10px;flex-wrap:wrap}
+.price-row{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-top:auto}
+.price{font-family:var(--f-display);font-size:18px;font-weight:500}
+.price small{font-family:var(--f-body);font-size:12px;color:var(--muted);font-weight:400}
+.per{font-family:var(--f-mono);font-size:11.5px;color:var(--muted)}
+.stock{font-size:12px;display:inline-flex;align-items:center;gap:6px}
+.stock::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+.stock.ok{color:var(--ok)}.stock.low{color:var(--warn)}.stock.no{color:var(--muted)}
+.empty{padding:40px;text-align:center;border:1.5px dashed var(--line);border-radius:var(--r);color:var(--muted)}
+@media (max-width:900px){
+  .cat-layout{grid-template-columns:1fr}
+  .fbtn{display:inline-flex}
+  .filters{position:fixed;inset:0 0 0 auto;width:min(360px,92vw);z-index:60;background:var(--surface);padding:calc(env(safe-area-inset-top,0px) + 18px) 20px 30px;overflow-y:auto;transform:translateX(105%);transition:transform .3s;box-shadow:-20px 0 40px rgba(0,0,0,.2);align-content:start}
+  .filters.open{transform:none}
+  .fhead{display:flex;justify-content:space-between;align-items:center}
+  .grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:22px 14px}
+  .card h3{font-size:14.5px}.price{font-size:16px}
+}
+
+/* overlay drawers */
+.scrim{position:fixed;inset:0;background:rgba(10,14,13,.5);z-index:55;opacity:0;pointer-events:none;transition:opacity .25s}
+.scrim.on{opacity:1;pointer-events:auto}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(520px,100vw);z-index:70;background:var(--surface);transform:translateX(105%);transition:transform .32s cubic-bezier(.3,.7,.3,1);display:flex;flex-direction:column;padding-top:env(safe-area-inset-top,0px)}
+.drawer.open{transform:none}
+.drawer .dh{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid var(--line)}
+.drawer .db{overflow-y:auto;padding:20px;display:grid;gap:18px;align-content:start;flex:1}
+.drawer .df{padding:16px 20px calc(16px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line);display:grid;gap:10px}
+.x{width:40px;height:40px;border-radius:50%;border:1.5px solid var(--line);background:transparent;cursor:pointer;font-size:18px}
+.qv-sheet{padding:10px 0 30px}
+.qv-sheet .slab{--t:14px}
+.spec{width:100%;border-collapse:collapse;font-size:14px}
+.spec td{padding:8px 0;border-bottom:1px solid var(--line)}
+.spec td:last-child{text-align:right;font-family:var(--f-mono)}
+.stepper{display:inline-flex;align-items:center;border:1.5px solid var(--line);border-radius:999px}
+.stepper button{width:38px;height:38px;border:0;background:transparent;cursor:pointer;font-size:18px}
+.stepper input{width:52px;text-align:center;border:0;background:transparent;font-family:var(--f-mono)}
+.match{display:flex;gap:12px;align-items:center;padding:12px;border-radius:var(--r);background:var(--soft)}
+.match .sw{width:46px;height:18px;border-radius:3px;flex:none;background-size:cover}
+.match label{display:flex;gap:10px;align-items:center;flex:1;cursor:pointer;font-size:14px}
+.row{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.total{font-family:var(--f-display);font-size:22px}
+.cart-item{display:grid;grid-template-columns:56px 1fr auto;gap:12px;align-items:center;padding-bottom:14px;border-bottom:1px solid var(--line)}
+.cart-item img{width:56px;height:42px;object-fit:cover;border-radius:3px}
+.cart-item .t{font-size:14px;font-weight:600;line-height:1.3}
+.cart-item .m{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.linkish{background:none;border:0;color:var(--muted);cursor:pointer;font-size:13px;text-decoration:underline;padding:0}
+.field{display:grid;gap:6px;font-size:14px}
+.field input,.field select{border:1.5px solid var(--line);border-radius:8px;padding:10px 12px;background:var(--bg)}
+
+/* cutting */
+.cutting{background:var(--surface);border-block:1px solid var(--line)}
+.cut-grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:28px;align-items:start}
+.panel{border:1px solid var(--line);border-radius:14px;padding:18px;background:var(--bg);min-width:0}
+.panel + .panel{margin-top:16px}
+.mat{display:grid;grid-template-columns:1fr 110px;gap:10px}
+.tbl-wrap{overflow-x:auto;margin-top:14px}
+table.parts{border-collapse:collapse;width:100%;min-width:560px;font-size:14px}
+.parts th{font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:500;text-align:left;padding:6px 4px;border-bottom:1px solid var(--line)}
+.parts td{padding:5px 4px;border-bottom:1px solid var(--line)}
+.parts input[type=number],.parts input[type=text],.parts select{width:100%;border:1.5px solid var(--line);border-radius:6px;padding:7px 6px;background:var(--surface);font-family:var(--f-mono);font-size:13px}
+.parts input[type=text]{font-family:var(--f-body)}
+.parts tr.err input{border-color:var(--bad)}
+.parts .n{font-family:var(--f-mono);color:var(--muted);width:24px}
+.rm{border:0;background:transparent;cursor:pointer;color:var(--muted);font-size:18px}
+.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+.summary div{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.summary b{display:block;font-family:var(--f-display);font-weight:500;font-size:20px}
+.summary span{font-size:12px;color:var(--muted)}
+.sheets{display:grid;gap:14px}
+.sheets figure{margin:0}
+.sheets figcaption{font-family:var(--f-mono);font-size:12px;color:var(--muted);margin-bottom:6px;display:flex;justify-content:space-between}
+.sheets svg{width:100%;height:auto;display:block;border-radius:3px}
+.calc{display:grid;gap:6px;font-size:14px;margin-top:6px}
+.calc div{display:flex;justify-content:space-between;gap:10px}
+.calc div span:last-child{font-family:var(--f-mono)}
+.calc .sum{border-top:1px solid var(--line);padding-top:8px;font-weight:600}
+.note{font-size:12.5px;color:var(--muted)}
+.warnbox{color:var(--bad);font-size:14px}
+@media (max-width:980px){.cut-grid{grid-template-columns:1fr}.summary{grid-template-columns:repeat(2,1fr)}}
+
+/* offcuts */
+.off-filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;align-items:end}
+.off-filters .field{min-width:120px;flex:1 1 120px}
+.table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:14px;background:var(--surface)}
+table.off{border-collapse:collapse;width:100%;min-width:720px;font-size:14px}
+.off th{text-align:left;font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:500;padding:12px 14px;border-bottom:1px solid var(--line)}
+.off td{padding:10px 14px;border-bottom:1px solid var(--line)}
+.off tr:last-child td{border-bottom:0}
+.off .sw{width:44px;height:28px;border-radius:3px;display:block;background-size:cover}
+.off .num{font-family:var(--f-mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+.mini{padding:7px 12px;font-size:13px}
+
+/* facades */
+.fac{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px}
+.fcard{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;display:grid;gap:12px;align-content:start}
+.front{height:150px;border-radius:6px;position:relative;overflow:hidden}
+.fcard h3{font-family:var(--f-body);font-weight:600;font-size:16px}
+.fcard p{font-size:14px;color:var(--muted)}
+.tag{font-family:var(--f-mono);font-size:11px;color:var(--accent);letter-spacing:.06em;text-transform:uppercase}
+
+/* steps */
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;counter-reset:s}
+.step{border-top:2px solid var(--ink);padding-top:16px}
+.step .k{font-family:var(--f-mono);font-size:12px;color:var(--accent)}
+.step h3{margin:8px 0;font-family:var(--f-body);font-weight:600;font-size:17px}
+.step p{font-size:14.5px;color:var(--muted)}
+@media (max-width:860px){.steps{grid-template-columns:1fr 1fr}}
+@media (max-width:480px){.steps{grid-template-columns:1fr}}
+
+/* contacts */
+.contacts{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+.ccard{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px;display:grid;gap:12px;align-content:start}
+.ccard h3{font-size:20px}
+.phones{display:grid;gap:6px}
+.ph{display:flex;align-items:center;justify-content:space-between;gap:10px;font-family:var(--f-mono);font-size:15px;user-select:all}
+.copy{border:1.5px solid var(--line);background:transparent;border-radius:999px;padding:4px 10px;font-size:12px;cursor:pointer;user-select:none;font-family:var(--f-body)}
+footer{border-top:1px solid var(--line);padding-block:28px calc(28px + env(safe-area-inset-bottom,0px));font-size:13px;color:var(--muted)}
+footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translate(-50%,30px);background:var(--ink);color:var(--bg);padding:12px 18px;border-radius:999px;font-size:14px;z-index:90;opacity:0;transition:all .25s;pointer-events:none;max-width:calc(100vw - 32px);text-align:center}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.anim .cut{stroke-dashoffset:0}.anim .part{opacity:1}}
+</style>
+
+<div class="proto">Прототип для погодження · <b>ціни, залишки та тарифи — демонстраційні</b></div>
+
+<header class="top">
+  <div class="wrap">
+    <a class="logo" href="#top" aria-label="Леоплит — на головну">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="15" width="20" height="13" rx="1.5" fill="var(--ink)"/><rect x="7" y="10" width="20" height="13" rx="1.5" fill="var(--muted)"/><rect x="11" y="5" width="18" height="12" rx="1.5" fill="var(--accent)"/></svg>
+      ЛЕОПЛИТ
+    </a>
+    <nav class="main" aria-label="Розділи">
+      <a href="#catalog">Каталог</a><a href="#cutting">Порізка</a><a href="#offcuts">Залишки</a><a href="#facades">Фасади</a><a href="#contacts">Контакти</a>
+    </nav>
+    <div class="right">
+      <div class="phone-top">067 323-07-57<small>Пн–Пт, 9:00–18:00</small></div>
+      <button class="cart-btn" id="cartBtn" aria-label="Кошик">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h2l2.4 11.2a2 2 0 0 0 2 1.6h7.7a2 2 0 0 0 2-1.5L21 8H6"/><circle cx="10" cy="20" r="1.3"/><circle cx="17" cy="20" r="1.3"/></svg>
+        <span class="n" id="cartN">0</span>
+      </button>
+      <button class="burger" id="burger" aria-label="Меню" aria-expanded="false">
+        <svg width="20" height="20" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+    </div>
+  </div>
+  <nav class="mnav" id="mnav" hidden aria-label="Меню">
+    <a href="#catalog">Каталог плит</a><a href="#cutting">Порізка і крайка</a><a href="#offcuts">Залишки плит</a><a href="#facades">Меблеві фасади</a><a href="#contacts">Контакти · 067 323-07-57</a>
+  </nav>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <div class="wrap">
+      <div>
+        <div class="eyebrow">Меблеві плити · Львів · з 2002 року</div>
+        <h1>Плита, порізана <em>під ваш проєкт</em></h1>
+        <p class="lead">ЛДСП, МДФ, ХДФ, ОСБ, стільниці й фасади на двох складах у Львові. Надсилаєте список деталей — ріжемо, клеїмо крайку в тон і готуємо до самовивозу.</p>
+        <div class="ctas">
+          <a class="btn btn-primary" href="#catalog">Підібрати плиту</a>
+          <a class="btn btn-ghost" href="#cutting">Розрахувати порізку</a>
+        </div>
+        <div class="stats">
+          <div><b class="mono">2002</b><span>працюємо з року</span></div>
+          <div><b class="mono">20 000+</b><span>найменувань</span></div>
+          <div><b class="mono">2</b><span>склади у Львові</span></div>
+          <div><b class="mono">3</b><span>офіційні бренди плит</span></div>
+        </div>
+      </div>
+      <figure class="map-card" style="margin:0">
+        <div class="cap"><span>КАРТА РОЗКРОЮ · АРКУШ 1</span><span id="heroCap">2800 × 2070 × 16 мм</span></div>
+        <div id="heroMap"></div>
+      </figure>
+    </div>
+  </section>
+
+  <div class="brands">
+    <div class="wrap">
+      <small>Офіційний дилер</small>
+      <span>Kronospan</span><span>Swisspan</span><span>SwissKrono</span><span>DI Portes</span>
+    </div>
+  </div>
+
+  <section class="block" id="catalog">
+    <div class="wrap">
+      <div class="head">
+        <div>
+          <div class="eyebrow">Каталог</div>
+          <h2>Плитні матеріали</h2>
+          <p>Кожна позиція — це декор, товщина і формат аркуша. Наведіть на плиту, щоб побачити розмір; торець показує реальну товщину.</p>
+        </div>
+      </div>
+      <div class="cats" id="cats" role="toolbar" aria-label="Категорії"></div>
+      <div class="cat-layout">
+        <aside class="filters" id="filters" aria-label="Фільтри">
+          <div class="fhead"><h3>Фільтри</h3><button class="x" id="fClose" aria-label="Закрити фільтри">✕</button></div>
+          <div id="fBody" style="display:grid;gap:22px"></div>
+          <button class="linkish" id="fReset" style="justify-self:start">Скинути фільтри</button>
+        </aside>
+        <div style="min-width:0">
+          <div class="toolbar">
+            <label class="search"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="q" type="search" placeholder="Декор або код: Венге, 0110…" aria-label="Пошук"></label>
+            <button class="btn btn-ghost fbtn mini" id="fOpen">Фільтри <span id="fCount"></span></button>
+            <select class="select" id="sort" aria-label="Сортування">
+              <option value="pop">Спочатку в наявності</option>
+              <option value="asc">Ціна: дешевші</option>
+              <option value="desc">Ціна: дорожчі</option>
+              <option value="name">За назвою</option>
+            </select>
+            <span class="count" id="count"></span>
+          </div>
+          <div class="grid" id="grid"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block cutting" id="cutting">
+    <div class="wrap">
+      <div class="head">
+        <div>
+          <div class="eyebrow">Порізка і крайкування</div>
+          <h2>Карта розкрою онлайн</h2>
+          <p>Введіть розміри деталей — система розкладе їх на аркуші з урахуванням пропилу й напрямку текстури, порахує кількість плити та метраж крайки.</p>
+        </div>
+      </div>
+      <div class="cut-grid">
+        <div>
+          <div class="panel">
+            <div class="mat">
+              <label class="field">Матеріал<select id="cMat"></select></label>
+              <label class="field">Товщина<select id="cThick"></select></label>
+            </div>
+            <div class="tbl-wrap">
+              <table class="parts">
+                <thead><tr><th>№</th><th>Довжина, мм</th><th>Ширина, мм</th><th>К-сть</th><th title="Сторін з крайкою по довжині">Крайка Д</th><th title="Сторін з крайкою по ширині">Крайка Ш</th><th title="Можна повертати, ігноруючи текстуру">↻</th><th>Назва</th><th></th></tr></thead>
+                <tbody id="pBody"></tbody>
+              </table>
+            </div>
+            <div class="row" style="margin-top:12px">
+              <button class="btn btn-ghost mini" id="addPart">+ Деталь</button>
+              <span class="note mono">пропил 4 мм · обріз кромки аркуша 10 мм</span>
+            </div>
+            <div class="warnbox" id="cWarn" hidden></div>
+          </div>
+          <div class="panel">
+            <h3 style="font-family:var(--f-body);font-weight:600;font-size:16px">Орієнтовна вартість</h3>
+            <div class="calc" id="calc"></div>
+            <p class="note" style="margin-top:8px">Тарифи порізки й крайки в прототипі умовні — підставимо реальні після погодження.</p>
+            <button class="btn btn-primary" id="sendCut" style="margin-top:14px">Додати порізку до замовлення</button>
+          </div>
+        </div>
+        <div class="panel" style="background:var(--surface)">
+          <div class="summary" id="summary"></div>
+          <div class="sheets" id="sheets"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="offcuts">
+    <div class="wrap">
+      <div class="head">
+        <div>
+          <div class="eyebrow">Залишки плит</div>
+          <h2>Обрізки зі знижкою</h2>
+          <p>Цілі шматки після порізки, які лежать на складах. Підходять для полиць, ящиків і дрібних виробів.</p>
+        </div>
+      </div>
+      <div class="off-filters">
+        <label class="field">Довжина від, мм<input id="oL" type="number" min="0" step="50" placeholder="0"></label>
+        <label class="field">Ширина від, мм<input id="oW" type="number" min="0" step="50" placeholder="0"></label>
+        <label class="field">Товщина<select id="oT"><option value="">Будь-яка</option><option>10</option><option>16</option><option>18</option></select></label>
+        <label class="field">Склад<select id="oS"><option value="">Усі склади</option><option value="lug">Луганська, 6б</option><option value="kov">Ковельська, 73</option></select></label>
+      </div>
+      <div class="table-wrap">
+        <table class="off">
+          <thead><tr><th></th><th>Декор</th><th>Товщина</th><th>Розмір, мм</th><th>Площа</th><th>Склад</th><th>Ціна</th><th></th></tr></thead>
+          <tbody id="oBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="facades" style="padding-top:0">
+    <div class="wrap">
+      <div class="head">
+        <div>
+          <div class="eyebrow">Меблеві фасади</div>
+          <h2>Фасади під замовлення</h2>
+          <p>Рамкові МДФ-фасади робимо на власному виробництві, є піскоструминна обробка скла. Розрахунок за квадратний метр.</p>
+        </div>
+        <a class="btn btn-ghost" href="#contacts">Замовити прорахунок</a>
+      </div>
+      <div class="fac" id="fac"></div>
+    </div>
+  </section>
+
+  <section class="block" style="padding-top:0">
+    <div class="wrap">
+      <div class="head"><div><div class="eyebrow">Як це працює</div><h2>Від декору до готових деталей</h2></div></div>
+      <div class="steps">
+        <div class="step"><div class="k">КРОК 1</div><h3>Обираєте плиту</h3><p>Декор, товщину й бренд у каталозі або в шоурумі на складі.</p></div>
+        <div class="step"><div class="k">КРОК 2</div><h3>Надсилаєте деталі</h3><p>Через калькулятор порізки або файлом: xls, txt, фото ескізу.</p></div>
+        <div class="step"><div class="k">КРОК 3</div><h3>Ріжемо й клеїмо крайку</h3><p>Підтверджуємо карту розкрою, ріжемо та крайкуємо в тон.</p></div>
+        <div class="step"><div class="k">КРОК 4</div><h3>Забираєте</h3><p>Самовивіз з Луганської або Ковельської, або доставка по Львову.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="contacts" style="padding-top:0">
+    <div class="wrap">
+      <div class="head"><div><div class="eyebrow">Контакти</div><h2>Два склади у Львові</h2></div></div>
+      <div class="contacts">
+        <div class="ccard">
+          <div class="tag">Склад і порізка</div>
+          <h3>вул. Луганська, 6б</h3>
+          <p class="muted">Пн–Пт 9:00–18:00</p>
+          <div class="phones">
+            <div class="ph"><span>067 323-07-57</span><button class="copy" data-copy="0673230757">Копіювати</button></div>
+            <div class="ph"><span>067 820-32-96</span><button class="copy" data-copy="0678203296">Копіювати</button></div>
+            <div class="ph"><span>050 371-30-13</span><span class="note">лише Viber</span></div>
+          </div>
+          <a class="btn btn-ghost mini" style="justify-self:start" href="https://www.google.com/maps/search/?api=1&query=%D0%9B%D1%8C%D0%B2%D1%96%D0%B2%2C+%D0%9B%D1%83%D0%B3%D0%B0%D0%BD%D1%81%D1%8C%D0%BA%D0%B0+6%D0%B1" target="_blank" rel="noopener">Відкрити на мапі ↗</a>
+        </div>
+        <div class="ccard">
+          <div class="tag">Склад, шоурум, фасади й ламінат</div>
+          <h3>вул. Ковельська, 73</h3>
+          <p class="muted">Пн–Пт 9:00–18:00</p>
+          <div class="phones">
+            <div class="ph"><span>067 675-33-04</span><button class="copy" data-copy="0676753304">Копіювати</button></div>
+            <div class="ph"><span>068 971-38-01</span><button class="copy" data-copy="0689713801">Копіювати</button></div>
+          </div>
+          <a class="btn btn-ghost mini" style="justify-self:start" href="https://www.google.com/maps/search/?api=1&query=%D0%9B%D1%8C%D0%B2%D1%96%D0%B2%2C+%D0%9A%D0%BE%D0%B2%D0%B5%D0%BB%D1%8C%D1%81%D1%8C%D0%BA%D0%B0+73" target="_blank" rel="noopener">Відкрити на мапі ↗</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer><div class="wrap"><span>© ТОВ «Леоплит», з 2002 року. Раніше — «Рай-Ком».</span><span>Прототип дизайну · жовтень 2026</span></div></footer>
+
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="qv" aria-label="Картка товару" aria-hidden="true">
+  <div class="dh"><span class="eyebrow" id="qvCat"></span><button class="x" data-close aria-label="Закрити">✕</button></div>
+  <div class="db" id="qvBody"></div>
+  <div class="df" id="qvFoot"></div>
+</aside>
+<aside class="drawer" id="cart" aria-label="Кошик" aria-hidden="true">
+  <div class="dh"><h3>Замовлення</h3><button class="x" data-close aria-label="Закрити">✕</button></div>
+  <div class="db" id="cartBody"></div>
+  <div class="df" id="cartFoot"></div>
+</aside>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(function(){
+/* ---------- data (demo) ---------- */
+const WH={lug:'Луганська',kov:'Ковельська'};
+const CATS=[['all','Усі'],['ldsp','ЛДСП'],['dsp','ДСП'],['mdf','МДФ'],['hdf','ХДФ / ДВП'],['osb','ОСБ і фанера'],['top','Стільниці'],['wall','Стінові панелі'],['edge','Крайка ПВХ']];
+const TYPE_N={uni:'Однотонний',wood:'Деревина',stone:'Камінь',metal:'Метал',raw:'Без покриття'};
+const P=[
+ {id:1,cat:'ldsp',name:'Білий',code:'0110',tex:'SM',brand:'Kronospan',type:'uni',c:'#F2F2EE',L:2800,W:2070,th:[10,16,18],def:16,base:1890,st:{lug:42,kov:18}},
+ {id:2,cat:'ldsp',name:'Білий Діамант',code:'8681',tex:'SM',brand:'Kronospan',type:'uni',c:'#F7F7F4',L:2800,W:2070,th:[16,18],def:16,base:2010,st:{lug:12,kov:6}},
+ {id:3,cat:'ldsp',name:'Бук',code:'0381',tex:'PR',brand:'SwissKrono',type:'wood',c:'#D7A36D',L:2800,W:2070,th:[16,18],def:16,base:1960,st:{lug:3,kov:0}},
+ {id:4,cat:'ldsp',name:'Ваніль',code:'1301',tex:'PE',brand:'SwissKrono',type:'uni',c:'#EADDBF',L:2800,W:2070,th:[16],def:16,base:1980,st:{lug:0,kov:9}},
+ {id:5,cat:'ldsp',name:'Венге',code:'0325',tex:'SE',brand:'Swisspan',type:'wood',c:'#3A2920',L:2750,W:1830,th:[10,16,18],def:16,base:1650,st:{lug:25,kov:14}},
+ {id:6,cat:'ldsp',name:'Акація Австралійська',code:'0356',tex:'WL',brand:'Swisspan',type:'wood',c:'#B48654',L:2750,W:1830,th:[16],def:16,base:1790,st:{lug:0,kov:0}},
+ {id:7,cat:'ldsp',name:'Аляска',code:'0433',tex:'WL',brand:'Swisspan',type:'wood',c:'#D8CEBF',L:2750,W:1830,th:[16,18],def:16,base:1820,st:{lug:7,kov:2}},
+ {id:8,cat:'ldsp',name:'Алюміній',code:'0079',tex:'PE',brand:'Swisspan',type:'metal',c:'#B5B8B9',L:2750,W:1830,th:[16],def:16,base:1990,st:{lug:4,kov:0}},
+ {id:9,cat:'ldsp',name:'Бріоті Світлий',code:'0366',tex:'WL',brand:'Swisspan',type:'wood',c:'#C8B293',L:2750,W:1830,th:[16],def:16,base:1840,st:{lug:11,kov:5}},
+ {id:10,cat:'ldsp',name:'Бук Баварія Світлий',code:'0038',tex:'SE',brand:'Swisspan',type:'wood',c:'#DDB385',L:2750,W:1830,th:[10,16,18],def:16,base:1650,st:{lug:30,kov:21}},
+ {id:11,cat:'ldsp',name:'Біла Аляска',code:'0440',tex:'SM',brand:'Swisspan',type:'uni',c:'#F0EEE8',L:2750,W:1830,th:[16],def:16,base:1700,st:{lug:16,kov:0}},
+ {id:12,cat:'ldsp',name:'Біле Дерево',code:'0449',tex:'WL',brand:'Swisspan',type:'wood',c:'#E6E0D5',L:2750,W:1830,th:[16,18],def:16,base:1790,st:{lug:2,kov:8}},
+ {id:20,cat:'dsp',name:'ДСП шліфована',code:'',tex:'',brand:'Kronospan',type:'raw',k:'chip',c:'#C9A77B',L:2800,W:2070,th:[16,18,22],def:16,base:1350,st:{lug:60,kov:20}},
+ {id:21,cat:'mdf',name:'МДФ шліфований',code:'',tex:'',brand:'Kronospan',type:'raw',k:'mdf',c:'#B9895B',L:2800,W:2070,th:[10,16,18,22],def:18,base:2150,st:{lug:18,kov:10}},
+ {id:22,cat:'hdf',name:'ХДФ біла',code:'',tex:'',brand:'Kronospan',type:'uni',c:'#F1F0EB',L:2800,W:2070,th:[3],def:3,base:620,st:{lug:80,kov:40}},
+ {id:23,cat:'hdf',name:'ДВП шліфована',code:'',tex:'',brand:'Swisspan',type:'raw',k:'mdf',c:'#8D5C37',L:2745,W:1700,th:[3.2],def:3.2,base:380,st:{lug:45,kov:0}},
+ {id:24,cat:'osb',name:'ОСБ-3',code:'',tex:'',brand:'Kronospan',type:'raw',k:'osb',c:'#C99D5F',L:2500,W:1250,th:[9,12,18],def:12,base:690,st:{lug:0,kov:120}},
+ {id:25,cat:'osb',name:'Фанера березова ФК',code:'',tex:'',brand:'—',type:'raw',k:'ply',c:'#E3C795',L:1525,W:1525,th:[10,15,18],def:18,base:1250,st:{lug:14,kov:6}},
+ {id:30,cat:'top',name:'Стільниця Бетон темний',code:'',tex:'',brand:'Kronospan',type:'stone',c:'#6D6D6A',L:4100,W:600,th:[38],def:38,base:3400,unit:'шт',st:{lug:0,kov:5}},
+ {id:31,cat:'top',name:'Стільниця Дуб природний',code:'',tex:'',brand:'SwissKrono',type:'wood',c:'#C49460',L:4100,W:600,th:[38],def:38,base:3650,unit:'шт',st:{lug:2,kov:3}},
+ {id:32,cat:'wall',name:'Стінова панель Мармур білий',code:'',tex:'',brand:'Kronospan',type:'stone',c:'#ECEAE5',L:4100,W:600,th:[10],def:10,base:1900,unit:'шт',st:{lug:0,kov:7}},
+ {id:40,cat:'edge',name:'Крайка ПВХ Білий',code:'0110',tex:'',brand:'ПВХ',type:'uni',c:'#F2F2EE',edge:true,L:22,W:0.6,th:[0.6,2],def:0.6,prices:{0.6:8,2:19},unit:'м.п.',st:{lug:900,kov:400}},
+ {id:41,cat:'edge',name:'Крайка ПВХ Венге',code:'0325',tex:'',brand:'ПВХ',type:'wood',c:'#3A2920',edge:true,L:22,W:0.6,th:[0.6,2],def:0.6,prices:{0.6:10,2:23},unit:'м.п.',st:{lug:300,kov:120}},
+ {id:42,cat:'edge',name:'Крайка ПВХ Бук Баварія',code:'0038',tex:'',brand:'ПВХ',type:'wood',c:'#DDB385',edge:true,L:22,W:0.6,th:[0.6,2],def:0.6,prices:{0.6:10,2:23},unit:'м.п.',st:{lug:250,kov:0}},
+ {id:43,cat:'edge',name:'Крайка ПВХ Алюміній',code:'0079',tex:'',brand:'ПВХ',type:'metal',c:'#B5B8B9',edge:true,L:22,W:0.6,th:[0.6,2],def:0.6,prices:{0.6:12,2:26},unit:'м.п.',st:{lug:0,kov:80}},
+];
+const byId=id=>P.find(p=>p.id===id);
+const unit=p=>p.unit||'лист';
+const priceFor=(p,t)=>p.prices?p.prices[t]:Math.round(p.base*Math.pow(t/p.def,.8)/10)*10;
+const fmt=n=>Math.round(n).toLocaleString('uk-UA');
+const fmtTh=t=>String(t).replace('.',',');
+const stockSum=p=>p.st.lug+p.st.kov;
+const findEdge=p=>p.code&&!p.edge?P.find(e=>e.edge&&e.code===p.code):null;
+
+/* ---------- procedural textures ---------- */
+function rng(seed){return function(){seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function hex2rgb(h){h=h.replace('#','');return[0,2,4].map(i=>parseInt(h.substr(i,2),16))}
+function shade(h,a){const [r,g,b]=hex2rgb(h);const f=v=>Math.max(0,Math.min(255,Math.round(a<0?v*(1+a):v+(255-v)*a)));return`rgb(${f(r)},${f(g)},${f(b)})`}
+const texCache={};
+function tex(p){
+  const kind=p.type==='raw'?p.k:p.type;const key=p.c+kind+p.id;
+  if(texCache[key])return texCache[key];
+  const W=360,H=264,cv=document.createElement('canvas');cv.width=W;cv.height=H;const x=cv.getContext('2d');const R=rng(p.id*977+7);
+  x.fillStyle=p.c;x.fillRect(0,0,W,H);
+  const dark=hex2rgb(p.c).reduce((a,b)=>a+b)/3<90;
+  if(kind==='wood'||kind==='ply'){
+    const step=kind==='ply'?2.4:1.3;
+    for(let y=0;y<H;y+=step){const v=Math.sin(y*.045+R()*.4)*.07+(R()-.5)*.08;x.strokeStyle=shade(p.c,dark?v*1.6:v);x.globalAlpha=.55;x.lineWidth=step*.9;x.beginPath();const ph=R()*6,amp=1+R()*2.5;for(let i=0;i<=W;i+=18){x.lineTo(i,y+Math.sin(i*.012+ph)*amp+Math.sin(i*.003+y*.02)*6)}x.stroke()}
+    x.globalAlpha=1;
+    if(kind==='wood'&&R()>.4){const kx=40+R()*280,ky=30+R()*200;for(let r=14;r>2;r-=2.5){x.strokeStyle=shade(p.c,-.12);x.globalAlpha=.25;x.beginPath();x.ellipse(kx,ky,r*2.6,r,0,0,7);x.stroke()}x.globalAlpha=1}
+  }else if(kind==='stone'){
+    for(let i=0;i<5000;i++){x.fillStyle=shade(p.c,(R()-.5)*.25);x.globalAlpha=.5;x.fillRect(R()*W,R()*H,1.2,1.2)}
+    for(let v=0;v<5;v++){x.strokeStyle=shade(p.c,R()>.5?-.25:.3);x.globalAlpha=.28;x.lineWidth=.6+R()*2.2;x.beginPath();x.moveTo(-10,R()*H);x.bezierCurveTo(W*.3,R()*H,W*.6,R()*H,W+10,R()*H);x.stroke()}
+    x.globalAlpha=1;
+  }else if(kind==='metal'){
+    for(let i=0;i<700;i++){x.strokeStyle=R()>.5?'#fff':'#000';x.globalAlpha=R()*.07;x.beginPath();const y=R()*H;x.moveTo(0,y);x.lineTo(W,y);x.stroke()}
+    const g=x.createLinearGradient(0,0,W,H);g.addColorStop(0,'rgba(255,255,255,.18)');g.addColorStop(.5,'rgba(255,255,255,0)');g.addColorStop(1,'rgba(0,0,0,.08)');x.globalAlpha=1;x.fillStyle=g;x.fillRect(0,0,W,H);
+  }else if(kind==='chip'){
+    for(let i=0;i<3200;i++){x.fillStyle=shade(p.c,(R()-.5)*.35);x.globalAlpha=.8;x.fillRect(R()*W,R()*H,1+R()*3.5,1+R()*2)}x.globalAlpha=1;
+  }else if(kind==='osb'){
+    for(let i=0;i<260;i++){x.save();x.translate(R()*W,R()*H);x.rotate(R()*Math.PI);x.fillStyle=shade(p.c,(R()-.5)*.38);x.globalAlpha=.9;x.fillRect(-25,-5,30+R()*45,6+R()*9);x.restore()}x.globalAlpha=1;
+  }else{
+    for(let i=0;i<2200;i++){x.fillStyle=shade(p.c,(R()-.5)*.12);x.globalAlpha=.35;x.fillRect(R()*W,R()*H,1.3,1.3)}x.globalAlpha=1;
+  }
+  return texCache[key]=cv.toDataURL('image/jpeg',.82);
+}
+const edgeCol=p=>p.type==='raw'?shade(p.c,-.25):shade(p.c,-.18);
+function slab(p,t,big){
+  const ar=p.edge?4:Math.min(2.2,Math.max(1.15,p.L/p.W));
+  const tp=big?Math.min(18,4+t*.55):Math.min(12,2+t*.42);
+  return `<div class="slab" style="aspect-ratio:${ar};--t:${tp}px;--edge:${edgeCol(p)}"><img src="${tex(p)}" alt="Декор ${p.name}"></div>`;
+}
+
+/* ---------- catalog ---------- */
+const S={cat:'all',brand:new Set(),th:new Set(),type:new Set(),wh:'any',q:'',sort:'pop'};
+let firstRender=true;
+function inCat(p){return S.cat==='all'?!p.edge:p.cat===S.cat}
+function renderCats(){
+  document.getElementById('cats').innerHTML=CATS.map(([k,n])=>{const c=P.filter(p=>k==='all'?!p.edge:p.cat===k).length;return`<button class="chip" data-cat="${k}" aria-pressed="${S.cat===k}">${n} <i>${c}</i></button>`}).join('');
+}
+function renderFilters(){
+  const pool=P.filter(inCat);
+  const brands=[...new Set(pool.map(p=>p.brand))].filter(b=>b!=='—');
+  const ths=[...new Set(pool.flatMap(p=>p.th))].sort((a,b)=>a-b);
+  const types=[...new Set(pool.map(p=>p.type))];
+  const g=(title,key,vals,lab)=>`<div class="fgroup"><h4>${title}</h4><div class="opts">${vals.map(v=>`<button class="chip" data-f="${key}" data-v="${v}" aria-pressed="${S[key].has(String(v))}">${lab?lab(v):v}</button>`).join('')}</div></div>`;
+  document.getElementById('fBody').innerHTML=
+    (brands.length>1?g('Виробник','brand',brands):'')+
+    (ths.length>1?g('Товщина, мм','th',ths,fmtTh):'')+
+    (types.length>1?g('Тип декору','type',types,v=>TYPE_N[v]):'')+
+    `<div class="fgroup"><h4>Наявність</h4><div class="opts">${[['any','Усі'],['lug','Луганська'],['kov','Ковельська']].map(([k,n])=>`<button class="chip" data-wh="${k}" aria-pressed="${S.wh===k}">${n}</button>`).join('')}</div></div>`;
+  const n=S.brand.size+S.th.size+S.type.size+(S.wh!=='any'?1:0);
+  document.getElementById('fCount').textContent=n?`· ${n}`:'';
+}
+function stockBadge(p){
+  const n=S.wh==='any'?stockSum(p):p.st[S.wh];const u=unit(p)==='м.п.'?'м':'шт';
+  if(!n)return`<span class="stock no">Під замовлення</span>`;
+  if(n<5)return`<span class="stock low">Залишилось ${n} ${u}</span>`;
+  return`<span class="stock ok">В наявності${S.wh==='any'?'':' · '+WH[S.wh]}</span>`;
+}
+function renderGrid(){
+  const q=S.q.trim().toLowerCase();
+  let list=P.filter(inCat).filter(p=>
+    (!S.brand.size||S.brand.has(p.brand))&&
+    (!S.th.size||p.th.some(t=>S.th.has(String(t))))&&
+    (!S.type.size||S.type.has(p.type))&&
+    (S.wh==='any'||p.st[S.wh]>0)&&
+    (!q||(p.name+' '+p.code+' '+p.brand).toLowerCase().includes(q)));
+  const pt=p=>{const t=S.th.size?p.th.find(t=>S.th.has(String(t))):p.def;return t??p.def};
+  if(S.sort==='asc')list.sort((a,b)=>priceFor(a,pt(a))-priceFor(b,pt(b)));
+  else if(S.sort==='desc')list.sort((a,b)=>priceFor(b,pt(b))-priceFor(a,pt(a)));
+  else if(S.sort==='name')list.sort((a,b)=>a.name.localeCompare(b.name,'uk'));
+  else list.sort((a,b)=>(stockSum(b)>0)-(stockSum(a)>0));
+  document.getElementById('count').textContent=`${list.length} позицій`;
+  const anim=firstRender?'':' enter';
+  document.getElementById('grid').innerHTML=list.length?list.map((p,i)=>{
+    const t=pt(p),pr=priceFor(p,t),u=unit(p);
+    const m2=u==='лист'?`<span class="per">${fmt(pr/(p.L*p.W/1e6))} грн/м²</span>`:'';
+    const dims=p.edge?`${p.L} × ${fmtTh(t)} мм`:`${p.L} × ${p.W} мм`;
+    return`<article class="card${anim}" style="animation-delay:${Math.min(i,12)*30}ms">
+      <button class="sheet-btn" data-open="${p.id}" style="--t:${p.edge?4:Math.min(12,2+t*.42)}px" aria-label="${p.name}: деталі">
+        ${slab(p,t)}<span class="dims">${dims}</span>
+        <span class="badges">${p.code?`<span class="badge">${p.code}${p.tex?' '+p.tex:''}</span>`:''}</span>
+      </button>
+      <div><h3>${p.name}</h3><div class="sub"><span>${p.brand!=='—'?p.brand:'Фанера'}</span><span>${p.th.map(fmtTh).join(' / ')} мм</span></div></div>
+      ${stockBadge(p)}
+      <div class="price-row"><span class="price">${p.th.length>1&&!S.th.size?'<small>від </small>':''}${fmt(p.th.length>1&&!S.th.size?Math.min(...p.th.map(x=>priceFor(p,x))):pr)} <small>грн/${u}</small></span>${m2}</div>
+    </article>`}).join(''):`<div class="empty">Нічого не знайшли за цими фільтрами. <button class="linkish" id="emptyReset">Скинути фільтри</button></div>`;
+  firstRender=false;
+}
+function refresh(){renderCats();renderFilters();renderGrid()}
+
+document.getElementById('cats').addEventListener('click',e=>{const b=e.target.closest('[data-cat]');if(!b)return;S.cat=b.dataset.cat;S.brand.clear();S.th.clear();S.type.clear();refresh()});
+document.getElementById('fBody').addEventListener('click',e=>{
+  const b=e.target.closest('button');if(!b)return;
+  if(b.dataset.wh){S.wh=b.dataset.wh}else{const set=S[b.dataset.f];const v=b.dataset.v;set.has(v)?set.delete(v):set.add(v)}
+  renderFilters();renderGrid();
+});
+function resetF(){S.brand.clear();S.th.clear();S.type.clear();S.wh='any';S.q='';document.getElementById('q').value='';refresh()}
+document.getElementById('fReset').onclick=resetF;
+document.getElementById('grid').addEventListener('click',e=>{if(e.target.id==='emptyReset')return resetF();const b=e.target.closest('[data-open]');if(b)openQV(+b.dataset.open)});
+document.getElementById('q').addEventListener('input',e=>{S.q=e.target.value;renderGrid()});
+document.getElementById('sort').addEventListener('change',e=>{S.sort=e.target.value;renderGrid()});
+const fl=document.getElementById('filters');
+document.getElementById('fOpen').onclick=()=>{fl.classList.add('open');scrim.classList.add('on')};
+document.getElementById('fClose').onclick=closeAll;
+
+/* ---------- drawers ---------- */
+const scrim=document.getElementById('scrim');
+function openDrawer(id){closeAll();const d=document.getElementById(id);d.classList.add('open');d.setAttribute('aria-hidden','false');scrim.classList.add('on');setTimeout(()=>d.querySelector('[data-close]').focus(),50)}
+function closeAll(){document.querySelectorAll('.drawer').forEach(d=>{d.classList.remove('open');d.setAttribute('aria-hidden','true')});fl.classList.remove('open');scrim.classList.remove('on')}
+scrim.onclick=closeAll;document.querySelectorAll('[data-close]').forEach(b=>b.onclick=closeAll);
+addEventListener('keydown',e=>{if(e.key==='Escape')closeAll()});
+
+let qv={id:0,t:0,qty:1,edge:false,em:20};
+function openQV(id){const p=byId(id);qv={id,t:p.def,qty:1,edge:false,em:unit(p)==='лист'?20:0};renderQV();openDrawer('qv')}
+function renderQV(){
+  const p=byId(qv.id),u=unit(p),pr=priceFor(p,qv.t),e=findEdge(p);
+  document.getElementById('qvCat').textContent=CATS.find(c=>c[0]===p.cat)[1];
+  const area=p.L*p.W/1e6;
+  document.getElementById('qvBody').innerHTML=`
+    <div class="qv-sheet">${slab(p,qv.t,true)}</div>
+    <div><h2 style="font-size:26px">${p.name}</h2><p class="mono muted" style="margin-top:6px;font-size:13px">${[p.code,p.tex,p.brand!=='—'?p.brand:''].filter(Boolean).join(' · ')}</p></div>
+    ${p.th.length>1?`<div><div class="eyebrow" style="color:var(--muted);margin-bottom:8px">Товщина, мм</div><div class="opts" style="display:flex;gap:6px;flex-wrap:wrap">${p.th.map(t=>`<button class="chip" data-qt="${t}" aria-pressed="${t===qv.t}">${fmtTh(t)}</button>`).join('')}</div></div>`:''}
+    <table class="spec">
+      ${p.edge?`<tr><td>Ширина × товщина</td><td>${p.L} × ${fmtTh(qv.t)} мм</td></tr>`:`<tr><td>Формат</td><td>${p.L} × ${p.W} мм</td></tr><tr><td>Товщина</td><td>${fmtTh(qv.t)} мм</td></tr>`}
+      ${u==='лист'?`<tr><td>Площа аркуша</td><td>${area.toFixed(2).replace('.',',')} м²</td></tr><tr><td>Ціна за м²</td><td>${fmt(pr/area)} грн</td></tr>`:''}
+      <tr><td>Тип декору</td><td>${TYPE_N[p.type]}</td></tr>
+      ${p.tex?`<tr><td>Структура поверхні</td><td>${p.tex}</td></tr>`:''}
+      <tr><td>Склад Луганська</td><td>${p.st.lug||'—'}</td></tr>
+      <tr><td>Склад Ковельська</td><td>${p.st.kov||'—'}</td></tr>
+    </table>
+    ${e?`<div class="match"><label><input type="checkbox" id="qvEdge" ${qv.edge?'checked':''}><span class="sw" style="background-image:url(${tex(e)})"></span><span><b>Крайка в тон ${e.code}</b><br><span class="muted">ПВХ 22 × 0,6 мм · ${e.prices[0.6]} грн/м.п.</span></span></label>${qv.edge?`<span class="stepper"><input id="qvEm" type="number" min="1" value="${qv.em}" aria-label="Метрів крайки"></span><span class="mono" style="font-size:12px">м</span>`:''}</div>`:''}
+    ${u==='лист'?`<button class="btn btn-ghost" id="qvCut">Порізати цей декор за моїми розмірами →</button>`:''}`;
+  const sum=pr*qv.qty+(qv.edge&&e?e.prices[0.6]*qv.em:0);
+  document.getElementById('qvFoot').innerHTML=`<div class="row"><span class="stepper"><button data-q="-1" aria-label="Менше">−</button><input id="qvQty" type="number" min="1" value="${qv.qty}" aria-label="Кількість"><button data-q="1" aria-label="Більше">+</button></span><span class="total">${fmt(sum)} грн</span></div><button class="btn btn-primary" id="qvAdd" style="justify-content:center">Додати в замовлення · ${qv.qty} ${u}</button>`;
+}
+document.getElementById('qv').addEventListener('click',e=>{
+  const t=e.target.closest('[data-qt]');if(t){qv.t=+t.dataset.qt;renderQV();return}
+  const q=e.target.closest('[data-q]');if(q){qv.qty=Math.max(1,qv.qty+ +q.dataset.q);renderQV();return}
+  if(e.target.id==='qvAdd'){const p=byId(qv.id);addCart({id:p.id,t:qv.t,qty:qv.qty});const ed=findEdge(p);if(qv.edge&&ed)addCart({id:ed.id,t:0.6,qty:qv.em});closeAll();toast(`${p.name} додано в замовлення`)}
+  if(e.target.id==='qvCut'){const id=qv.id,t=qv.t;closeAll();setCutMat(id,t);document.getElementById('cutting').scrollIntoView()}
+});
+document.getElementById('qv').addEventListener('change',e=>{
+  if(e.target.id==='qvEdge'){qv.edge=e.target.checked;renderQV()}
+  if(e.target.id==='qvEm'){qv.em=Math.max(1,+e.target.value||1);renderQV()}
+  if(e.target.id==='qvQty'){qv.qty=Math.max(1,+e.target.value||1);renderQV()}
+});
+
+/* ---------- cart ---------- */
+let cart=[];
+function addCart(it){const ex=cart.find(c=>c.id===it.id&&c.t===it.t&&!c.cut);ex?ex.qty+=it.qty:cart.push(it);renderCart()}
+function lineTotal(c){return c.cut?c.total:priceFor(byId(c.id),c.t)*c.qty}
+function renderCart(){
+  document.getElementById('cartN').textContent=cart.length;
+  const body=document.getElementById('cartBody');
+  if(!cart.length){body.innerHTML=`<div class="empty">Замовлення порожнє. Оберіть плиту в каталозі або розрахуйте порізку.</div>`;document.getElementById('cartFoot').innerHTML='';return}
+  body.innerHTML=cart.map((c,i)=>{const p=byId(c.id);return`<div class="cart-item"><img src="${tex(p)}" alt=""><div><div class="t">${c.cut?'Порізка: ':''}${p.name} ${fmtTh(c.t)} мм</div><div class="m">${c.cut?c.desc:`${c.qty} ${unit(p)} × ${fmt(priceFor(p,c.t))} грн`}</div><button class="linkish" data-rm="${i}">Видалити</button></div><div class="mono">${fmt(lineTotal(c))} ₴</div></div>`}).join('')+
+  `<label class="field">Ім'я<input id="oName" autocomplete="name" placeholder="Андрій"></label><label class="field">Телефон<input id="oPhone" type="tel" autocomplete="tel" placeholder="067 000-00-00"></label><label class="field">Самовивіз<select id="oPick"><option>вул. Луганська, 6б</option><option>вул. Ковельська, 73</option><option>Доставка по Львову</option></select></label>`;
+  const tot=cart.reduce((s,c)=>s+lineTotal(c),0);
+  document.getElementById('cartFoot').innerHTML=`<div class="row"><span class="muted">Разом</span><span class="total">${fmt(tot)} грн</span></div><button class="btn btn-primary" id="checkout" style="justify-content:center">Надіслати заявку менеджеру</button><span class="note" id="coMsg"></span>`;
+}
+document.getElementById('cartBtn').onclick=()=>{renderCart();openDrawer('cart')};
+document.getElementById('cart').addEventListener('click',e=>{
+  if(e.target.dataset.rm!==undefined){cart.splice(+e.target.dataset.rm,1);renderCart()}
+  if(e.target.id==='checkout'){const ph=document.getElementById('oPhone').value.replace(/\D/g,'');const m=document.getElementById('coMsg');
+    if(ph.length<10){m.style.color='var(--bad)';m.textContent='Вкажіть телефон з 10 цифр, щоб менеджер міг підтвердити замовлення.';return}
+    m.style.color='var(--ok)';m.textContent='Заявку сформовано. У робочій версії вона потрапить менеджеру складу.'}
+});
+
+/* ---------- cutting ---------- */
+const KERF=4,TRIM=10;
+const RATE={cut:18,edge06:14,edge2:22}; // demo
+const sheetMats=P.filter(p=>unit(p)==='лист'&&!p.edge);
+let cut={id:10,t:16,parts:[
+  {L:2000,W:560,q:2,eL:1,eW:0,r:false,n:'Бокова шафи'},
+  {L:720,W:560,q:4,eL:1,eW:0,r:false,n:'Бокова тумби'},
+  {L:1168,W:560,q:1,eL:1,eW:0,r:false,n:'Дах шафи'},
+  {L:564,W:520,q:4,eL:1,eW:0,r:true,n:'Полиця'},
+  {L:564,W:100,q:4,eL:1,eW:0,r:true,n:'Царга'},
+  {L:796,W:396,q:3,eL:2,eW:2,r:false,n:'Фасад шухляди'}]};
+const cMat=document.getElementById('cMat'),cThick=document.getElementById('cThick');
+cMat.innerHTML=sheetMats.map(p=>`<option value="${p.id}">${p.name}${p.code?' '+p.code:''} · ${p.L}×${p.W}</option>`).join('');
+function setCutMat(id,t){cut.id=id;const p=byId(id);cut.t=p.th.includes(t)?t:p.def;cMat.value=id;fillThick();renderParts();runCut()}
+function fillThick(){const p=byId(cut.id);cThick.innerHTML=p.th.map(t=>`<option value="${t}" ${t===cut.t?'selected':''}>${fmtTh(t)} мм</option>`).join('')}
+cMat.onchange=()=>setCutMat(+cMat.value,cut.t);
+cThick.onchange=()=>{cut.t=+cThick.value;runCut()};
+
+function pack(parts,SL,SW){
+  const UW=SL-2*TRIM,UH=SW-2*TRIM,items=[],over=[];
+  parts.forEach((p,idx)=>{for(let i=0;i<p.q;i++){let w=p.L,h=p.W;if(p.r&&h>w)[w,h]=[h,w];
+    if(w>UW||h>UH){if(p.r&&h<=UW&&w<=UH)[w,h]=[h,w];else{over.push(idx);return}}items.push({w,h,idx,r:p.r})}});
+  items.sort((a,b)=>b.h-a.h||b.w-a.w);
+  const sheets=[];
+  const newSheet=()=>{const s={shelves:[],used:0,rects:[]};sheets.push(s);return s};
+  for(const it of items){
+    let done=false;
+    for(const s of sheets){for(const sh of s.shelves){
+      let w=it.w,h=it.h;
+      if(!(h<=sh.h&&sh.x+w<=UW)&&it.r&&w<=sh.h&&sh.x+h<=UW){[w,h]=[h,w]}
+      if(h<=sh.h&&sh.x+w<=UW){s.rects.push({x:sh.x,y:sh.y,w,h,idx:it.idx});sh.x+=w+KERF;sh.cuts.push({x:sh.x-KERF/2,h});done=true;break}
+    }if(done)break}
+    if(done)continue;
+    let s=sheets.find(s=>s.used+it.h<=UH)||newSheet();
+    const sh={y:s.used,h:it.h,x:0,cuts:[]};s.shelves.push(sh);s.used+=it.h+KERF;
+    s.rects.push({x:0,y:sh.y,w:it.w,h:it.h,idx:it.idx});sh.x=it.w+KERF;sh.cuts.push({x:sh.x-KERF/2});
+  }
+  return{sheets,over:[...new Set(over)],UW,UH};
+}
+const PCOL=['#C9481A','#2C6E8F','#6B8E23','#8A4FA3','#B8860B','#2E8B77','#A0522D','#4F6D7A'];
+function sheetSVG(p,s,SL,SW,opts={}){
+  const im=tex(p);let out=`<svg viewBox="-40 -40 ${SL+80} ${SW+80}" role="img" aria-label="Карта розкрою аркуша"><rect x="-40" y="-40" width="${SL+80}" height="${SW+80}" fill="var(--soft)"/><image href="${im}" x="0" y="0" width="${SL}" height="${SW}" preserveAspectRatio="none"/><rect x="0" y="0" width="${SL}" height="${SW}" fill="none" stroke="var(--ink)" stroke-width="6"/>`;
+  let d=0;const lines=[];
+  s.shelves.forEach(sh=>{const y=TRIM+sh.y+sh.h+KERF/2;lines.push([TRIM,y,SL-TRIM,y]);sh.cuts.forEach(c=>lines.push([TRIM+c.x,TRIM+sh.y,TRIM+c.x,TRIM+sh.y+sh.h]))});
+  s.rects.forEach(r=>{const shelf=s.shelves.find(sh=>sh.y===r.y);if(shelf&&r.h<shelf.h){const y=TRIM+r.y+r.h+KERF/2;lines.push([TRIM+r.x,y,TRIM+r.x+r.w,y])}});
+  s.rects.forEach((r,i)=>{const c=PCOL[r.idx%PCOL.length];const fs=Math.min(64,r.w/7,r.h/2.4);
+    out+=`<g class="part" style="--d:${opts.anim?(150+i*90):0}ms"><rect x="${TRIM+r.x}" y="${TRIM+r.y}" width="${r.w}" height="${r.h}" fill="${c}" fill-opacity=".2" stroke="${c}" stroke-width="5"/>${fs>=22?`<text x="${TRIM+r.x+r.w/2}" y="${TRIM+r.y+r.h/2}" text-anchor="middle" dominant-baseline="middle" font-family="JetBrains Mono, monospace" font-size="${fs}" font-weight="500" fill="#111" stroke="#fff" stroke-width="${fs/6}" paint-order="stroke">${opts.names?'':(r.idx+1)+' · '}${Math.max(r.w,r.h)}×${Math.min(r.w,r.h)}</text>`:''}</g>`});
+  lines.forEach((l,i)=>{const len=Math.hypot(l[2]-l[0],l[3]-l[1]);out+=`<line class="cut" x1="${l[0]}" y1="${l[1]}" x2="${l[2]}" y2="${l[3]}" style="--l:${len};--d:${opts.anim?(200+i*60):0}ms"/>`});
+  return out+'</svg>';
+}
+function renderParts(){
+  document.getElementById('pBody').innerHTML=cut.parts.map((p,i)=>`<tr data-i="${i}">
+    <td class="n">${i+1}</td>
+    <td><input type="number" id="pL${i}" data-k="L" value="${p.L}" min="1" aria-label="Довжина деталі ${i+1}"></td>
+    <td><input type="number" id="pW${i}" data-k="W" value="${p.W}" min="1" aria-label="Ширина деталі ${i+1}"></td>
+    <td><input type="number" id="pQ${i}" data-k="q" value="${p.q}" min="1" style="width:56px" aria-label="Кількість"></td>
+    <td><select id="pEL${i}" data-k="eL" aria-label="Крайка по довжині">${[0,1,2].map(v=>`<option ${v===p.eL?'selected':''}>${v}</option>`).join('')}</select></td>
+    <td><select id="pEW${i}" data-k="eW" aria-label="Крайка по ширині">${[0,1,2].map(v=>`<option ${v===p.eW?'selected':''}>${v}</option>`).join('')}</select></td>
+    <td><input type="checkbox" id="pR${i}" data-k="r" ${p.r?'checked':''} aria-label="Можна повертати"></td>
+    <td><input type="text" id="pN${i}" data-k="n" value="${p.n}" aria-label="Назва"></td>
+    <td><button class="rm" data-rmp="${i}" aria-label="Видалити деталь">×</button></td></tr>`).join('');
+}
+let lastCut=null;
+function runCut(){
+  const p=byId(cut.id),SL=p.L,SW=p.W;
+  const valid=cut.parts.filter(x=>x.L>0&&x.W>0&&x.q>0);
+  const res=pack(valid,SL,SW);
+  document.querySelectorAll('#pBody tr').forEach(tr=>tr.classList.remove('err'));
+  const w=document.getElementById('cWarn');
+  if(res.over.length){w.hidden=false;w.textContent=`Деталь ${res.over.map(i=>cut.parts.indexOf(valid[i])+1).join(', ')} не вміщується в аркуш ${res.UW}×${res.UH} мм (після обрізу). Зменште розмір або дозвольте поворот.`;res.over.forEach(i=>document.querySelector(`#pBody tr[data-i="${cut.parts.indexOf(valid[i])}"]`)?.classList.add('err'))}else w.hidden=true;
+  const n=res.sheets.length;
+  const area=res.sheets.reduce((a,s)=>a+s.rects.reduce((b,r)=>b+r.w*r.h,0),0);
+  const util=n?area/(n*SL*SW)*100:0;
+  const edgeM=valid.reduce((a,x)=>a+x.q*(x.eL*x.L+x.eW*x.W),0)/1000;
+  const cutM=res.sheets.reduce((a,s)=>a+s.rects.reduce((b,r)=>b+r.w+r.h,0),0)/1000;
+  document.getElementById('summary').innerHTML=`<div><b class="mono">${n}</b><span>аркушів ${SL}×${SW}</span></div><div><b class="mono">${util.toFixed(0)}%</b><span>використання плити</span></div><div><b class="mono">${edgeM.toFixed(1).replace('.',',')}</b><span>м.п. крайки</span></div><div><b class="mono">${cutM.toFixed(1).replace('.',',')}</b><span>≈ м.п. різу</span></div>`;
+  const show=res.sheets.slice(0,3);
+  document.getElementById('sheets').innerHTML=n?show.map((s,i)=>`<figure><figcaption><span>АРКУШ ${i+1} з ${n}</span><span>${p.name} ${fmtTh(cut.t)} мм</span></figcaption>${sheetSVG(p,s,SL,SW)}</figure>`).join('')+(n>3?`<p class="note">Ще ${n-3} аркуш(і) — у повній карті розкрою.</p>`:''):`<div class="empty">Додайте хоча б одну деталь з розмірами.</div>`;
+  const ed=findEdge(p);
+  const plate=n*priceFor(p,cut.t),cutC=cutM*RATE.cut,edgeC=edgeM*(RATE.edge06+(ed?ed.prices[0.6]:9));
+  lastCut={total:plate+cutC+edgeC,desc:`${valid.reduce((a,x)=>a+x.q,0)} деталей · ${n} арк. · ${edgeM.toFixed(1)} м крайки`};
+  document.getElementById('calc').innerHTML=`<div><span>Плита: ${n} × ${fmt(priceFor(p,cut.t))} грн</span><span>${fmt(plate)} грн</span></div><div><span>Порізка ≈ ${cutM.toFixed(1)} м.п.</span><span>${fmt(cutC)} грн</span></div><div><span>Крайка ${ed?'в тон '+ed.code:'ПВХ'} + поклейка, ${edgeM.toFixed(1)} м.п.</span><span>${fmt(edgeC)} грн</span></div><div class="sum"><span>Разом орієнтовно</span><span>${fmt(lastCut.total)} грн</span></div>`;
+}
+const pBody=document.getElementById('pBody');
+pBody.addEventListener('input',e=>{const tr=e.target.closest('tr');if(!tr)return;const p=cut.parts[+tr.dataset.i],k=e.target.dataset.k;
+  if(k==='r')p.r=e.target.checked;else if(k==='n')p.n=e.target.value;else p[k]=+e.target.value||0;runCut()});
+pBody.addEventListener('change',e=>{const k=e.target.dataset.k;if(k==='eL'||k==='eW'){cut.parts[+e.target.closest('tr').dataset.i][k]=+e.target.value;runCut()}});
+pBody.addEventListener('click',e=>{const b=e.target.closest('[data-rmp]');if(b){cut.parts.splice(+b.dataset.rmp,1);renderParts();runCut()}});
+document.getElementById('addPart').onclick=()=>{const l=cut.parts[cut.parts.length-1];cut.parts.push({L:l?l.L:600,W:l?l.W:400,q:1,eL:1,eW:0,r:byId(cut.id).type!=='wood',n:''});renderParts();runCut();document.getElementById('pL'+(cut.parts.length-1)).focus()};
+document.getElementById('sendCut').onclick=()=>{if(!lastCut||!lastCut.total)return;cart.push({id:cut.id,t:cut.t,qty:1,cut:true,total:lastCut.total,desc:lastCut.desc});renderCart();toast('Порізку додано до замовлення')};
+
+/* ---------- hero ---------- */
+(function hero(){
+  const p=byId(10),SL=2750,SW=1830;
+  const res=pack(cut.parts,SL,SW);
+  document.getElementById('heroCap').textContent=`${p.name} · ${SL} × ${SW} × 16 мм`;
+  const box=document.getElementById('heroMap');box.innerHTML=sheetSVG(p,res.sheets[0],SL,SW,{anim:true});
+  box.querySelector('svg').classList.add('anim');
+})();
+
+/* ---------- offcuts (demo) ---------- */
+const OFF=[[1,16,1840,620,'lug',310],[5,16,2100,480,'kov',260],[10,16,960,900,'lug',220],[3,18,1500,700,'lug',340],[7,16,2750,350,'kov',240],[11,16,780,540,'kov',120],[8,16,1200,1100,'lug',390],[1,10,2050,900,'kov',300],[12,18,640,600,'lug',130],[5,10,1700,1220,'lug',350]];
+function renderOff(){
+  const L=+document.getElementById('oL').value||0,Wm=+document.getElementById('oW').value||0,T=document.getElementById('oT').value,Sv=document.getElementById('oS').value;
+  const rows=OFF.filter(o=>o[2]>=L&&o[3]>=Wm&&(!T||o[1]==T)&&(!Sv||o[4]===Sv));
+  document.getElementById('oBody').innerHTML=rows.length?rows.map((o,i)=>{const p=byId(o[0]);return`<tr><td><span class="sw" style="background-image:url(${tex(p)})"></span></td><td><b>${p.name}</b><div class="mono muted" style="font-size:12px">${p.code} ${p.tex} · ${p.brand}</div></td><td class="num">${o[1]} мм</td><td class="num">${o[2]} × ${o[3]}</td><td class="num">${(o[2]*o[3]/1e6).toFixed(2).replace('.',',')} м²</td><td>${WH[o[4]]}</td><td class="num"><b>${o[5]} грн</b></td><td><button class="btn btn-ghost mini" data-off="${OFF.indexOf(o)}">Взяти</button></td></tr>`}).join(''):`<tr><td colspan="8" class="muted" style="text-align:center;padding:28px">Залишків такого розміру зараз немає. Зменште мінімальні розміри.</td></tr>`;
+}
+['oL','oW','oT','oS'].forEach(id=>document.getElementById(id).addEventListener('input',renderOff));
+document.getElementById('oBody').addEventListener('click',e=>{const b=e.target.closest('[data-off]');if(!b)return;const o=OFF[+b.dataset.off],p=byId(o[0]);cart.push({id:p.id,t:o[1],qty:1,cut:true,total:o[5],desc:`залишок ${o[2]}×${o[3]} мм, ${WH[o[4]]}`});cart[cart.length-1].desc=`залишок ${o[2]}×${o[3]} мм · ${WH[o[4]]}`;renderCart();toast('Залишок додано до замовлення')});
+
+/* ---------- facades ---------- */
+const FAC=[
+ ['Рамкові МДФ','Власне виробництво','Фрезерована рамка з філенкою або під скло, фарбування в будь-який RAL.',`background:#DCD6CC;box-shadow:inset 0 0 0 14px #E8E3DA,inset 0 0 0 16px #C9C2B6`],
+ ['Плівкові МДФ','Під замовлення','ПВХ-плівка на МДФ: дерево, однотон, глянець, фрезеровки.',`background:linear-gradient(135deg,#8C6A4F,#6E513B)`],
+ ['Фарбовані','Під замовлення','Матова, напівматова й глянцева емаль, будь-який колір.',`background:#2F4B5A`],
+ ['Алюмінієві','Під замовлення','Тонкий профіль зі склом, сатинатом або дзеркалом.',`background:linear-gradient(90deg,#B8BCBE 0 10px,#9FB4BA 10px calc(100% - 10px),#B8BCBE 0)`],
+ ['Шпоновані','Під замовлення','Натуральний шпон дуба й горіха під лак або олію.',`background:repeating-linear-gradient(90deg,#B0844F 0 3px,#A47744 3px 7px,#B98E5A 7px 9px)`],
+ ['Акрилові панелі','Склад Ковельська','Глибокий глянець і супермат для кухонь. Панелі Alvic та Skin.',`background:linear-gradient(160deg,#F4F4F2 0%,#E3E3E0 55%,#FFFFFF 56%,#ECECE9 100%)`],
+ ['Піскоструминна обробка','Власне виробництво','Візерунки на склі й дзеркалі для фасадів і дверей шаф-купе.',`background:radial-gradient(circle at 30% 40%,rgba(255,255,255,.75) 0 18%,transparent 19%),radial-gradient(circle at 70% 65%,rgba(255,255,255,.7) 0 14%,transparent 15%),linear-gradient(#9FB6BE,#B9CBD0)`],
+ ['Двері шаф-купе','Під замовлення','Розсувні системи, наповнення ДСП, дзеркало, скло.',`background:linear-gradient(90deg,#C9C2B6 0 49%,#5F6B70 49% 51%,#A9BAC0 51%)`],
+];
+document.getElementById('fac').innerHTML=FAC.map(f=>`<div class="fcard"><div class="front" style="${f[3]}"></div><div class="tag">${f[1]}</div><h3>${f[0]}</h3><p>${f[2]}</p></div>`).join('');
+
+/* ---------- misc ---------- */
+let tt;function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('on'),2200)}
+document.querySelectorAll('.copy').forEach(b=>b.onclick=()=>{const v=b.dataset.copy;const ok=()=>{b.textContent='Скопійовано';setTimeout(()=>b.textContent='Копіювати',1500)};
+  try{navigator.clipboard.writeText(v).then(ok,()=>{selectNum(b)})}catch(e){selectNum(b)}});
+function selectNum(b){const s=b.previousElementSibling,r=document.createRange();r.selectNodeContents(s);const sel=getSelection();sel.removeAllRanges();sel.addRange(r)}
+const burger=document.getElementById('burger'),mnav=document.getElementById('mnav');
+burger.onclick=()=>{mnav.hidden=!mnav.hidden;burger.setAttribute('aria-expanded',!mnav.hidden)};
+mnav.addEventListener('click',e=>{if(e.target.tagName==='A'){mnav.hidden=true;burger.setAttribute('aria-expanded','false')}});
+
+refresh();fillThick();renderParts();runCut();renderOff();renderCart();
+})();
+</script>
+
+</body></html>

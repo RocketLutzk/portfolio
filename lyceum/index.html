@@ -1,0 +1,794 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Ліцей Стернюка</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800;900&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: graphite hero and footer framing alternating white / fog sections; yellow is the single loud voice. Single deliberate look (user-specified palette). */
+:root{
+  --graphite:#1d1e21; --ink:#2b2d31; --steel:#8b8e95; --line:#d9dad6;
+  --fog:#efefec; --paper:#ffffff; --yolk:#ffd21f; --yolk-2:#f2be00;
+  --display:"Unbounded","Arial Black",system-ui,sans-serif;
+  --body:"Manrope","Segoe UI",system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+  --ease:cubic-bezier(.7,0,.2,1); --spring:cubic-bezier(.2,1.4,.4,1);
+  --gut:clamp(16px,4vw,48px); --max:1240px;
+  color-scheme:light;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--graphite);font:500 16px/1.6 var(--body);overflow-x:hidden}
+h1,h2,h3{font-family:var(--display);line-height:1.05;margin:0;text-wrap:balance;letter-spacing:-.02em}
+p{margin:0}
+a{color:inherit}
+button{font:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--yolk);outline-offset:3px;border-radius:6px}
+.wrap{max-width:var(--max);margin-inline:auto;padding-inline:var(--gut)}
+.eyebrow{font:500 12px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--steel);display:flex;align-items:center;gap:10px}
+.eyebrow::before{content:"";width:22px;height:2px;background:var(--yolk)}
+section{padding-block:clamp(72px,10vw,128px);position:relative}
+.sec-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:end;gap:24px;margin-bottom:clamp(36px,5vw,56px)}
+.sec-head h2{font-size:clamp(34px,6vw,72px);font-weight:800;max-width:14ch}
+.sec-head p{max-width:42ch;color:#55585e}
+.hl{background:linear-gradient(transparent 62%,var(--yolk) 62%);padding-inline:.06em}
+
+/* intro curtain */
+.curtain{position:fixed;inset:0;z-index:100;background:var(--yolk);display:grid;place-items:center;animation:curtain .9s .55s var(--ease) forwards;pointer-events:none}
+.curtain span{font:900 clamp(40px,12vw,140px)/1 var(--display);color:var(--graphite);animation:pop .55s var(--spring)}
+@keyframes curtain{to{transform:translateY(-101%)}}
+@keyframes pop{from{transform:scale(.6) rotate(-6deg);opacity:0}}
+
+/* wipe transition */
+.wipe{position:fixed;inset:0;z-index:90;pointer-events:none;display:grid;grid-template-columns:repeat(5,1fr)}
+.wipe i{background:var(--yolk);transform:scaleY(0);transform-origin:bottom}
+.wipe.in i{animation:wipeIn .42s var(--ease) forwards}
+.wipe.out i{transform:scaleY(1);transform-origin:top;animation:wipeOut .42s var(--ease) forwards}
+.wipe i:nth-child(2){animation-delay:.04s!important}.wipe i:nth-child(3){animation-delay:.08s!important}.wipe i:nth-child(4){animation-delay:.12s!important}.wipe i:nth-child(5){animation-delay:.16s!important}
+@keyframes wipeIn{to{transform:scaleY(1)}}@keyframes wipeOut{to{transform:scaleY(0)}}
+
+/* progress + header */
+.progress{position:fixed;top:0;left:0;height:3px;background:var(--yolk);width:0;z-index:60}
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;transition:background .35s,box-shadow .35s,padding .35s;padding-block:18px}
+header.top.scrolled{background:rgba(29,30,33,.86);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);padding-block:10px;box-shadow:0 10px 30px rgba(0,0,0,.18)}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.logo{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--paper)}
+.logo b{width:42px;height:42px;border-radius:12px;background:var(--yolk);color:var(--graphite);display:grid;place-items:center;font:900 15px var(--display);transition:transform .5s var(--spring)}
+.logo:hover b{transform:rotate(-12deg) scale(1.08)}
+.logo small{font:600 11px/1.25 var(--body);letter-spacing:.04em;display:block;max-width:19ch;opacity:.85}
+nav.main{display:flex;gap:4px}
+nav.main a{color:var(--paper);text-decoration:none;font-weight:600;font-size:13.5px;padding:8px 10px;border-radius:999px;position:relative;transition:color .25s}
+nav.main a::after{content:"";position:absolute;inset:0;border-radius:inherit;background:var(--yolk);transform:scale(.4);opacity:0;transition:.3s var(--spring);z-index:-1}
+nav.main a:hover,nav.main a.active{color:var(--graphite)}
+nav.main a:hover::after,nav.main a.active::after{transform:scale(1);opacity:1}
+.burger{display:none;width:46px;height:46px;border-radius:14px;border:0;background:var(--yolk);position:relative;z-index:70}
+.burger i{position:absolute;left:12px;right:12px;height:2.5px;background:var(--graphite);border-radius:2px;transition:.35s var(--ease)}
+.burger i:nth-child(1){top:16px}.burger i:nth-child(2){top:22px}.burger i:nth-child(3){top:28px}
+.menu-open .burger i:nth-child(1){top:22px;transform:rotate(45deg)}
+.menu-open .burger i:nth-child(2){opacity:0;transform:translateX(10px)}
+.menu-open .burger i:nth-child(3){top:22px;transform:rotate(-45deg)}
+.mnav{position:fixed;inset:0;z-index:65;background:var(--graphite);clip-path:circle(0 at calc(100% - 40px) 40px);transition:clip-path .7s var(--ease);display:flex;flex-direction:column;justify-content:center;padding:90px var(--gut) 40px;gap:4px;visibility:hidden}
+.menu-open .mnav{clip-path:circle(150% at calc(100% - 40px) 40px);visibility:visible}
+.mnav a{font:800 clamp(28px,8vw,44px)/1.15 var(--display);color:var(--paper);text-decoration:none;transform:translateY(30px);opacity:0;transition:.5s var(--ease);display:flex;gap:14px;align-items:baseline}
+.mnav a span{font:500 12px var(--mono);color:var(--yolk)}
+.menu-open .mnav a{transform:none;opacity:1}
+@media (max-width:1180px){nav.main{display:none}.burger{display:block}}
+
+/* hero */
+.hero{background:var(--graphite);color:var(--paper);margin-top:-82px;padding-top:150px;padding-bottom:0;overflow:hidden}
+.hero canvas{position:absolute;inset:0;width:100%;height:100%;opacity:.55}
+.hero .wrap{position:relative}
+.hero-grid{display:grid;grid-template-columns:1.4fr .8fr;gap:40px;align-items:end}
+.hero h1{font-size:clamp(44px,9.4vw,138px);font-weight:900;line-height:.92;letter-spacing:-.04em}
+.hero h1 .line{display:block;overflow:hidden}
+.hero h1 .line>span{display:inline-block;animation:rise 1s var(--ease) both}
+.hero h1 .line:nth-child(2)>span{animation-delay:1.05s}.hero h1 .line:nth-child(3)>span{animation-delay:1.15s}.hero h1 .line:nth-child(1)>span{animation-delay:.95s}
+@keyframes rise{from{transform:translateY(105%)}}
+.hero h1 em{font-style:normal;color:var(--yolk);-webkit-text-stroke:0}
+.hero h1 .outline{color:transparent;-webkit-text-stroke:2px var(--paper)}
+.hero-lead{margin-top:28px;max-width:46ch;font-size:clamp(16px,1.6vw,19px);color:#c9cbcf;animation:fade .8s 1.3s both}
+@keyframes fade{from{opacity:0;transform:translateY(16px)}}
+.cta-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:32px;animation:fade .8s 1.45s both}
+.btn{--b:var(--yolk);--c:var(--graphite);display:inline-flex;align-items:center;gap:10px;padding:16px 26px;border-radius:999px;border:2px solid var(--b);background:var(--b);color:var(--c);font-weight:700;text-decoration:none;position:relative;overflow:hidden;isolation:isolate;transition:transform .3s var(--spring),color .3s}
+.btn::before{content:"";position:absolute;inset:0;background:var(--paper);transform:translateY(101%);transition:transform .4s var(--ease);z-index:-1;border-radius:inherit}
+.btn:hover::before{transform:none}
+.btn .arr{transition:transform .35s var(--spring)}
+.btn:hover .arr{transform:translateX(5px) rotate(-45deg)}
+.btn.ghost{--b:transparent;--c:var(--paper);border-color:rgba(255,255,255,.35)}
+.btn.ghost:hover{color:var(--graphite)}
+.btn.dark{--b:var(--graphite);--c:var(--paper)}
+.btn.dark::before{background:var(--yolk)}.btn.dark:hover{color:var(--graphite)}
+.badge-spin{position:relative;width:min(240px,60vw);aspect-ratio:1;justify-self:end;animation:fade .8s 1.5s both}
+.badge-spin svg{width:100%;height:100%;animation:spin 18s linear infinite}
+.badge-spin svg text{font:600 10.5px var(--mono);letter-spacing:3.1px;fill:var(--paper);text-transform:uppercase}
+.badge-spin .core{position:absolute;inset:26%;border-radius:50%;background:var(--yolk);color:var(--graphite);display:grid;place-items:center;text-align:center;font:900 clamp(26px,4vw,40px)/1 var(--display);transition:transform .5s var(--spring)}
+.badge-spin .core small{display:block;font:600 10px/1.2 var(--mono);letter-spacing:.08em;margin-top:4px}
+.badge-spin:hover .core{transform:scale(1.1) rotate(8deg)}
+@keyframes spin{to{transform:rotate(360deg)}}
+.marquee{margin-top:clamp(56px,8vw,96px);background:var(--yolk);color:var(--graphite);transform:rotate(-2deg) scale(1.04);padding-block:14px;overflow:hidden;white-space:nowrap;margin-bottom:-12px}
+.marquee div{display:inline-flex;gap:36px;animation:marq 28s linear infinite;font:800 clamp(18px,2.6vw,28px)/1 var(--display);text-transform:uppercase}
+.marquee div span::after{content:"✦";margin-left:36px}
+@keyframes marq{to{transform:translateX(-50%)}}
+
+/* about + stats */
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(32px,6vw,80px);align-items:start}
+.about-text p+p{margin-top:16px}
+.about-text p{font-size:18px;color:#3c3f44;max-width:58ch}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:2px;background:var(--line);border-radius:24px;overflow:hidden;border:2px solid var(--line)}
+.stat{background:var(--paper);padding:28px 24px;transition:background .4s}
+.stat:hover{background:var(--yolk)}
+.stat b{display:block;font:900 clamp(38px,5vw,60px)/1 var(--display);font-variant-numeric:tabular-nums;letter-spacing:-.03em}
+.stat span{font-size:14px;color:#55585e;display:block;margin-top:8px}
+.stat:hover span{color:var(--graphite)}
+.facts{margin-top:40px;display:flex;flex-wrap:wrap;gap:10px}
+.chip{border:1.5px solid var(--graphite);border-radius:999px;padding:8px 16px;font-weight:600;font-size:14px;transition:.3s var(--spring)}
+.chip:hover{background:var(--graphite);color:var(--yolk);transform:translateY(-3px) rotate(-2deg)}
+
+/* profiles */
+.profiles{background:var(--fog)}
+.pgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+@media (max-width:1000px){.pgrid{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:560px){.pgrid{grid-template-columns:1fr}}
+.pcard{background:var(--paper);border-radius:28px;padding:28px;min-height:340px;display:flex;flex-direction:column;justify-content:space-between;gap:24px;position:relative;overflow:hidden;transform-style:preserve-3d;transition:transform .2s ease-out,background .4s,color .4s;will-change:transform}
+.pcard::after{content:"";position:absolute;width:260px;height:260px;border-radius:50%;background:var(--yolk);right:-120px;top:-120px;transition:transform .7s var(--ease);z-index:0}
+.pcard:hover{background:var(--graphite);color:var(--paper)}
+.pcard:hover::after{transform:scale(3.2)}
+.pcard:hover .pbody,.pcard:hover h3,.pcard:hover .ptop{color:var(--graphite)}
+.pcard>*{position:relative;z-index:1}
+.ptop{display:flex;justify-content:space-between;align-items:start;font:500 12px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--steel);transition:color .4s}
+.picon{width:58px;height:58px;border-radius:18px;background:var(--graphite);color:var(--yolk);display:grid;place-items:center;transition:transform .6s var(--spring)}
+.pcard:hover .picon{transform:rotate(-14deg) scale(1.08)}
+.pcard h3{font-size:clamp(22px,2.2vw,26px);font-weight:800;transition:color .4s}
+.pbody{color:#55585e;font-size:15px;transition:color .4s}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
+.tags span{font:500 11px var(--mono);padding:5px 9px;border-radius:999px;background:var(--fog);color:var(--graphite)}
+.cluster-note{margin-top:28px;display:flex;flex-wrap:wrap;gap:12px;align-items:center;font-size:15px;color:#55585e}
+.cluster-note b{color:var(--graphite)}
+
+/* patron */
+.patron{background:var(--graphite);color:var(--paper);overflow:hidden}
+.patron .sec-head p{color:#b9bbc0}
+.patron .eyebrow{color:#9ea1a7}
+.patron-grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:clamp(32px,6vw,80px)}
+.portrait{position:sticky;top:110px;align-self:start;border-radius:32px;background:var(--ink);aspect-ratio:4/5;max-width:100%;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between;padding:32px}
+.portrait .years{font:900 clamp(48px,7vw,92px)/.9 var(--display);color:var(--yolk);letter-spacing:-.04em}
+.portrait .years span{display:block;color:transparent;-webkit-text-stroke:1.5px var(--yolk)}
+.portrait p{color:#c9cbcf;font-size:16px;max-width:36ch}
+.portrait .cross{position:absolute;right:-30px;bottom:-30px;width:200px;opacity:.08}
+.timeline{position:relative;padding-left:36px}
+.timeline::before{content:"";position:absolute;left:8px;top:6px;bottom:6px;width:2px;background:#3a3c41}
+.tl-fill{position:absolute;left:8px;top:6px;width:2px;background:var(--yolk);height:0;transition:height .15s linear}
+.tl-item{position:relative;padding-bottom:40px}
+.tl-item::before{content:"";position:absolute;left:-36px;top:6px;width:18px;height:18px;border-radius:50%;background:var(--graphite);border:2px solid #55585e;transition:.4s var(--spring)}
+.tl-item.lit::before{background:var(--yolk);border-color:var(--yolk);transform:scale(1.2)}
+.tl-item time{font:500 13px var(--mono);color:var(--yolk);letter-spacing:.08em}
+.tl-item h3{font-size:clamp(20px,2.2vw,26px);font-weight:600;margin:8px 0}
+.tl-item p{color:#b9bbc0;max-width:52ch}
+
+/* news */
+.news-tools{display:flex;flex-wrap:wrap;gap:8px}
+.filter{border:1.5px solid var(--line);background:var(--paper);border-radius:999px;padding:8px 16px;font-weight:600;font-size:14px;transition:.25s}
+.filter:hover{border-color:var(--graphite)}
+.filter[aria-pressed="true"]{background:var(--graphite);color:var(--yolk);border-color:var(--graphite)}
+.rail{display:flex;gap:18px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:18px;cursor:grab;scrollbar-width:thin;scrollbar-color:var(--graphite) var(--fog)}
+.rail.drag{cursor:grabbing;scroll-snap-type:none}
+.ncard{flex:0 0 min(340px,82vw);scroll-snap-align:start;border-radius:26px;overflow:hidden;background:var(--fog);display:flex;flex-direction:column;transition:transform .45s var(--spring),box-shadow .45s;user-select:none}
+.ncard:hover{transform:translateY(-8px);box-shadow:0 24px 40px -18px rgba(0,0,0,.35)}
+.ncard[hidden]{display:none!important}
+.nimg{aspect-ratio:16/10;max-width:100%;position:relative;overflow:hidden;display:grid;place-items:center}
+.nimg .glyph{font:900 64px var(--display);transition:transform .7s var(--spring)}
+.ncard:hover .glyph{transform:scale(1.25) rotate(-8deg)}
+.t-y{background:var(--yolk);color:var(--graphite)}
+.t-g{background:var(--graphite);color:var(--yolk)}
+.t-s{background:#c9cbcf;color:var(--graphite)}
+.t-y .pat,.t-g .pat,.t-s .pat{position:absolute;inset:0;background-image:radial-gradient(currentColor 1.4px,transparent 1.6px);background-size:16px 16px;opacity:.16}
+.nbody{padding:20px 22px 24px;display:flex;flex-direction:column;gap:10px;flex:1}
+.nmeta{display:flex;justify-content:space-between;font:500 12px var(--mono);color:#6b6e74;letter-spacing:.06em;text-transform:uppercase}
+.ncard h3{font:700 19px/1.3 var(--body);letter-spacing:0}
+.ncard p{font-size:14.5px;color:#55585e}
+.rail-nav{display:flex;gap:8px}
+.rbtn{width:52px;height:52px;border-radius:50%;border:2px solid var(--graphite);background:var(--paper);font-size:20px;transition:.3s var(--spring)}
+.rbtn:hover{background:var(--yolk);transform:scale(1.08)}
+
+/* life */
+.life{background:var(--fog)}
+.bento{display:grid;grid-template-columns:repeat(6,1fr);grid-auto-rows:minmax(170px,auto);gap:16px}
+.tile{border-radius:28px;padding:26px;position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;gap:8px;background:var(--paper);transition:transform .45s var(--spring)}
+.tile:hover{transform:scale(1.02) rotate(-.4deg)}
+.tile h3{font-size:clamp(20px,2.2vw,26px);font-weight:800}
+.tile p{font-size:15px;color:#55585e;max-width:40ch}
+.tile .big{position:absolute;top:18px;right:22px;font:900 clamp(40px,5vw,64px)/1 var(--display);opacity:.95}
+.tile.y{background:var(--yolk)}.tile.y p{color:#3a3c41}
+.tile.g{background:var(--graphite);color:var(--paper)}.tile.g p{color:#b9bbc0}.tile.g .big{color:var(--yolk)}
+.s3{grid-column:span 3}.s2{grid-column:span 2}.s4{grid-column:span 4}.r2{grid-row:span 2}
+@media (max-width:860px){.bento{grid-template-columns:1fr 1fr}.s3,.s2,.s4{grid-column:span 1}.wide-m{grid-column:span 2}.r2{grid-row:span 1}}
+@media (max-width:520px){.bento{grid-template-columns:1fr}.wide-m{grid-column:span 1}}
+
+
+/* team */
+.team{background:var(--graphite);color:var(--paper)}
+.team .sec-head p{color:#b9bbc0}
+.team .eyebrow{color:#9ea1a7}
+.tgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+@media (max-width:1000px){.tgrid{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:560px){.tgrid{grid-template-columns:1fr}}
+.flip{perspective:1200px;border:0;padding:0;background:none;color:inherit;text-align:left;min-height:330px;display:block;width:100%}
+.flip.lead{grid-column:span 2}
+@media (max-width:560px){.flip.lead{grid-column:span 1}}
+.flip-in{position:relative;width:100%;height:100%;min-height:inherit;transform-style:preserve-3d;transition:transform .8s var(--spring)}
+.flip.on .flip-in{transform:rotateY(180deg)}
+@media (hover:hover){.flip:hover .flip-in{transform:rotateY(180deg)}.flip.on:hover .flip-in{transform:rotateY(180deg)}}
+.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:28px;padding:26px;display:flex;flex-direction:column;justify-content:space-between;gap:16px;overflow:hidden}
+.front{background:var(--ink)}
+.back{background:var(--yolk);color:var(--graphite);transform:rotateY(180deg)}
+.lead .front{background:var(--yolk);color:var(--graphite)}
+.lead .back{background:var(--paper)}
+.ava{width:84px;height:84px;border-radius:50%;background:var(--yolk);color:var(--graphite);display:grid;place-items:center;font:900 26px var(--display);position:relative}
+.lead .ava{background:var(--graphite);color:var(--yolk);width:104px;height:104px;font-size:32px}
+.ava::after{content:"";position:absolute;inset:-9px;border-radius:50%;border:2px dashed currentColor;opacity:.0;border-color:var(--yolk);animation:spin 14s linear infinite}
+.front .ava::after{opacity:.6}
+.lead .ava::after{border-color:var(--graphite)}
+.ava.empty{background:transparent;border:2px dashed #55585e;color:#8b8e95}
+.ava.empty::after{display:none}
+.role{font:500 11px var(--mono);letter-spacing:.12em;text-transform:uppercase;opacity:.75}
+.face h3{font-size:clamp(20px,2vw,24px);font-weight:800;margin-top:6px}
+.lead .face h3{font-size:clamp(26px,3vw,38px)}
+.face p{font-size:15px;line-height:1.5}
+.front p{color:#b9bbc0}.lead .front p{color:#3a3c41}
+.hint{font:500 11px var(--mono);letter-spacing:.08em;text-transform:uppercase;display:flex;align-items:center;gap:8px;opacity:.7}
+.hint::before{content:"↻";font-size:16px}
+.vac .front{background:transparent;border:2px dashed #3e4046}
+.team-cta{margin-top:28px;display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between;padding:22px 26px;border-radius:24px;background:var(--ink)}
+.team-cta p{color:#c3c5c9;max-width:56ch}
+
+/* admission */
+.adm-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(32px,6vw,72px);align-items:start}
+.steps{display:grid;gap:12px;counter-reset:s}
+.step{display:grid;grid-template-columns:auto 1fr;gap:18px;padding:22px;border-radius:22px;border:2px solid var(--fog);transition:.35s}
+.step:hover{border-color:var(--yolk);background:#fffbe8}
+.step::before{counter-increment:s;content:counter(s);width:44px;height:44px;border-radius:14px;background:var(--graphite);color:var(--yolk);display:grid;place-items:center;font:800 18px var(--display)}
+.step h3{font:700 18px/1.3 var(--body);letter-spacing:0;margin-bottom:4px}
+.step p{font-size:15px;color:#55585e}
+.acc{border-top:2px solid var(--graphite)}
+.acc details{border-bottom:1.5px solid var(--line)}
+.acc summary{list-style:none;cursor:pointer;padding:20px 0;font-weight:700;font-size:17px;display:flex;justify-content:space-between;gap:16px;align-items:center}
+.acc summary::-webkit-details-marker{display:none}
+.acc summary i{flex:none;width:34px;height:34px;border-radius:50%;background:var(--fog);position:relative;transition:.4s var(--spring)}
+.acc summary i::before,.acc summary i::after{content:"";position:absolute;left:10px;right:10px;top:16px;height:2px;background:var(--graphite);transition:.4s var(--spring)}
+.acc summary i::after{transform:rotate(90deg)}
+.acc details[open] summary i{background:var(--yolk);transform:rotate(180deg)}
+.acc details[open] summary i::after{transform:rotate(0)}
+.acc .ans{padding:0 0 20px;color:#55585e;max-width:60ch;animation:fade .4s both}
+
+/* info tabs */
+.info{background:var(--graphite);color:var(--paper)}
+.info .sec-head p{color:#b9bbc0}
+.tabbar{display:inline-flex;flex-wrap:wrap;gap:4px;background:var(--ink);padding:6px;border-radius:999px;position:relative}
+.tab{border:0;background:transparent;color:var(--paper);padding:12px 22px;border-radius:999px;font-weight:700;position:relative;z-index:1;transition:color .3s}
+.tab[aria-selected="true"]{color:var(--graphite)}
+.tab-pill{position:absolute;top:6px;bottom:6px;left:6px;background:var(--yolk);border-radius:999px;transition:.5s var(--spring);z-index:0}
+.panels{margin-top:32px}
+.panel{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;animation:fade .5s both}
+@media (max-width:860px){.panel{grid-template-columns:1fr}}
+.icard{background:var(--ink);border-radius:24px;padding:24px;display:flex;flex-direction:column;gap:10px;border:1.5px solid transparent;transition:.35s}
+.icard:hover{border-color:var(--yolk);transform:translateY(-4px)}
+.icard h3{font:700 18px/1.3 var(--body);letter-spacing:0;color:var(--yolk)}
+.icard p,.icard li{color:#c3c5c9;font-size:15px}
+.icard ul{margin:0;padding-left:18px}
+.bells{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+.bells td{padding:6px 0;border-bottom:1px solid #3a3c41;font:500 14px var(--mono);color:#d7d9dc}
+.bells td:first-child{color:var(--yolk);width:2.5em}
+.bells td:last-child{text-align:right}
+.note{font-size:12.5px!important;color:#8b8e95!important}
+
+/* transparency */
+.docs{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.doc{display:flex;gap:14px;align-items:center;padding:18px 20px;border-radius:18px;background:var(--fog);text-decoration:none;font-weight:600;transition:.3s var(--spring)}
+.doc:hover{background:var(--yolk);transform:translateX(6px)}
+.doc svg{flex:none}
+.doc small{display:block;font:500 11px var(--mono);color:#6b6e74;letter-spacing:.06em;text-transform:uppercase;margin-top:2px}
+
+/* contacts */
+.contacts{background:var(--yolk)}
+.contacts .eyebrow{color:var(--graphite)}
+.contacts .eyebrow::before{background:var(--graphite)}
+.c-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:clamp(28px,5vw,64px)}
+.c-list{display:grid;gap:12px}
+.c-item{background:var(--paper);border-radius:22px;padding:20px 22px;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+.c-item small{display:block;font:500 11px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:#6b6e74}
+.c-item b{font-size:clamp(16px,1.8vw,19px);word-break:break-word}
+.copy{border:2px solid var(--graphite);background:transparent;border-radius:999px;padding:8px 14px;font-weight:700;font-size:13px;transition:.25s}
+.copy:hover{background:var(--graphite);color:var(--yolk)}
+form.card{background:var(--graphite);color:var(--paper);border-radius:28px;padding:clamp(22px,3vw,34px);display:grid;gap:14px}
+form.card h3{font-size:24px;font-weight:800;color:var(--yolk)}
+.field{display:grid;gap:6px}
+.field label{font:500 11px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:#9ea1a7}
+.field input,.field select,.field textarea{font:500 16px var(--body);background:var(--ink);border:1.5px solid #3e4046;color:var(--paper);border-radius:14px;padding:13px 14px;transition:.25s;width:100%}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--yolk);box-shadow:0 0 0 4px rgba(255,210,31,.18)}
+.field textarea{resize:vertical;min-height:90px}
+
+footer{background:var(--graphite);color:#9ea1a7;padding-block:48px;font-size:14px}
+.f-grid{display:flex;flex-wrap:wrap;justify-content:space-between;gap:24px;align-items:end}
+.f-big{font:900 clamp(40px,10vw,128px)/.9 var(--display);color:var(--paper);letter-spacing:-.04em}
+.f-big span{color:var(--yolk)}
+footer a{color:var(--paper)}
+.src{margin-top:28px;padding-top:20px;border-top:1px solid #3a3c41;font-size:12.5px}
+
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translate(-50%,140%);background:var(--graphite);color:var(--paper);border:2px solid var(--yolk);padding:14px 20px;border-radius:16px;z-index:95;transition:transform .5s var(--spring);font-weight:600;max-width:calc(100vw - 32px)}
+.toast.show{transform:translate(-50%,0)}
+.cursor{position:fixed;left:0;top:0;width:14px;height:14px;border-radius:50%;background:var(--yolk);pointer-events:none;z-index:99;mix-blend-mode:difference;transform:translate(-50%,-50%);transition:width .3s var(--spring),height .3s var(--spring);display:none}
+.cursor.big{width:56px;height:56px}
+@media (pointer:fine){.cursor{display:block}}
+
+/* reveal: elements stay visible at rest; JS plays this only as they approach the viewport */
+.rv.play{animation:rv .9s var(--ease) both}
+@keyframes rv{from{opacity:0;transform:translateY(46px)}}
+
+@media (max-width:900px){
+  .hero-grid,.about-grid,.patron-grid,.adm-grid,.c-grid{grid-template-columns:1fr}
+  .badge-spin{justify-self:start;width:170px}
+  .portrait{position:relative;top:0;aspect-ratio:auto;min-height:280px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-delay:0s!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+  .curtain{display:none}.cursor{display:none!important}
+}
+</style>
+
+<div class="curtain" aria-hidden="true"><span>ПЛ</span></div>
+<div class="wipe" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+<div class="progress" aria-hidden="true"></div>
+<div class="cursor" aria-hidden="true"></div>
+
+<header class="top" id="top">
+  <div class="wrap bar">
+    <a class="logo" href="#home" data-go><b>ПЛ</b><small>Пустомитівський ліцей ім.&nbsp;Митрополита В.&nbsp;Стернюка</small></a>
+    <nav class="main" aria-label="Головне меню">
+      <a href="#about" data-go>Про ліцей</a><a href="#profiles" data-go>Профілі</a><a href="#patron" data-go>Покровитель</a><a href="#news" data-go>Новини</a><a href="#life" data-go>Життя</a><a href="#team" data-go>Команда</a><a href="#admission" data-go>Вступ</a><a href="#info" data-go>Інфо</a><a href="#docs" data-go>Прозорість</a><a href="#contacts" data-go>Контакти</a>
+    </nav>
+    <button class="burger" id="burger" aria-label="Відкрити меню" aria-expanded="false"><i></i><i></i><i></i></button>
+  </div>
+</header>
+<nav class="mnav" id="mnav" aria-label="Мобільне меню">
+  <a href="#about" data-go><span>01</span>Про ліцей</a><a href="#profiles" data-go><span>02</span>Профілі</a><a href="#patron" data-go><span>03</span>Покровитель</a><a href="#news" data-go><span>04</span>Новини</a><a href="#life" data-go><span>05</span>Життя</a><a href="#team" data-go><span>06</span>Команда</a><a href="#admission" data-go><span>07</span>Вступ</a><a href="#info" data-go><span>08</span>Інфо</a><a href="#docs" data-go><span>09</span>Прозорість</a><a href="#contacts" data-go><span>10</span>Контакти</a>
+</nav>
+
+<main>
+<section class="hero" id="home">
+  <canvas id="dots" aria-hidden="true"></canvas>
+  <div class="wrap">
+    <div class="hero-grid">
+      <div>
+        <p class="eyebrow" style="color:#9ea1a7">Академічний ліцей · 10–12 класи · Пустомити</p>
+        <h1 style="margin-top:22px">
+          <span class="line"><span>Твій</span></span>
+          <span class="line"><span class="outline">профіль.</span></span>
+          <span class="line"><span><em>Твій</em> старт.</span></span>
+        </h1>
+        <p class="hero-lead">Пустомитівський ліцей імені Митрополита Володимира Стернюка: оновлена старша школа, де ти сам обираєш, що вивчати поглиблено, і готуєшся до вступу в університет.</p>
+        <div class="cta-row">
+          <a class="btn mag" href="#admission" data-go>Як вступити <span class="arr">→</span></a>
+          <a class="btn ghost mag" href="#profiles" data-go>Обрати профіль</a>
+        </div>
+      </div>
+      <div class="badge-spin" aria-hidden="true">
+        <svg viewBox="0 0 200 200"><defs><path id="circ" d="M100,100 m-80,0 a80,80 0 1,1 160,0 a80,80 0 1,1 -160,0"/></defs><text><textPath href="#circ">Пустомити ✦ Ліцей ✦ ім. Стернюка ✦ з 2025 ✦</textPath></text></svg>
+        <div class="core"><div>2025<small>оновлений<br>ліцей</small></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="marquee" aria-hidden="true"><div>
+    <span>ІТ-профіль</span><span>Біологія</span><span>Філологія</span><span>Універсальний</span><span>STEM-простір</span><span>Учнівський парламент</span><span>Походи</span><span>Ніч науки</span>
+    <span>ІТ-профіль</span><span>Біологія</span><span>Філологія</span><span>Універсальний</span><span>STEM-простір</span><span>Учнівський парламент</span><span>Походи</span><span>Ніч науки</span>
+  </div></div>
+</section>
+
+<section id="about">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <div><p class="eyebrow">Про ліцей</p><h2 style="margin-top:16px">Старша школа <span class="hl">нового</span> формату</h2></div>
+    </div>
+    <div class="about-grid">
+      <div class="about-text rv">
+        <p>1 вересня 2025 року в Пустомитах урочисто відкрили оновлений ліцей для старшокласників. Тут навчаються лише учні старшої школи, а програма будується навколо профілів, які обирає сам ліцеїст.</p>
+        <p>Ліцей готується до реформи профільної середньої освіти, яка повноцінно стартує 1 вересня 2027 року. Головна ідея проста: дати кожному можливість зробити свідомий вибір і поглиблено готуватися до майбутньої професії та вступу.</p>
+        <p>Заклад належить до мережі академічних ліцеїв Львівщини і отримав державне фінансування на створення сучасного STEM-простору.</p>
+        <div class="facts">
+          <span class="chip">Комунальний заклад</span><span class="chip">Українська мова навчання</span><span class="chip">Пустомитівська громада</span><span class="chip">Львівський район</span>
+        </div>
+      </div>
+      <div class="stats rv">
+        <div class="stat"><b data-count="101">101</b><span>ліцеїст на старті 2025/26</span></div>
+        <div class="stat"><b data-count="4">4</b><span>профілі навчання</span></div>
+        <div class="stat"><b data-count="400">400</b><span>місць — проєктна спроможність</span></div>
+        <div class="stat"><b><span data-count="3.2" data-dec="1">3,2</span></b><span>млн грн на STEM-простір</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="profiles" id="profiles">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <div><p class="eyebrow">Профілі навчання</p><h2 style="margin-top:16px">Обери свій <span class="hl">трек</span></h2></div>
+      <p>10 клас адаптаційний: можна спробувати профіль і за потреби змінити його. 11–12 класи — поглиблене навчання й підготовка до НМТ.</p>
+    </div>
+    <div class="pgrid">
+      <article class="pcard tilt rv">
+        <div class="ptop"><span>STEM</span><div class="picon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 9l-4 3 4 3M16 9l4 3-4 3M13.5 6l-3 12"/></svg></div></div>
+        <div><h3>Інформаційно-технологічний</h3><p class="pbody" style="margin-top:10px">Програмування, алгоритми, робота з даними й цифрові проєкти.</p><div class="tags"><span>інформатика</span><span>математика</span><span>фізика</span></div></div>
+      </article>
+      <article class="pcard tilt rv">
+        <div class="ptop"><span>STEM</span><div class="picon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 3c0 6 10 6 10 12s-10 0-10 6M17 3c0 6-10 6-10 12s10 0 10 6M8 7h8M8 17h8"/></svg></div></div>
+        <div><h3>Біологічний</h3><p class="pbody" style="margin-top:10px">Для майбутніх медиків, біологів та екологів. Лабораторні й дослідницькі роботи.</p><div class="tags"><span>біологія</span><span>хімія</span><span>дослідження</span></div></div>
+      </article>
+      <article class="pcard tilt rv">
+        <div class="ptop"><span>Мовно-літ.</span><div class="picon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5h7a3 3 0 013 3v12a2 2 0 00-2-2H4zM20 5h-4M20 9h-4M20 13h-4"/></svg></div></div>
+        <div><h3>Філологічний</h3><p class="pbody" style="margin-top:10px">Мови, література, медіа й публічні виступи. Англійська на рівні, що відкриває світ.</p><div class="tags"><span>укр. мова</span><span>англійська</span><span>література</span></div></div>
+      </article>
+      <article class="pcard tilt rv">
+        <div class="ptop"><span>Гнучкий</span><div class="picon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/></svg></div></div>
+        <div><h3>Універсальний</h3><p class="pbody" style="margin-top:10px">Збалансована програма для тих, хто ще визначається, з курсами за вибором.</p><div class="tags"><span>курси за вибором</span><span>НМТ</span></div></div>
+      </article>
+    </div>
+    <p class="cluster-note rv"><b>Три кластери реформи:</b> STEM · мовно-літературний · соціально-гуманітарний. Профілі ліцею формуються в їхніх межах.</p>
+  </div>
+</section>
+
+<section class="patron" id="patron">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <div><p class="eyebrow">Покровитель ліцею</p><h2 style="margin-top:16px">Митрополит Володимир Стернюк</h2></div>
+      <p>Уродженець Пустомитів, який очолював підпільну Українську Греко-Католицьку Церкву в найважчі роки і став символом незламності.</p>
+    </div>
+    <div class="patron-grid">
+      <div class="portrait rv">
+        <svg class="cross" viewBox="0 0 100 100" aria-hidden="true"><path d="M44 0h12v30h28v12H56v58H44V42H16V30h28z" fill="#ffd21f"/></svg>
+        <div class="years">1907<span>1997</span></div>
+        <p>Народився в Пустомитах у родині священника. 29 вересня ліцей щороку вшановує день його пам’яті, а учні відвідують присвячений йому музей.</p>
+      </div>
+      <div class="timeline" id="timeline">
+        <div class="tl-fill" id="tlfill"></div>
+        <div class="tl-item"><time>12.02.1907</time><h3>Народження в Пустомитах</h3><p>Перші роки навчання — у народній школі рідного міста, згодом гімназія у Львові.</p></div>
+        <div class="tl-item"><time>1921–1931</time><h3>Навчання в Бельгії</h3><p>Здобуває освіту під опікою отців-редемптористів, вступає до монастиря, 1931 року приймає священничі свячення в Лювені.</p></div>
+        <div class="tl-item"><time>1930-ті–1940-ві</time><h3>Служіння</h3><p>Місійна праця на Волині, служіння в Тернополі та у Львові.</p></div>
+        <div class="tl-item"><time>до 1952</time><h3>Табори ГУЛАГу</h3><p>Відмовився перейти на православ’я. Після звільнення повертається до Пустомитів, працює санітаром і таємно продовжує душпастирство.</p></div>
+        <div class="tl-item"><time>1970-ті–1991</time><h3>На чолі підпільної Церкви</h3><p>Очолює УГКЦ у катакомбних умовах, виховує нове покоління духовенства, з 1986 року веде боротьбу за легалізацію Церкви.</p></div>
+        <div class="tl-item"><time>29.09.1997</time><h3>Вічна пам’ять</h3><p>Помер у Львові, похований у соборі святого Юра. Ліцей у його рідному місті носить його ім’я.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="news">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <div><p class="eyebrow">Новини · жовтень 2026</p><h2 style="margin-top:16px">Що <span class="hl">нового</span></h2></div>
+      <div style="display:grid;gap:14px;justify-items:end">
+        <div class="news-tools" role="group" aria-label="Фільтр новин">
+          <button class="filter" aria-pressed="true" data-f="all">Усі</button><button class="filter" aria-pressed="false" data-f="life">Життя</button><button class="filter" aria-pressed="false" data-f="edu">Навчання</button><button class="filter" aria-pressed="false" data-f="mem">Пам’ять</button>
+        </div>
+        <div class="rail-nav"><button class="rbtn" data-dir="-1" aria-label="Попередні новини">←</button><button class="rbtn" data-dir="1" aria-label="Наступні новини">→</button></div>
+      </div>
+    </div>
+  </div>
+  <div class="wrap" style="padding-right:0">
+    <div class="rail" id="rail">
+      <article class="ncard" data-c="life"><div class="nimg t-y"><div class="pat"></div><span class="glyph">🎭</span></div><div class="nbody"><div class="nmeta"><span>Життя</span><time>03.10.2026</time></div><h3>Театральний вечір</h3><p>Педагоги ліцею перед професійним святом разом сходили на виставу в театр імені Марії Заньковецької.</p></div></article>
+      <article class="ncard" data-c="life"><div class="nimg t-g"><div class="pat"></div><span class="glyph">🤗</span></div><div class="nbody"><div class="nmeta"><span>Життя</span><time>02.10.2026</time></div><h3>День обіймів</h3><p>День учителя в ліцеї перетворився на свято теплих обіймів і вдячності.</p></div></article>
+      <article class="ncard" data-c="life"><div class="nimg t-s"><div class="pat"></div><span class="glyph">☕</span></div><div class="nbody"><div class="nmeta"><span>Волонтерство</span><time>01.10.2026</time></div><h3>«Кава для воїна»</h3><p>Учнівський парламент зібрав каву, смаколики та потрібні речі для захисників і передав волонтерам.</p></div></article>
+      <article class="ncard" data-c="life"><div class="nimg t-y"><div class="pat"></div><span class="glyph">📚</span></div><div class="nbody"><div class="nmeta"><span>Життя</span><time>30.09.2026</time></div><h3>День вдячності бібліотекарям</h3><p>Учнівське самоврядування привітало бібліотекарів і поповнило фонди новими книжками.</p></div></article>
+      <article class="ncard" data-c="edu"><div class="nimg t-g"><div class="pat"></div><span class="glyph">🧪</span></div><div class="nbody"><div class="nmeta"><span>Навчання</span><time>30.09.2026</time></div><h3>Хімічне доміно</h3><p>Десятикласники на природничих науках перевірили знання в швидкій командній грі.</p></div></article>
+      <article class="ncard" data-c="mem"><div class="nimg t-s"><div class="pat"></div><span class="glyph">🕯️</span></div><div class="nbody"><div class="nmeta"><span>Пам’ять</span><time>29.09.2026</time></div><h3>Музей Володимира Стернюка</h3><p>Напередодні дня пам’яті покровителя ліцеїсти відвідали музей, присвячений його життю.</p></div></article>
+      <article class="ncard" data-c="life"><div class="nimg t-y"><div class="pat"></div><span class="glyph">⛰️</span></div><div class="nbody"><div class="nmeta"><span>Туризм</span><time>28.09.2026</time></div><h3>Разом на Говерлі</h3><p>До Всесвітнього дня туризму ліцей піднявся на найвищу вершину України.</p></div></article>
+      <article class="ncard" data-c="edu"><div class="nimg t-g"><div class="pat"></div><span class="glyph">🔬</span></div><div class="nbody"><div class="nmeta"><span>Навчання</span><time>25.09.2026</time></div><h3>Ніч науки в Політехніці</h3><p>Насичений день у лабораторіях і на виставках сучасних технологій Львівської політехніки.</p></div></article>
+      <article class="ncard" data-c="edu"><div class="nimg t-s"><div class="pat"></div><span class="glyph">🏛️</span></div><div class="nbody"><div class="nmeta"><span>Історія</span><time>24.09.2026</time></div><h3>Про що мовчить каміння</h3><p>Ліцеїсти дослідили історію Личаківського цвинтаря під час виїзного уроку.</p></div></article>
+    </div>
+  </div>
+</section>
+
+<section class="life" id="life">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <div><p class="eyebrow">Ліцейне життя</p><h2 style="margin-top:16px">Більше, ніж <span class="hl">уроки</span></h2></div>
+      <p>Самоврядування, волонтерство, подорожі та наука поза класом.</p>
+    </div>
+    <div class="bento">
+      <div class="tile g s4 r2 wide-m rv"><span class="big">ПАРЛАМЕНТ</span><h3>Учнівське самоврядування</h3><p>Ліцеїсти самі організовують акції, свята й благодійні збори: від «Кави для воїна» до дня вдячності бібліотекарям.</p></div>
+      <div class="tile y s2 rv"><span class="big">2061 м</span><h3>Походи</h3><p>Говерла, екскурсії Львовом і Карпатами.</p></div>
+      <div class="tile s2 rv"><span class="big">STEM</span><h3>Наука</h3><p>Ніч науки, лабораторні, STEM-простір.</p></div>
+      <div class="tile s3 rv"><span class="big">🎙</span><h3>Мистецтво й слово</h3><p>Літературно-мистецькі композиції, театр, виступи в сусідніх громадах.</p></div>
+      <div class="tile y s3 rv"><span class="big">🤝</span><h3>Громада</h3><p>Зустрічі з керівництвом громади, уроки громадянської свідомості та обмін досвідом з іншими ліцеями.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="team" id="team">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <div><p class="eyebrow">Команда</p><h2 style="margin-top:16px">Люди, які <span class="hl" style="background:linear-gradient(transparent 62%,#5a4a00 62%)">запалюють</span></h2></div>
+      <p>Педагогічна команда ліцею невелика, тож кожен ліцеїст знає своїх наставників особисто. Наведіть курсор або торкніться картки.</p>
+    </div>
+    <div class="tgrid">
+      <button class="flip lead rv" aria-label="Людмила Паук: Директорка ліцею. Натисніть, щоб дізнатися більше"><div class="flip-in">
+        <div class="face front"><div class="ava">ЛП</div><div><span class="role">Директорка ліцею</span><h3>Людмила Паук</h3><p style="margin-top:8px">Стратег, наставниця й лідерка команди, яка запускала оновлений ліцей у 2025 році.</p></div><span class="hint">Більше</span></div>
+        <div class="face back"><span class="role">Директорка ліцею</span><p>Людмила Олександрівна вибудовує ліцей як дружню спільноту, де адміністрація створює умови для якісної освіти й розвитку кожного ліцеїста. Відповідає за профільне навчання, партнерства з громадою та розвиток STEM-простору.</p><span class="hint">Назад</span></div>
+      </div></button>
+      <button class="flip  rv" aria-label="Маріуш Плечистий: Математика · фізика. Натисніть, щоб дізнатися більше"><div class="flip-in">
+        <div class="face front"><div class="ava">МП</div><div><span class="role">Математика · фізика</span><h3>Маріуш Плечистий</h3><p style="margin-top:8px">Пояснює точні науки через задачі з реального життя.</p></div><span class="hint">Більше</span></div>
+        <div class="face back"><span class="role">Математика · фізика</span><p>Веде математику й фізику для ліцеїстів STEM-профілів, допомагає готуватися до НМТ та олімпіад.</p><span class="hint">Назад</span></div>
+      </div></button>
+      <button class="flip  rv" aria-label="Віта Ніколаєва: Математика. Натисніть, щоб дізнатися більше"><div class="flip-in">
+        <div class="face front"><div class="ava">ВН</div><div><span class="role">Математика</span><h3>Віта Ніколаєва</h3><p style="margin-top:8px">Математика без страху і з чіткою логікою.</p></div><span class="hint">Більше</span></div>
+        <div class="face back"><span class="role">Математика</span><p>Викладає математику, працює з ліцеїстами інформаційно-технологічного та універсального профілів.</p><span class="hint">Назад</span></div>
+      </div></button>
+      <button class="flip vac rv" aria-label="Наставник біологічного профілю: Біологія · хімія. Натисніть, щоб дізнатися більше"><div class="flip-in">
+        <div class="face front"><div class="ava empty">+</div><div><span class="role">Біологія · хімія</span><h3>Наставник біологічного профілю</h3><p style="margin-top:8px">Ім’я та фото буде додано.</p></div><span class="hint">Більше</span></div>
+        <div class="face back"><span class="role">Біологія · хімія</span><p>Цю картку заповнить ліцей: ПІБ, фото, коротко про педагога і його предмет.</p><span class="hint">Назад</span></div>
+      </div></button>
+      <button class="flip vac rv" aria-label="Наставник філологічного профілю: Мова · література. Натисніть, щоб дізнатися більше"><div class="flip-in">
+        <div class="face front"><div class="ava empty">+</div><div><span class="role">Мова · література</span><h3>Наставник філологічного профілю</h3><p style="margin-top:8px">Ім’я та фото буде додано.</p></div><span class="hint">Більше</span></div>
+        <div class="face back"><span class="role">Мова · література</span><p>Цю картку заповнить ліцей: ПІБ, фото, коротко про педагога і його предмет.</p><span class="hint">Назад</span></div>
+      </div></button>
+      <button class="flip vac rv" aria-label="Наставник ІТ-профілю: Інформатика. Натисніть, щоб дізнатися більше"><div class="flip-in">
+        <div class="face front"><div class="ava empty">+</div><div><span class="role">Інформатика</span><h3>Наставник ІТ-профілю</h3><p style="margin-top:8px">Ім’я та фото буде додано.</p></div><span class="hint">Більше</span></div>
+        <div class="face back"><span class="role">Інформатика</span><p>Цю картку заповнить ліцей: ПІБ, фото, коротко про педагога і його предмет.</p><span class="hint">Назад</span></div>
+      </div></button>
+      <button class="flip vac rv" aria-label="Практичний психолог: Психологічна служба. Натисніть, щоб дізнатися більше"><div class="flip-in">
+        <div class="face front"><div class="ava empty">+</div><div><span class="role">Психологічна служба</span><h3>Практичний психолог</h3><p style="margin-top:8px">Ім’я та фото буде додано.</p></div><span class="hint">Більше</span></div>
+        <div class="face back"><span class="role">Психологічна служба</span><p>Цю картку заповнить ліцей: ПІБ, фото, коротко про педагога і його предмет.</p><span class="hint">Назад</span></div>
+      </div></button>
+    </div>
+    <div class="team-cta rv"><p>Учнівський парламент теж частина команди: ліцеїсти самі організовують акції, свята й волонтерські збори.</p><a class="btn" href="#life" data-go>Ліцейне життя <span class="arr">→</span></a></div>
+  </div>
+</section>
+
+<section id="admission">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <div><p class="eyebrow">Вступ до 10 класу</p><h2 style="margin-top:16px">Чотири кроки <span class="hl">до ліцею</span></h2></div>
+      <p>Після 9 класу є два шляхи: академічний ліцей для підготовки до університету або професійний коледж.</p>
+    </div>
+    <div class="adm-grid">
+      <div class="steps rv">
+        <div class="step"><div><h3>Обери профіль</h3><p>Ознайомся з профілями й порадься з батьками та вчителями.</p></div></div>
+        <div class="step"><div><h3>Подай заяву</h3><p>Електронна реєстрація до закладу доступна через систему ІСУО, або особисто в ліцеї.</p></div></div>
+        <div class="step"><div><h3>Підготуй документи</h3><p>Свідоцтво про базову середню освіту, медична довідка, копії документів.</p></div></div>
+        <div class="step"><div><h3>Ласкаво просимо!</h3><p>Конкурс проводять лише тоді, коли заяв більше, ніж місць.</p></div></div>
+      </div>
+      <div class="acc rv">
+        <details open><summary>Чи можна змінити профіль?<i></i></summary><p class="ans">Так. 10 клас адаптаційний: ліцеїст знайомиться з предметами профілю й може змінити його перед 11 класом.</p></details>
+        <details><summary>Скільки триває навчання?<i></i></summary><p class="ans">Профільна середня освіта за реформою триває три роки: 10, 11 і 12 класи. Повноцінно система запрацює з 1 вересня 2027 року.</p></details>
+        <details><summary>Хто може вступити?<i></i></summary><p class="ans">Випускники 9 класів закладів Пустомитівської громади та інших громад за наявності місць.</p></details>
+        <details><summary>Де дізнатися умови вступу?<i></i></summary><p class="ans">Ліцей оприлюднює умови вступу, профілі, освітні програми й навчальні плани на своєму сайті до початку прийому заяв.</p></details>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="info" id="info">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <div><p class="eyebrow" style="color:#9ea1a7">Корисне</p><h2 style="margin-top:16px">Для кожного свій розділ</h2></div>
+      <div class="tabbar" role="tablist" aria-label="Розділи інформації"><span class="tab-pill" id="pill"></span>
+        <button class="tab" role="tab" id="t-st" aria-selected="true" aria-controls="p-st">Учням</button>
+        <button class="tab" role="tab" id="t-pa" aria-selected="false" aria-controls="p-pa">Батькам</button>
+        <button class="tab" role="tab" id="t-te" aria-selected="false" aria-controls="p-te">Вчителям</button>
+      </div>
+    </div>
+    <div class="panels">
+      <div class="panel" role="tabpanel" id="p-st" aria-labelledby="t-st">
+        <div class="icard"><h3>Розклад дзвінків</h3>
+          <table class="bells"><tbody>
+            <tr><td>1</td><td>08:30 – 09:15</td></tr><tr><td>2</td><td>09:25 – 10:10</td></tr><tr><td>3</td><td>10:25 – 11:10</td></tr><tr><td>4</td><td>11:25 – 12:10</td></tr><tr><td>5</td><td>12:20 – 13:05</td></tr><tr><td>6</td><td>13:15 – 14:00</td></tr><tr><td>7</td><td>14:10 – 14:55</td></tr>
+          </tbody></table><p class="note">Приклад для прототипу. Замініть на актуальний розклад.</p></div>
+        <div class="icard"><h3>Підготовка до НМТ</h3><p>Корисні ресурси: тестові завдання на Testportal, консультації з профільних предметів, пробне тестування.</p><a class="btn" style="padding:10px 16px;font-size:14px;margin-top:auto;align-self:start" href="https://testportal.gov.ua/" target="_blank" rel="noopener">Testportal <span class="arr">↗</span></a></div>
+        <div class="icard"><h3>Безпечне середовище</h3><p>У ліцеї діє політика протидії булінгу. Якщо тебе ображають або ти бачиш цькування, звернися до класного керівника, психолога чи адміністрації.</p><p class="note">Дитяча гаряча лінія «Ла Страда»: 116 111</p></div>
+      </div>
+      <div class="panel" role="tabpanel" id="p-pa" aria-labelledby="t-pa" hidden>
+        <div class="icard"><h3>Електронний щоденник</h3><p>Оцінки, домашні завдання й відвідуваність доступні в системі «Нові знання».</p></div>
+        <div class="icard"><h3>Про реформу старшої школи</h3><ul><li>10 клас адаптаційний</li><li>11–12 класи профільні</li><li>Більше годин на предмети за вибором</li></ul></div>
+        <div class="icard"><h3>Зв’язок з ліцеєм</h3><p>Запитання щодо навчання, вступу чи документів — пишіть на пошту ліцею або телефонуйте адміністрації.</p><a class="btn" style="padding:10px 16px;font-size:14px;margin-top:auto;align-self:start" href="#contacts" data-go>Контакти <span class="arr">→</span></a></div>
+      </div>
+      <div class="panel" role="tabpanel" id="p-te" aria-labelledby="t-te" hidden>
+        <div class="icard"><h3>Методичні матеріали</h3><p>Типова освітня програма для 10–12 класів академічних ліцеїв та рекомендації МОН щодо профільної освіти.</p></div>
+        <div class="icard"><h3>Підвищення кваліфікації</h3><p>План атестації та курсів, звіти про проходження підвищення кваліфікації.</p></div>
+        <div class="icard"><h3>STEM-простір</h3><p>Обладнання новоствореного STEM-простору доступне для уроків природничих наук та інформатики.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="docs">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <div><p class="eyebrow">Прозорість та інформаційна відкритість</p><h2 style="margin-top:16px">Документи</h2></div>
+      <p>Розділ, обов’язковий для сайту закладу освіти відповідно до статті 30 Закону «Про освіту».</p>
+    </div>
+    <div class="docs rv">
+      <a class="doc" href="#docs"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 3H6v18h12V7zM14 3v4h4"/></svg><span>Статут ліцею<small>PDF</small></span></a>
+      <a class="doc" href="#docs"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 3H6v18h12V7zM14 3v4h4"/></svg><span>Ліцензія на освітню діяльність<small>PDF</small></span></a>
+      <a class="doc" href="#docs"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 3H6v18h12V7zM14 3v4h4"/></svg><span>Освітня програма<small>2026/27</small></span></a>
+      <a class="doc" href="#docs"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 3H6v18h12V7zM14 3v4h4"/></svg><span>Річний план роботи<small>2026/27</small></span></a>
+      <a class="doc" href="#docs"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 3H6v18h12V7zM14 3v4h4"/></svg><span>Правила прийому<small>10 клас</small></span></a>
+      <a class="doc" href="#docs"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 3H6v18h12V7zM14 3v4h4"/></svg><span>Кошторис і фінзвіти<small>Звітність</small></span></a>
+      <a class="doc" href="#docs"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 3H6v18h12V7zM14 3v4h4"/></svg><span>Звіт директора<small>Звітність</small></span></a>
+      <a class="doc" href="#docs"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 3H6v18h12V7zM14 3v4h4"/></svg><span>План протидії булінгу<small>Безпека</small></span></a>
+    </div>
+  </div>
+</section>
+
+<section class="contacts" id="contacts">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <div><p class="eyebrow">Контакти</p><h2 style="margin-top:16px">Приходь знайомитись</h2></div>
+    </div>
+    <div class="c-grid">
+      <div class="c-list rv">
+        <div class="c-item"><div><small>Адреса</small><b>вул. Паркова, 2, корп. 2, м. Пустомити, 81100</b></div><a class="copy" href="https://www.google.com/maps/search/?api=1&query=Пустомити+вул.+Паркова+2" target="_blank" rel="noopener">На мапі ↗</a></div>
+        <div class="c-item"><div><small>Телефон</small><b id="ph">+38 067 427 01 00</b></div><button class="copy" data-copy="ph">Копіювати</button></div>
+        <div class="c-item"><div><small>Email</small><b id="em">pustomytylyceum@gmail.com</b></div><button class="copy" data-copy="em">Копіювати</button></div>
+        <div class="c-item"><div><small>Директорка</small><b>Паук Людмила Олександрівна</b></div></div>
+        <div class="c-item"><div><small>Засновник</small><b>Пустомитівська міська рада, відділ освіти</b></div></div>
+      </div>
+      <form class="card rv" id="form" novalidate>
+        <h3>Запис на день відкритих дверей</h3>
+        <div class="field"><label for="f-name">Ім’я</label><input id="f-name" required placeholder="Олена Коваль"></div>
+        <div class="field"><label for="f-contact">Телефон або email</label><input id="f-contact" required placeholder="+380 …"></div>
+        <div class="field"><label for="f-prof">Профіль, що цікавить</label><select id="f-prof"><option>Інформаційно-технологічний</option><option>Біологічний</option><option>Філологічний</option><option>Універсальний</option><option>Ще не визначився</option></select></div>
+        <div class="field"><label for="f-msg">Запитання</label><textarea id="f-msg" placeholder="Що хочете дізнатися?"></textarea></div>
+        <button class="btn" type="submit" style="justify-content:center">Записатися <span class="arr">→</span></button>
+      </form>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="f-grid">
+      <div class="f-big">Ліцей<br><span>Стернюка</span></div>
+      <div style="display:grid;gap:6px;max-width:40ch">
+        <span>Пустомитівський ліцей імені Митрополита Володимира Стернюка Пустомитівської міської ради Львівського району Львівської області</span>
+        <span>© 2026 · Прототип сайту</span>
+        <a href="#home" data-go>Нагору ↑</a>
+      </div>
+    </div>
+    <p class="src">Джерела даних: освітній портал Пустомитівської громади, ІСУО, Львівська РДА, сайт Пустомитівської громади, ZAXID.NET. Документи в розділі «Прозорість» — заглушки прототипу.</p>
+  </div>
+</footer>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const $=(s,c=document)=>c.querySelector(s), $$=(s,c=document)=>[...c.querySelectorAll(s)];
+
+/* toast */
+const toast=$('#toast');let tt;
+function say(m){toast.textContent=m;toast.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>toast.classList.remove('show'),3200)}
+
+/* header, progress, active nav, timeline */
+const header=$('header.top'),prog=$('.progress'),links=$$('nav.main a'),secs=links.map(a=>$(a.getAttribute('href')));
+const tl=$('#timeline'),fill=$('#tlfill'),items=$$('.tl-item');
+function onScroll(){
+  const y=scrollY,h=document.documentElement.scrollHeight-innerHeight;
+  header.classList.toggle('scrolled',y>40);
+  prog.style.width=(h>0?y/h*100:0)+'%';
+  let cur=-1;secs.forEach((s,i)=>{if(s&&s.getBoundingClientRect().top<innerHeight*.4)cur=i});
+  links.forEach((a,i)=>a.classList.toggle('active',i===cur));
+  const r=tl.getBoundingClientRect(),mid=innerHeight*.6;
+  const p=Math.min(Math.max((mid-r.top)/r.height,0),1);
+  fill.style.height=(p*(r.height-12))+'px';
+  items.forEach(it=>it.classList.toggle('lit',it.getBoundingClientRect().top<mid));
+}
+addEventListener('scroll',onScroll,{passive:true});onScroll();
+
+/* page-wipe navigation */
+const wipe=$('.wipe'),body=document.body,burger=$('#burger');
+function closeMenu(){body.classList.remove('menu-open');burger.setAttribute('aria-expanded','false');burger.setAttribute('aria-label','Відкрити меню')}
+burger.addEventListener('click',()=>{const o=body.classList.toggle('menu-open');burger.setAttribute('aria-expanded',o);burger.setAttribute('aria-label',o?'Закрити меню':'Відкрити меню')});
+let busy=false;
+$$('[data-go]').forEach(a=>a.addEventListener('click',e=>{
+  const t=$(a.getAttribute('href'));if(!t)return;e.preventDefault();
+  const wasMenu=body.classList.contains('menu-open');
+  if(reduce||busy){closeMenu();t.scrollIntoView();return}
+  busy=true;wipe.className='wipe in';
+  setTimeout(()=>{closeMenu();document.documentElement.style.scrollBehavior='auto';
+    scrollTo(0,t.getBoundingClientRect().top+scrollY-(t.id==='home'?0:70));
+    document.documentElement.style.scrollBehavior='';
+    wipe.className='wipe out';setTimeout(()=>{wipe.className='wipe';busy=false},620)},wasMenu?380:560);
+}));
+
+/* reveal on approach (content is visible at rest) */
+if(!reduce&&'IntersectionObserver' in window){
+  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('play');io.unobserve(e.target)}}),{rootMargin:'0px 0px 10% 0px'});
+  requestAnimationFrame(()=>$$('.rv').forEach((el,i)=>{const r=el.getBoundingClientRect();if(r.top>innerHeight){el.style.animationDelay=((i%4)*.08)+'s';io.observe(el)}}));
+}
+
+document.addEventListener('animationend',e=>{if(e.animationName==='rv')e.target.classList.remove('play')});
+
+/* counters */
+const cio=new IntersectionObserver(es=>es.forEach(e=>{if(!e.isIntersecting)return;cio.unobserve(e.target);
+  const el=e.target,end=parseFloat(el.dataset.count),dec=+el.dataset.dec||0;if(reduce)return;
+  const t0=performance.now(),d=1400;
+  (function f(t){const p=Math.min((t-t0)/d,1),v=end*(1-Math.pow(1-p,4));el.textContent=v.toFixed(dec).replace('.',',');if(p<1)requestAnimationFrame(f)})(t0);
+}),{threshold:.6});
+$$('[data-count]').forEach(el=>{if(el.getBoundingClientRect().top>innerHeight)cio.observe(el)});
+
+/* tilt + magnetic + cursor (fine pointers only) */
+if(matchMedia('(pointer:fine)').matches&&!reduce){
+  $$('.tilt').forEach(c=>{
+    c.addEventListener('mousemove',e=>{const r=c.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;c.style.transform=`perspective(800px) rotateY(${x*10}deg) rotateX(${-y*10}deg) translateY(-6px)`});
+    c.addEventListener('mouseleave',()=>c.style.transform='');
+  });
+  $$('.mag').forEach(b=>{
+    b.addEventListener('mousemove',e=>{const r=b.getBoundingClientRect();b.style.transform=`translate(${(e.clientX-r.left-r.width/2)*.25}px,${(e.clientY-r.top-r.height/2)*.35}px)`});
+    b.addEventListener('mouseleave',()=>b.style.transform='');
+  });
+  const cur=$('.cursor');let cx=innerWidth/2,cy=innerHeight/2,tx=cx,ty=cy;
+  addEventListener('mousemove',e=>{tx=e.clientX;ty=e.clientY});
+  (function loop(){cx+=(tx-cx)*.2;cy+=(ty-cy)*.2;cur.style.transform=`translate(${cx}px,${cy}px) translate(-50%,-50%)`;requestAnimationFrame(loop)})();
+  document.addEventListener('mouseover',e=>cur.classList.toggle('big',!!e.target.closest('a,button,.pcard,.ncard,.tile,summary')));
+}
+
+/* hero dot field */
+const cv=$('#dots'),ctx=cv.getContext('2d');let W,H,dpr,mx=-999,my=-999;
+function size(){dpr=Math.min(devicePixelRatio||1,2);W=cv.offsetWidth;H=cv.offsetHeight;cv.width=W*dpr;cv.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0)}
+size();addEventListener('resize',size);
+cv.parentElement.addEventListener('pointermove',e=>{const r=cv.getBoundingClientRect();mx=e.clientX-r.left;my=e.clientY-r.top});
+cv.parentElement.addEventListener('pointerleave',()=>{mx=my=-999});
+function draw(t){ctx.clearRect(0,0,W,H);const g=34;
+  for(let x=g/2;x<W;x+=g)for(let y=g/2;y<H;y+=g){
+    const d=Math.hypot(x-mx,y-my),near=Math.max(0,1-d/160);
+    const w=reduce?0:Math.sin(x*.012+t*.0012)*Math.cos(y*.014+t*.0009);
+    const r=1.1+near*3.4+(w>0.6?1:0);
+    ctx.fillStyle=near>0.05||w>0.6?'#ffd21f':'#55585e';ctx.globalAlpha=.35+near*.65;
+    ctx.beginPath();ctx.arc(x,y,r,0,7);ctx.fill();}
+  ctx.globalAlpha=1;if(!reduce)requestAnimationFrame(draw)}
+requestAnimationFrame(draw);
+
+/* news rail: drag, arrows, filters */
+const rail=$('#rail');let down=false,sx,sl,moved=false;
+rail.addEventListener('pointerdown',e=>{if(e.pointerType!=='mouse')return;down=true;moved=false;sx=e.clientX;sl=rail.scrollLeft;rail.classList.add('drag')});
+addEventListener('pointerup',()=>{down=false;rail.classList.remove('drag')});
+rail.addEventListener('pointermove',e=>{if(!down)return;const dx=e.clientX-sx;if(Math.abs(dx)>3)moved=true;rail.scrollLeft=sl-dx});
+$$('.rbtn').forEach(b=>b.addEventListener('click',()=>rail.scrollBy({left:+b.dataset.dir*360,behavior:reduce?'auto':'smooth'})));
+$$('.filter').forEach(f=>f.addEventListener('click',()=>{
+  $$('.filter').forEach(x=>x.setAttribute('aria-pressed',x===f));
+  const c=f.dataset.f;$$('.ncard').forEach(n=>{n.hidden=!(c==='all'||n.dataset.c===c);if(!n.hidden&&!reduce){n.classList.remove('play');void n.offsetWidth;n.classList.add('play')}});
+  rail.scrollTo({left:0});
+}));
+$$('.ncard').forEach(n=>n.classList.add('rv'));
+
+/* tabs */
+const tabs=$$('.tab'),pill=$('#pill');
+function movePill(t){pill.style.left=t.offsetLeft+'px';pill.style.width=t.offsetWidth+'px';pill.style.top=t.offsetTop+'px';pill.style.height=t.offsetHeight+'px';pill.style.bottom='auto'}
+tabs.forEach(t=>t.addEventListener('click',()=>{
+  tabs.forEach(x=>{const on=x===t;x.setAttribute('aria-selected',on);$('#'+x.getAttribute('aria-controls')).hidden=!on});movePill(t)}));
+document.fonts&&document.fonts.ready.then(()=>movePill($('.tab[aria-selected="true"]')));
+movePill(tabs[0]);addEventListener('resize',()=>movePill($('.tab[aria-selected="true"]')));
+
+/* team flip cards: tap/keyboard */
+$$('.flip').forEach(f=>{f.addEventListener('click',()=>f.classList.toggle('on'));f.addEventListener('mouseleave',()=>f.classList.remove('on'))});
+
+/* accordion: one open at a time */
+$$('.acc details').forEach(d=>d.addEventListener('toggle',()=>{if(d.open)$$('.acc details').forEach(o=>{if(o!==d)o.open=false})}));
+
+/* copy */
+$$('[data-copy]').forEach(b=>b.addEventListener('click',()=>{
+  const el=$('#'+b.dataset.copy),txt=el.textContent;
+  const ok=()=>{b.textContent='Скопійовано ✓';setTimeout(()=>b.textContent='Копіювати',1800)};
+  try{navigator.clipboard.writeText(txt).then(ok,()=>{sel(el);say('Текст виділено — скопіюйте вручну')})}catch(e){sel(el);say('Текст виділено — скопіюйте вручну')}
+}));
+function sel(el){const r=document.createRange();r.selectNodeContents(el);const s=getSelection();s.removeAllRanges();s.addRange(r)}
+
+/* form (prototype) */
+$('#form').addEventListener('submit',e=>{e.preventDefault();
+  const n=$('#f-name'),c=$('#f-contact');
+  if(!n.value.trim()||!c.value.trim()){say('Вкажіть ім’я та контакт для зворотного зв’язку');(n.value.trim()?c:n).focus();return}
+  say('Це прототип: заявку не надіслано, але форма працює');e.target.reset();
+});
+})();
+</script>
+
+</body></html>

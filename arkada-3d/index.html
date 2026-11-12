@@ -1,0 +1,490 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Аркада 3D</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Forum&family=Golos+Text:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: fixed WebGL stage behind a vertical scroll story; text panels alternate sides opposite the bottle */
+:root{
+  --ink:#080d14;          /* cellar night, blue-biased */
+  --ink-2:#0f1722;
+  --frost:#e6edf3;        /* text, glass highlights */
+  --mist:#8c9bab;         /* secondary text */
+  --line:rgba(190,210,228,.16);
+  --copper:#d0915e;       /* cap, emblem, single accent */
+  --f-display:"Forum","Cormorant Garamond",Georgia,serif;
+  --f-body:"Golos Text","Segoe UI",Roboto,system-ui,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+  color-scheme:dark;
+}
+html{scroll-behavior:smooth}
+body{background:var(--ink);color:var(--frost);font-family:var(--f-body);font-size:16px;line-height:1.6;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));overflow-x:hidden}
+#scene{position:fixed;inset:0;width:100%;height:100%;z-index:0;display:block;
+  background:radial-gradient(120% 80% at 60% 40%,var(--ink-2) 0%,var(--ink) 70%)}
+.no-webgl #scene{opacity:.6}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:5;display:flex;justify-content:space-between;align-items:center;
+  padding-top:calc(18px + env(safe-area-inset-top,0px));padding-bottom:18px;
+  padding-left:max(24px,env(safe-area-inset-left,0px));padding-right:max(24px,env(safe-area-inset-right,0px));pointer-events:none}
+nav *{pointer-events:auto}
+.mark{font-family:var(--f-display);font-size:1.5rem;letter-spacing:.22em;color:var(--frost);text-decoration:none}
+.age{font-family:var(--f-mono);font-size:.75rem;letter-spacing:.08em;border:1px solid var(--line);padding:.3rem .6rem;border-radius:2px;color:var(--mist)}
+
+.rail{position:fixed;right:max(24px,env(safe-area-inset-right,0px));top:50%;transform:translateY(-50%);z-index:5;
+  list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.9rem;font-family:var(--f-mono);font-size:.7rem;letter-spacing:.1em;text-transform:uppercase}
+.rail a{display:flex;align-items:center;justify-content:flex-end;gap:.6rem;color:var(--mist);text-decoration:none;opacity:.55;transition:opacity .3s,color .3s}
+.rail a::after{content:"";width:14px;height:1px;background:currentColor;transition:width .3s}
+.rail a.on{opacity:1;color:var(--copper)}
+.rail a.on::after{width:32px}
+.rail a:focus-visible,.btn:focus-visible{outline:2px solid var(--copper);outline-offset:3px}
+
+main{position:relative;z-index:1}
+.sec{min-height:100vh;min-height:100svh;display:grid;align-items:center;padding-block:14vh;max-width:1240px;margin:0 auto}
+.panel{max-width:27rem;min-width:0}
+.sec[data-side="right"] .panel{margin-left:auto;margin-right:4rem}
+.eyebrow{font-family:var(--f-mono);font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;color:var(--copper);margin:0 0 1rem}
+h2{font-family:var(--f-display);font-weight:400;font-size:clamp(2.2rem,4.6vw,3.6rem);line-height:1.05;margin:0 0 1.2rem;text-wrap:balance}
+p{margin:0 0 1rem;color:#c6d1db;max-width:62ch}
+.data{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;margin-top:1.8rem;background:var(--line);border:1px solid var(--line)}
+.data div{background:rgba(8,13,20,.72);padding:.9rem .8rem}
+.data b{display:block;font-family:var(--f-display);font-weight:400;font-size:1.7rem;line-height:1.1;font-variant-numeric:tabular-nums}
+.data span{font-family:var(--f-mono);font-size:.68rem;letter-spacing:.06em;color:var(--mist);text-transform:uppercase}
+
+/* hero */
+.hero .panel{max-width:40rem}
+.hero-title{font-family:var(--f-display);font-weight:400;font-size:clamp(4.2rem,13vw,11.5rem);line-height:.9;letter-spacing:.06em;margin:0 0 1.6rem;display:flex;overflow:hidden;padding-bottom:.08em}
+.hero-title .ch{display:inline-block}
+.hero p{font-size:1.12rem;max-width:30rem}
+.ctas{display:flex;flex-wrap:wrap;gap:.8rem;margin-top:2rem}
+.btn{font-family:var(--f-mono);font-size:.8rem;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;padding:.95rem 1.4rem;border:1px solid var(--line);color:var(--frost);border-radius:2px;transition:background .3s,border-color .3s}
+.btn.primary{background:var(--copper);border-color:var(--copper);color:var(--ink)}
+.btn:hover{border-color:var(--copper)}
+.btn.primary:hover{background:#e0a676}
+.scroll-hint{position:absolute;left:0;bottom:6vh;font-family:var(--f-mono);font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--mist)}
+.hero{position:relative}
+
+/* cocktails */
+.cocktails{align-items:start}
+.cocktails .panel{max-width:none}
+.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1.2rem;margin-top:2rem;max-width:60rem}
+.card{background:rgba(12,19,29,.8);border:1px solid var(--line);padding:1.5rem;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);min-width:0}
+.card h3{font-family:var(--f-display);font-weight:400;font-size:1.7rem;margin:0 0 .3rem;line-height:1.1}
+.card .glass{font-family:var(--f-mono);font-size:.7rem;color:var(--copper);letter-spacing:.08em;text-transform:uppercase;margin-bottom:1rem}
+.card ul{list-style:none;margin:0 0 1rem;padding:0;border-top:1px solid var(--line)}
+.card li{display:flex;justify-content:space-between;gap:1rem;padding:.5rem 0;border-bottom:1px solid var(--line);font-size:.92rem}
+.card li span:last-child{font-family:var(--f-mono);color:var(--mist);font-variant-numeric:tabular-nums;white-space:nowrap}
+.card p{font-size:.9rem;margin:0}
+
+footer{position:relative;z-index:1;max-width:1240px;margin:0 auto;padding-block:5rem 3rem;border-top:1px solid var(--line);display:grid;gap:1.4rem}
+.warn{font-family:var(--f-display);font-size:clamp(1.4rem,3vw,2.1rem);line-height:1.2;max-width:34ch;text-wrap:balance;margin:0}
+.fine{font-family:var(--f-mono);font-size:.72rem;color:var(--mist);letter-spacing:.04em;display:flex;flex-wrap:wrap;gap:.4rem 1.6rem}
+
+@media (max-width:860px){
+  .rail{display:none}
+  .sec{align-items:end;padding-block:52vh 8vh}
+  .sec.hero{padding-block:46vh 10vh}
+  .sec[data-side="right"] .panel{margin-right:0;margin-left:0}
+  .panel{background:rgba(8,13,20,.78);border:1px solid var(--line);padding:1.3rem;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+  .hero .panel{background:none;border:0;padding:0;backdrop-filter:none;-webkit-backdrop-filter:none}
+  .hero-title{font-size:clamp(3.4rem,17vw,6rem)}
+  .scroll-hint{display:none}
+  .cocktails{padding-block:44vh 6vh}
+  .cocktails .panel{background:none;border:0;padding:0;backdrop-filter:none}
+  .cards{grid-template-columns:1fr}
+  .data b{font-size:1.35rem}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+
+<canvas id="scene" aria-hidden="true"></canvas>
+
+<nav>
+  <a class="mark" href="#top">АРКАДА</a>
+  <span class="age">18+</span>
+</nav>
+
+<ol class="rail" aria-label="Розділи">
+  <li><a href="#top" data-i="0">Аркада</a></li>
+  <li><a href="#water" data-i="1">Вода</a></li>
+  <li><a href="#spirit" data-i="2">Спирт</a></li>
+  <li><a href="#filter" data-i="3">Фільтрація</a></li>
+  <li><a href="#serve" data-i="4">Подача</a></li>
+  <li><a href="#mix" data-i="5">Коктейлі</a></li>
+</ol>
+
+<main>
+  <section class="sec hero" id="top" data-side="left">
+    <div class="panel">
+      <p class="eyebrow">Горілка особлива · 40% об. · 0,7 л</p>
+      <h1 class="hero-title" aria-label="Аркада"><span class="ch">А</span><span class="ch">р</span><span class="ch">к</span><span class="ch">а</span><span class="ch">д</span><span class="ch">а</span></h1>
+      <p>М'яка пшенична горілка на артезіанській воді. Три етапи очищення і чотирнадцять днів спокою в льоху, перш ніж вона потрапить у пляшку.</p>
+      <div class="ctas">
+        <a class="btn primary" href="#water">Як її роблять</a>
+        <a class="btn" href="#mix">Коктейлі</a>
+      </div>
+    </div>
+    <span class="scroll-hint">Гортайте вниз ↓</span>
+  </section>
+
+  <section class="sec" id="water" data-side="right">
+    <div class="panel">
+      <p class="eyebrow">Етап 1 з 3 · Вода</p>
+      <h2>Артезіанська вода з глибини 180 метрів</h2>
+      <p>Воду пом'якшують зворотним осмосом і повертають їй рівно стільки мінералів, щоб смак лишався круглим і не відгонив металом.</p>
+      <div class="data">
+        <div><b>180 м</b><span>глибина свердловини</span></div>
+        <div><b>0,5</b><span>жорсткість, ммоль/л</span></div>
+        <div><b>7,2</b><span>pH</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="spirit" data-side="left">
+    <div class="panel">
+      <p class="eyebrow">Етап 2 з 3 · Спирт</p>
+      <h2>Спирт «Люкс» з озимої пшениці</h2>
+      <p>Найвища категорія етилового спирту. Пшениця дає легку солодкість хлібної скоринки, яку чути в післясмаку.</p>
+      <div class="data">
+        <div><b>96,3%</b><span>міцність спирту</span></div>
+        <div><b>≤0,003%</b><span>метанол</span></div>
+        <div><b>100%</b><span>пшениця</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="filter" data-side="left">
+    <div class="panel">
+      <p class="eyebrow">Етап 3 з 3 · Фільтрація</p>
+      <h2>Березове вугілля і срібло</h2>
+      <p>Сортування вісім годин проходить крізь колону з активованим березовим вугіллям, потім через фільтр зі срібною ниткою. Після цього горілка два тижні відпочиває.</p>
+      <div class="data">
+        <div><b>8 год</b><span>у вугільній колоні</span></div>
+        <div><b>14 днів</b><span>відпочинку</span></div>
+        <div><b>4256</b><span>ДСТУ</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="serve" data-side="right">
+    <div class="panel">
+      <p class="eyebrow">Подача</p>
+      <h2>Охолодіть до 6–8 °C</h2>
+      <p>Морозилка робить горілку густою, але глушить аромат. Достатньо години в холодильнику і тонкої чарки на 50 мл. До неї: житній хліб, солоні огірки, сало з часником.</p>
+      <div class="data">
+        <div><b>6–8 °C</b><span>температура</span></div>
+        <div><b>50 мл</b><span>чарка</span></div>
+        <div><b>40%</b><span>об'ємна частка</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec cocktails" id="mix" data-side="left">
+    <div class="panel">
+      <p class="eyebrow">Коктейлі</p>
+      <h2>Три рецепти з Аркадою</h2>
+      <div class="cards">
+        <article class="card">
+          <h3>Морозна вишня</h3>
+          <div class="glass">Рокс · лід</div>
+          <ul>
+            <li><span>Аркада</span><span>50 мл</span></li>
+            <li><span>Вишневий сік</span><span>40 мл</span></li>
+            <li><span>Лимонний сік</span><span>10 мл</span></li>
+            <li><span>Цукровий сироп</span><span>5 мл</span></li>
+          </ul>
+          <p>Струсіть з льодом і процідіть у рокс зі свіжим льодом.</p>
+        </article>
+        <article class="card">
+          <h3>Карпатський мул</h3>
+          <div class="glass">Мідний кухоль · лід</div>
+          <ul>
+            <li><span>Аркада</span><span>50 мл</span></li>
+            <li><span>Імбирне пиво</span><span>120 мл</span></li>
+            <li><span>Сік лайма</span><span>10 мл</span></li>
+            <li><span>М'ята</span><span>гілочка</span></li>
+          </ul>
+          <p>Збудуйте прямо в кухлі, злегка перемішайте.</p>
+        </article>
+        <article class="card">
+          <h3>Мартіні Аркада</h3>
+          <div class="glass">Коктейльний келих · охолоджений</div>
+          <ul>
+            <li><span>Аркада</span><span>60 мл</span></li>
+            <li><span>Сухий вермут</span><span>10 мл</span></li>
+            <li><span>Лимонна цедра</span><span>1 смужка</span></li>
+          </ul>
+          <p>Перемішуйте з льодом 30 секунд, процідіть, віджміть цедру над келихом.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <p class="warn">Надмірне вживання алкоголю шкідливе для вашого здоров'я.</p>
+  <div class="fine">
+    <span>Лише для осіб від 18 років</span>
+    <span>Аркада — вигаданий бренд, демо-концепт промосторінки</span>
+    <span>3D: Three.js · моушн: GSAP</span>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.149.0/build/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script>
+(function(){
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const fontsReady = Promise.race([
+  Promise.all([
+    document.fonts.load('400 160px Forum'),
+    document.fonts.load('500 40px "Golos Text"'),
+    document.fonts.load('400 30px "JetBrains Mono"')
+  ]).catch(()=>{}),
+  new Promise(r=>setTimeout(r,2500))
+]);
+
+/* ---------- text motion (transform-only, page readable without it) ---------- */
+if (window.gsap) {
+  if (window.ScrollTrigger) gsap.registerPlugin(ScrollTrigger);
+  if (!reduce) {
+    gsap.from('.hero-title .ch',{yPercent:105,duration:1.3,stagger:.07,ease:'expo.out',delay:.2});
+    gsap.from('.hero .eyebrow, .hero p, .hero .ctas',{y:24,duration:1,stagger:.1,ease:'power3.out',delay:.6});
+    if (window.ScrollTrigger) {
+      document.querySelectorAll('.sec:not(.hero):not(.cocktails) .panel').forEach(el=>{
+        gsap.fromTo(el,{y:70},{y:-70,ease:'none',scrollTrigger:{trigger:el.parentElement,start:'top bottom',end:'bottom top',scrub:true}});
+      });
+      gsap.utils.toArray('.card').forEach((el,i)=>{
+        gsap.fromTo(el,{y:40+i*30},{y:0,ease:'none',scrollTrigger:{trigger:'.cards',start:'top bottom',end:'top 40%',scrub:true}});
+      });
+    }
+  }
+}
+
+/* ---------- scroll position → continuous section index ---------- */
+const secs = [...document.querySelectorAll('main .sec')];
+let anchors = [];
+function measure(){
+  const vh = innerHeight, max = document.documentElement.scrollHeight - vh;
+  anchors = secs.map(s => Math.min(max, Math.max(0, s.offsetTop + s.offsetHeight/2 - vh/2)));
+  anchors[0] = 0;
+}
+function sectionIndex(){
+  const y = scrollY;
+  for (let i=0;i<anchors.length-1;i++){
+    if (y < anchors[i+1]) return i + Math.max(0,(y-anchors[i]))/Math.max(1,anchors[i+1]-anchors[i]);
+  }
+  return anchors.length-1;
+}
+const railLinks = [...document.querySelectorAll('.rail a')];
+let lastActive = -1;
+function updateRail(p){
+  const a = Math.round(p);
+  if (a===lastActive) return; lastActive=a;
+  railLinks.forEach((l,i)=>l.classList.toggle('on',i===a));
+}
+
+/* ---------- WebGL scene ---------- */
+fontsReady.then(init);
+
+function init(){
+  measure(); addEventListener('resize',measure);
+  updateRail(sectionIndex());
+  if (!window.THREE){ document.documentElement.classList.add('no-webgl'); return; }
+  const canvas = document.getElementById('scene');
+  let renderer;
+  try { renderer = new THREE.WebGLRenderer({canvas,antialias:true,alpha:true}); }
+  catch(e){ document.documentElement.classList.add('no-webgl'); return; }
+  renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+  renderer.outputEncoding = THREE.sRGBEncoding;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.05;
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(35,1,.1,100);
+  camera.position.set(0,0,8);
+
+  /* studio environment: tall softboxes give the bottle its vertical highlights */
+  const pmrem = new THREE.PMREMGenerator(renderer);
+  const env = new THREE.Scene();
+  env.add(new THREE.Mesh(new THREE.BoxGeometry(24,24,24),new THREE.MeshBasicMaterial({color:0x04070b,side:THREE.BackSide})));
+  function softbox(w,h,col,x,y,z){
+    const m=new THREE.Mesh(new THREE.PlaneGeometry(w,h),new THREE.MeshBasicMaterial({color:col,side:THREE.DoubleSide}));
+    m.position.set(x,y,z); m.lookAt(0,0,0); env.add(m);
+  }
+  softbox(1.6,16,new THREE.Color(7,7.4,8),-7,0,4);
+  softbox(.9,16,new THREE.Color(5,5.3,6),6.5,0,3);
+  softbox(12,3,new THREE.Color(1.4,1.55,1.8),0,9,0);
+  softbox(3,12,new THREE.Color(6,3,1.5),4,0,-8);
+  softbox(2,12,new THREE.Color(1.2,1.6,2.4),-5,0,-7);
+  scene.environment = pmrem.fromScene(env,.02).texture;
+
+  /* rig (moves with scroll) → spinner (rotates) → bottle (origin at base) */
+  const rig = new THREE.Group(); scene.add(rig);
+  const spinner = new THREE.Group(); rig.add(spinner);
+  const bottle = new THREE.Group(); bottle.position.y = -1.6; spinner.add(bottle);
+
+  const P = (a)=>a.map(([x,y])=>new THREE.Vector2(x,y));
+  const glassProfile = P([[0,0],[.56,0],[.62,.03],[.645,.15],[.645,1.9],[.625,2.05],[.5,2.3],[.3,2.55],[.205,2.72],[.195,3.08],[.215,3.12],[.215,3.2],[0,3.2]]);
+  const liquidProfile = P([[0,.06],[.57,.06],[.605,.16],[.605,1.9],[.588,2.04],[.51,2.22],[0,2.22]]);
+
+  const glassGeo = new THREE.LatheGeometry(glassProfile,128);
+  // inner volume tint (back faces, normal blend)
+  const tint = new THREE.Mesh(glassGeo,new THREE.MeshPhysicalMaterial({
+    color:0x9fb8cc,roughness:.15,metalness:0,transparent:true,opacity:.1,side:THREE.BackSide,depthWrite:false}));
+  tint.renderOrder=1; bottle.add(tint);
+  // liquid
+  const liquid = new THREE.Mesh(new THREE.LatheGeometry(liquidProfile,128),new THREE.MeshPhysicalMaterial({
+    color:0xcfe3f2,roughness:.02,metalness:0,clearcoat:1,transparent:true,opacity:.2,envMapIntensity:1.6,depthWrite:false}));
+  liquid.renderOrder=2; bottle.add(liquid);
+  // glass shell: reflections only, added on top
+  const shell = new THREE.Mesh(glassGeo,new THREE.MeshPhysicalMaterial({
+    color:0x000000,roughness:.03,metalness:0,clearcoat:1,clearcoatRoughness:.02,envMapIntensity:3.2,
+    transparent:true,blending:THREE.AdditiveBlending,depthWrite:false}));
+  shell.renderOrder=4; bottle.add(shell);
+
+  // copper cap + neck ring
+  const copper = new THREE.MeshStandardMaterial({color:0xc07a48,metalness:1,roughness:.3,envMapIntensity:1.4});
+  const cap = new THREE.Mesh(new THREE.CylinderGeometry(.222,.222,.44,64),copper);
+  cap.position.y=3.17; bottle.add(cap);
+  const capTop = new THREE.Mesh(new THREE.CylinderGeometry(.2,.222,.03,64),copper);
+  capTop.position.y=3.405; bottle.add(capTop);
+  for (let i=0;i<3;i++){
+    const r=new THREE.Mesh(new THREE.TorusGeometry(.223,.006,8,64),new THREE.MeshStandardMaterial({color:0x7a4a2a,metalness:1,roughness:.5}));
+    r.rotation.x=Math.PI/2; r.position.y=2.99+i*.05; bottle.add(r);
+  }
+  const ring = new THREE.Mesh(new THREE.TorusGeometry(.205,.014,12,64),copper);
+  ring.rotation.x=Math.PI/2; ring.position.y=2.78; bottle.add(ring);
+
+  // printed label, wrapped around the front
+  const labelArc = 2.4;
+  const label = new THREE.Mesh(
+    new THREE.CylinderGeometry(.652,.652,1.12,96,1,true,-labelArc/2,labelArc),
+    new THREE.MeshBasicMaterial({map:labelTexture(),transparent:true,toneMapped:false,depthWrite:false}));
+  label.position.y=.98; label.renderOrder=3; bottle.add(label);
+
+  // warm glow behind the bottle (does not rotate)
+  const glow = new THREE.Mesh(new THREE.PlaneGeometry(6,8),new THREE.MeshBasicMaterial({
+    map:radialTexture('rgba(208,145,94,.55)','rgba(208,145,94,0)'),transparent:true,blending:THREE.AdditiveBlending,depthWrite:false,toneMapped:false}));
+  glow.position.set(0,.2,-1.8); glow.renderOrder=0; rig.add(glow);
+
+  // drifting frost particles
+  const N = innerWidth<760 ? 380 : 700;
+  const pos = new Float32Array(N*3), spd = new Float32Array(N);
+  for (let i=0;i<N;i++){
+    pos[i*3]=(Math.random()-.5)*14; pos[i*3+1]=(Math.random()-.5)*9; pos[i*3+2]=(Math.random()-.5)*6-1;
+    spd[i]=.08+Math.random()*.22;
+  }
+  const pGeo = new THREE.BufferGeometry(); pGeo.setAttribute('position',new THREE.BufferAttribute(pos,3));
+  const dust = new THREE.Points(pGeo,new THREE.PointsMaterial({size:.045,map:radialTexture('rgba(230,240,248,1)','rgba(230,240,248,0)'),
+    transparent:true,opacity:.55,depthWrite:false,blending:THREE.AdditiveBlending,sizeAttenuation:true,toneMapped:false}));
+  scene.add(dust);
+
+  /* keyframes per section: x,y,scale,turns,tilt,cameraZ */
+  const KD = [
+    {x:1.75,y:-.05,s:1,   r:0,    z:-.07, c:8},
+    {x:-2.0,y:0,   s:1.05,r:1,    z:.06,  c:7.8},
+    {x:2.0, y:.05, s:1,   r:1.5,  z:-.05, c:8},
+    {x:1.2, y:-1.0,s:1.75,r:2,    z:0,    c:7},
+    {x:-2.0,y:-.1, s:1,   r:2.55, z:.32,  c:8},
+    {x:2.9, y:1.0, s:.62, r:3,    z:-.1,  c:8.4},
+  ];
+  const KM = [
+    {x:0,y:1.15,s:.7, r:0,   z:0,   c:10.5},
+    {x:0,y:1.25,s:.66,r:1,   z:.06, c:10.5},
+    {x:0,y:1.25,s:.66,r:1.5, z:-.06,c:10.5},
+    {x:0,y:.4,  s:1.15,r:2,  z:0,   c:10},
+    {x:0,y:1.25,s:.66,r:2.55,z:.3,  c:10.5},
+    {x:0,y:2.1, s:.5, r:3,   z:0,   c:11},
+  ];
+  const keys=['x','y','s','r','z','c'];
+  function sample(K,p){
+    const n=K.length-1, f=Math.min(Math.max(p,0),n), i=Math.min(Math.floor(f),n-1);
+    let t=f-i; t=t*t*(3-2*t);
+    const o={}; keys.forEach(k=>o[k]=K[i][k]+(K[i+1][k]-K[i][k])*t); return o;
+  }
+
+  let mobile=false;
+  function resize(){
+    const w=innerWidth,h=innerHeight;
+    renderer.setSize(w,h,false); camera.aspect=w/h; camera.updateProjectionMatrix();
+    mobile = w<860;
+  }
+  resize(); addEventListener('resize',resize);
+
+  let mx=0,my=0,tmx=0,tmy=0;
+  addEventListener('pointermove',e=>{ if(e.pointerType==='mouse'){ tmx=e.clientX/innerWidth*2-1; tmy=e.clientY/innerHeight*2-1; } });
+
+  const state={fill:reduce?1:0};
+  if (window.gsap && !reduce) gsap.to(state,{fill:1,duration:2.6,delay:.5,ease:'power2.inOut'});
+  else state.fill=1;
+
+  const cur = sample(mobile?KM:KD,sectionIndex());
+  const clock = new THREE.Clock();
+  function frame(){
+    const dt=Math.min(clock.getDelta(),.05), t=clock.elapsedTime;
+    const p=sectionIndex(); updateRail(p);
+    const tgt=sample(mobile?KM:KD,p);
+    const k = reduce ? 1 : 1-Math.exp(-dt*4.5);
+    keys.forEach(key=>cur[key]+=(tgt[key]-cur[key])*k);
+    mx+=(tmx-mx)*(1-Math.exp(-dt*3)); my+=(tmy-my)*(1-Math.exp(-dt*3));
+
+    const idle = reduce?0:Math.sin(t*.45)*.22;
+    rig.position.set(cur.x,cur.y+(reduce?0:Math.sin(t*.8)*.04),0);
+    rig.scale.setScalar(cur.s);
+    spinner.rotation.set(my*.08, cur.r*Math.PI*2+idle+mx*.3, cur.z);
+    camera.position.set(mx*.2,-my*.12,cur.c);
+
+    liquid.scale.set(1,Math.max(.002,state.fill),1);
+
+    if (!reduce){
+      const a=pGeo.attributes.position.array;
+      for (let i=0;i<N;i++){ a[i*3+1]+=spd[i]*dt*(Math.abs(p-3)<1?2.5:1); if(a[i*3+1]>4.5)a[i*3+1]=-4.5; a[i*3]+=Math.sin(t*.3+i)*dt*.03; }
+      pGeo.attributes.position.needsUpdate=true;
+      dust.rotation.y=mx*.05;
+    }
+    renderer.render(scene,camera);
+    requestAnimationFrame(frame);
+  }
+  frame();
+}
+
+/* ---------- canvas textures ---------- */
+function radialTexture(inner,outer){
+  const c=document.createElement('canvas'); c.width=c.height=128;
+  const g=c.getContext('2d'), gr=g.createRadialGradient(64,64,0,64,64,64);
+  gr.addColorStop(0,inner); gr.addColorStop(1,outer);
+  g.fillStyle=gr; g.fillRect(0,0,128,128);
+  const t=new THREE.CanvasTexture(c); t.encoding=THREE.sRGBEncoding; return t;
+}
+function spaced(g,text,cx,y,sp){
+  const chars=[...text], ws=chars.map(ch=>g.measureText(ch).width);
+  let x=cx-(ws.reduce((a,b)=>a+b,0)+sp*(chars.length-1))/2;
+  g.textAlign='left'; chars.forEach((ch,i)=>{ g.fillText(ch,x,y); x+=ws[i]+sp; });
+}
+function labelTexture(){
+  const W=1400,H=1000,c=document.createElement('canvas'); c.width=W; c.height=H;
+  const g=c.getContext('2d'), cx=W/2;
+  // arch emblem
+  g.strokeStyle='#d6955f'; g.lineWidth=7; g.lineCap='round';
+  g.beginPath(); g.moveTo(cx-70,260); g.lineTo(cx-70,175); g.arc(cx,175,70,Math.PI,0); g.lineTo(cx+70,260); g.stroke();
+  g.lineWidth=4;
+  g.beginPath(); g.moveTo(cx-38,260); g.lineTo(cx-38,185); g.arc(cx,185,38,Math.PI,0); g.lineTo(cx+38,260); g.stroke();
+  g.beginPath(); g.moveTo(cx-110,262); g.lineTo(cx+110,262); g.stroke();
+  // wordmark
+  g.fillStyle='#f3f7fa';
+  g.font='400 168px Forum, Georgia, serif'; spaced(g,'АРКАДА',cx,470,34);
+  g.font='500 40px "Golos Text", sans-serif'; spaced(g,'ГОРІЛКА ОСОБЛИВА',cx,560,16);
+  g.fillStyle='rgba(243,247,250,.55)'; g.fillRect(cx-250,610,500,2);
+  g.fillStyle='#f3f7fa';
+  g.font='400 34px "JetBrains Mono", monospace'; spaced(g,'40% об.  ·  0,7 л',cx,690,4);
+  g.fillStyle='#d6955f';
+  g.font='400 26px "JetBrains Mono", monospace'; spaced(g,'ВИГОТОВЛЕНО В УКРАЇНІ',cx,780,6);
+  const t=new THREE.CanvasTexture(c); t.encoding=THREE.sRGBEncoding; t.anisotropy=8; return t;
+}
+})();
+</script>
+
+</body></html>

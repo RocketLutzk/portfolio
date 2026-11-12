@@ -1,0 +1,1478 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#9C6514">
+<title>Розводка</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Unbounded:wght@500;700&display=swap">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<style>
+/* Layout: app bar with role switch + nav; views: projects grid, plan editor (plan | side panel), estimate document, orders, catalog table, network dashboard */
+:root{
+  --bg:#ECF0F1; --surface:#FFFFFF; --paper:#F8FAFA; --grid:#DFE6E8; --grid2:#C9D4D7;
+  --fg:#1B2528; --muted:#5D6C71; --line:#CDD6D9;
+  --accent:#9C6514; --accent-soft:#F4E8D4; --accent-ink:#FFFFFF;
+  --cold:#2867C9; --hot:#CF3F35; --sew:#6D767A; --heat:#B0458E; --ok:#2E7D4F; --warn:#A86400; --err:#C2362C;
+  --ok-soft:#E3F2E8; --warn-soft:#FBEFD9; --err-soft:#FBE3E0;
+  --f-display:"Unbounded","Arial Black",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#11171A; --surface:#1A2226; --paper:#151D20; --grid:#1F2B2F; --grid2:#2A393E;
+  --fg:#E2E9EB; --muted:#94A4A9; --line:#2D3B40;
+  --accent:#D99D45; --accent-soft:#3A2F1E; --accent-ink:#1A1206;
+  --cold:#5E98F0; --hot:#F0695D; --sew:#9AA4A8; --heat:#D97BBB; --ok:#5BBF84; --warn:#E3A243; --err:#F0695D;
+  --ok-soft:#1B3326; --warn-soft:#3A2D16; --err-soft:#3D1F1C; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#11171A; --surface:#1A2226; --paper:#151D20; --grid:#1F2B2F; --grid2:#2A393E;
+  --fg:#E2E9EB; --muted:#94A4A9; --line:#2D3B40;
+  --accent:#D99D45; --accent-soft:#3A2F1E; --accent-ink:#1A1206;
+  --cold:#5E98F0; --hot:#F0695D; --sew:#9AA4A8; --heat:#D97BBB; --ok:#5BBF84; --warn:#E3A243; --err:#F0695D;
+  --ok-soft:#1B3326; --warn-soft:#3A2D16; --err-soft:#3D1F1C; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:14px;line-height:1.45}
+button,select,input,textarea{font:inherit;color:inherit}
+h1,h2,h3{text-wrap:balance}
+.wrap{max-width:1400px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:12px 40px;display:flex;flex-direction:column;gap:14px}
+
+/* app bar */
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;padding-bottom:10px;border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:10px;min-width:0}
+.logo{width:36px;height:36px;border-radius:8px;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font:700 15px var(--f-display);overflow:hidden;flex:none}
+.logo img{width:100%;height:100%;object-fit:contain;background:var(--surface)}
+.brand-t{display:flex;flex-direction:column;line-height:1.1;min-width:0}
+.brand-t b{font-family:var(--f-display);font-weight:700;font-size:18px;letter-spacing:-.01em}
+.brand-t span{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+nav.nav{display:flex;flex-wrap:wrap;gap:4px;flex:1 1 auto}
+.nv{border:0;background:transparent;border-radius:7px;padding:7px 11px;cursor:pointer;color:var(--muted);font-weight:500;display:inline-flex;gap:6px;align-items:center}
+.nv:hover{color:var(--fg);background:var(--grid)}
+.nv[aria-current="page"]{color:var(--fg);background:var(--surface);box-shadow:inset 0 0 0 1px var(--line)}
+.nv .cnt{font:600 11px var(--f-mono);background:var(--accent);color:var(--accent-ink);border-radius:999px;padding:0 6px}
+.role{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:2px;background:var(--surface)}
+.role button{border:0;background:transparent;border-radius:999px;padding:5px 12px;cursor:pointer;color:var(--muted);font-size:13px}
+.role button[aria-pressed="true"]{background:var(--fg);color:var(--bg)}
+
+/* generic */
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;min-width:0}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:7px;padding:6px 10px;cursor:pointer;line-height:1.2;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.btn:hover{border-color:var(--accent)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
+.btn.primary:hover{filter:brightness(1.07)}
+.btn.danger{color:var(--err)}
+.btn.sm{padding:4px 8px;font-size:12px}
+.btn.lg{padding:10px 14px;justify-content:center}
+:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+select,.inp,textarea{border:1px solid var(--line);background:var(--surface);border-radius:7px;padding:5px 8px;min-width:0}
+.fld{display:flex;flex-direction:column;gap:3px;font-size:12px;color:var(--muted);min-width:0}
+.fld .inp,.fld select{color:var(--fg);font-size:14px}
+.chk{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--fg)}
+.muted{color:var(--muted)}
+.hint{font-size:13px;color:var(--muted);margin:0}
+.lbl{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.num{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.pill{display:inline-flex;align-items:center;gap:5px;font-size:12px;border-radius:999px;padding:2px 9px;border:1px solid var(--line);white-space:nowrap}
+.pill.ok{background:var(--ok-soft);color:var(--ok);border-color:transparent}
+.pill.warn{background:var(--warn-soft);color:var(--warn);border-color:transparent}
+.pill.err{background:var(--err-soft);color:var(--err);border-color:transparent}
+.pill.acc{background:var(--accent-soft);color:var(--accent);border-color:transparent}
+.dot{width:7px;height:7px;border-radius:50%;background:currentColor;display:inline-block}
+h1.vt{font-family:var(--f-display);font-weight:500;font-size:22px;margin:0;letter-spacing:-.01em}
+.vh{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px}
+.vh .acts{display:flex;flex-wrap:wrap;gap:8px}
+.demo{font-size:12px;color:var(--muted);border:1px dashed var(--line);border-radius:999px;padding:3px 10px}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--fg);color:var(--bg);padding:10px 16px;border-radius:8px;z-index:80;font-size:14px;max-width:calc(100% - 32px)}
+.tbl-wrap{overflow-x:auto}
+table.t{width:100%;border-collapse:collapse;font-size:13px}
+table.t th{text-align:left;font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+table.t td{padding:8px 10px;border-bottom:1px solid var(--grid);vertical-align:middle}
+table.t td.r,table.t th.r{text-align:right}
+table.t tr:hover td{background:var(--paper)}
+
+/* projects */
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+.pcard{padding:14px;display:flex;flex-direction:column;gap:8px}
+.pcard h3{margin:0;font-size:16px}
+.pcard .meta{font-size:12px;color:var(--muted)}
+.pcard .sum{display:flex;justify-content:space-between;align-items:baseline;gap:8px;border-top:1px solid var(--grid);padding-top:8px}
+.pcard .sum b{font:500 17px var(--f-display)}
+.pcard .acts{display:flex;flex-wrap:wrap;gap:6px}
+.pcard.new{border-style:dashed;background:transparent;justify-content:center;gap:10px}
+.start{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:14px}
+@media (max-width:860px){.start{grid-template-columns:minmax(0,1fr)}}
+.hero{padding:20px}
+.hero h2{font-family:var(--f-display);font-weight:500;font-size:20px;margin:0 0 6px}
+.hero ol{margin:10px 0 0;padding-left:20px;display:flex;flex-direction:column;gap:4px;color:var(--fg)}
+
+/* editor */
+.ed{display:grid;grid-template-columns:minmax(0,1fr) 410px;gap:14px;align-items:start}
+@media (max-width:1060px){.ed{grid-template-columns:minmax(0,1fr)}}
+.ed-top{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:flex-end;padding:10px 12px;border-bottom:1px solid var(--line)}
+.ed-top .pname{flex:1 1 220px;min-width:0}
+.ed-top .pname input{font:600 16px var(--f-body);border:0;border-bottom:1px dashed var(--line);border-radius:0;padding:2px 0;width:100%;background:transparent}
+.floors{display:flex;flex-wrap:wrap;gap:4px;align-items:center}
+.fl{border:1px solid var(--line);background:var(--surface);border-radius:7px;padding:5px 10px;cursor:pointer;font-size:13px}
+.fl[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;padding:8px 12px;border-bottom:1px solid var(--line)}
+.tgroup{display:flex;flex-wrap:wrap;gap:5px;align-items:center}
+.tgroup .lbl{margin-right:2px}
+.tbtn{border:1px solid var(--line);background:var(--surface);border-radius:7px;padding:4px 8px 4px 5px;cursor:pointer;display:inline-flex;align-items:center;gap:5px;font-size:13px}
+.tbtn:hover{border-color:var(--accent)}
+.tbtn svg{width:22px;height:22px;flex:none}
+.steps{list-style:none;margin:0;padding:8px 12px;display:flex;flex-wrap:wrap;gap:6px;border-bottom:1px solid var(--line);counter-reset:st}
+.steps li{counter-increment:st;font-size:12px;border:1px solid var(--line);border-radius:999px;padding:3px 10px 3px 4px;display:inline-flex;align-items:center;gap:6px;color:var(--muted)}
+.steps li::before{content:counter(st);display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;background:var(--grid);color:var(--fg);font:600 11px var(--f-mono)}
+.steps li.done{color:var(--fg)}
+.steps li.done::before{content:"✓";background:var(--ok);color:var(--surface)}
+.steps li.now{border-color:var(--accent);color:var(--fg)}
+.steps li.now::before{background:var(--accent);color:var(--accent-ink)}
+.ubar{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:flex-end;padding:8px 12px;border-bottom:1px solid var(--line);background:var(--paper)}
+.ubar input[type=range]{width:120px}
+.plan-wrap{padding:8px;overflow:hidden}
+svg.plan{display:block;width:100%;height:auto;touch-action:none;user-select:none;-webkit-user-select:none}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;padding:6px 12px 10px;font-size:12px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend b{display:inline-block;width:22px;height:0;border-top:3px solid}
+.insp{padding:12px;border-top:1px solid var(--line);display:flex;flex-wrap:wrap;gap:10px 16px;align-items:flex-end;min-height:64px}
+.insp h3{margin:0;font-size:14px;width:100%;display:flex;flex-wrap:wrap;gap:4px 8px;align-items:baseline}
+.insp h3 small{color:var(--muted);font-weight:400}
+.insp .fld input[type=number]{width:90px}
+.insp .fld input[type=text]{width:160px}
+.ro{font-family:var(--f-mono);font-size:13px;color:var(--fg);padding-bottom:6px}
+.confirm{display:inline-flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:13px}
+
+/* plan svg */
+.g1{stroke:var(--grid);stroke-width:1}.g2{stroke:var(--grid2);stroke-width:1}
+.paperbg{fill:var(--paper)}
+.room{fill:var(--surface);fill-opacity:.88;stroke:var(--fg);stroke-width:3;cursor:move}
+.room.sel{stroke:var(--accent)}
+.room.bad{stroke:var(--err);stroke-dasharray:8 5}
+.hatch{stroke:var(--hot);stroke-width:1.4;opacity:.35}
+.rname{font:600 13px var(--f-body);fill:var(--fg);pointer-events:none;paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round}
+.rmeta{font:12px var(--f-mono);fill:var(--muted);pointer-events:none;paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round}
+.rs{fill:var(--accent);stroke:var(--surface);stroke-width:2;cursor:nwse-resize}
+.rc{fill:none;stroke-width:2.6;stroke-linejoin:round;stroke-linecap:round;pointer-events:none}
+.rc.c{stroke:var(--cold)}.rc.h{stroke:var(--hot)}
+.rc.s{stroke:var(--sew);stroke-width:3.2;stroke-dasharray:7 5;opacity:.75}
+.rc.u{stroke:var(--hot);stroke-width:2;stroke-dasharray:2 4;opacity:.8}
+.rc.ht{stroke:var(--heat);stroke-width:2.2;opacity:.85}
+.rc.hr{stroke:var(--heat);stroke-width:2.2;stroke-dasharray:6 3;opacity:.6}
+.fx{cursor:grab}
+.fx .b{fill:var(--surface);stroke:var(--fg);stroke-width:1.6}
+.fx .d{fill:none;stroke:var(--fg);stroke-width:1.3}
+.fx .hb{fill:var(--heat);fill-opacity:.25;stroke:var(--heat);stroke-width:1.6}
+.fx .hit{fill:transparent}
+.fx.sel .b,.fx.sel .hb{stroke:var(--accent);stroke-width:2.6}
+.fx.sel .hit{fill:var(--accent);opacity:.12}
+.fx.bad .hit{fill:var(--err);opacity:.16}
+.fxl{font:600 10px var(--f-mono);fill:var(--fg);pointer-events:none}
+.col rect{fill:var(--accent);stroke:var(--fg);stroke-width:1.2}
+.col text,.ris text{font:700 11px var(--f-mono);fill:var(--accent-ink);pointer-events:none}
+.ris circle{fill:var(--sew);stroke:var(--fg);stroke-width:1.2}
+.ris text{fill:var(--surface)}
+.col,.ris{cursor:move}
+.col.sel rect,.ris.sel circle{stroke:var(--accent);stroke-width:3}
+.ptlbl{font:11px var(--f-body);fill:var(--muted);pointer-events:none}
+.draft{fill:var(--accent);fill-opacity:.12;stroke:var(--accent);stroke-width:2;stroke-dasharray:6 4;pointer-events:none}
+.draftlbl{font:600 13px var(--f-mono);fill:var(--accent);pointer-events:none}
+.emptytxt{font:15px var(--f-body);fill:var(--muted);pointer-events:none}
+.emptytxt.b{font-weight:600;fill:var(--fg);font-size:17px}
+.uimg{pointer-events:none}
+.uimg.edit{pointer-events:all;cursor:move}
+
+/* side */
+.tabs{display:flex;border-bottom:1px solid var(--line)}
+.tab{flex:1;border:0;background:transparent;padding:11px 8px;cursor:pointer;font-weight:600;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px;display:inline-flex;justify-content:center;align-items:center;gap:6px}
+.tab[aria-selected="true"]{color:var(--fg);border-bottom-color:var(--accent)}
+.tab .pill{padding:0 7px;font-size:11px}
+.side-body{padding:12px 14px 14px}
+@media (min-width:1061px){aside.panel{position:sticky;top:calc(env(safe-area-inset-top,0px) + 12px)}aside .side-body{max-height:calc(100vh - 90px);overflow:auto}}
+.opts{display:flex;flex-wrap:wrap;gap:8px 12px;margin-bottom:6px}
+.grp{margin-top:12px}
+.grp-h{display:flex;justify-content:space-between;align-items:baseline;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);padding-bottom:4px;border-bottom:1px solid var(--line)}
+.grp-h b{font:500 12px var(--f-mono);letter-spacing:0;color:var(--fg)}
+.it{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:4px 10px;align-items:center;padding:7px 0;border-bottom:1px solid var(--grid)}
+.it .n{font-size:13px;min-width:0}
+.it .n small{display:block;color:var(--muted);font-family:var(--f-mono);font-size:11px}
+.it .q{display:flex;align-items:center;gap:3px;font-size:12px;color:var(--muted)}
+.it .q input{width:58px;text-align:right;font-family:var(--f-mono);font-size:13px;padding:3px 5px;border:1px solid var(--line);border-radius:5px;background:var(--surface)}
+.it .q input.ov{border-color:var(--accent);background:var(--accent-soft)}
+.it .q button{border:0;background:none;color:var(--accent);cursor:pointer;padding:0 2px;font-size:14px}
+.it .s{font-family:var(--f-mono);font-size:13px;text-align:right;min-width:76px;font-variant-numeric:tabular-nums}
+.empty{color:var(--muted);font-size:13px;padding:8px 0}
+.total{margin-top:14px;display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.total span{color:var(--muted);font-size:13px}
+.total b{font-family:var(--f-display);font-weight:500;font-size:22px;font-variant-numeric:tabular-nums}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.note{font-size:12px;color:var(--muted);margin:10px 0 0}
+.chk-sum{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.ck{display:grid;grid-template-columns:22px minmax(0,1fr);gap:2px 8px;padding:9px 0;border-bottom:1px solid var(--grid);font-size:13px}
+.ck i{font-style:normal;width:20px;height:20px;border-radius:50%;display:grid;place-items:center;font:700 11px var(--f-mono)}
+.ck.err i{background:var(--err-soft);color:var(--err)}
+.ck.warn i{background:var(--warn-soft);color:var(--warn)}
+.ck.ok i{background:var(--ok-soft);color:var(--ok)}
+.ck.info i{background:var(--grid);color:var(--muted)}
+.ck b{font-weight:600}
+.ck p{grid-column:2;margin:0;color:var(--muted)}
+.ck .ref{grid-column:2;font:11px var(--f-mono);color:var(--muted)}
+.ck button.go{grid-column:2;justify-self:start;margin-top:3px}
+.setgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px 12px}
+.setgrid .wide{grid-column:1/-1}
+.sec-h{font:600 13px var(--f-body);margin:14px 0 6px;padding-bottom:4px;border-bottom:1px solid var(--line)}
+
+/* estimate */
+.est-l{display:grid;grid-template-columns:300px minmax(0,1fr);gap:14px;align-items:start}
+@media (max-width:900px){.est-l{grid-template-columns:minmax(0,1fr)}}
+.est-ctrl{padding:14px;display:flex;flex-direction:column;gap:10px}
+.doc{background:var(--surface);color:var(--fg);border:1px solid var(--line);border-radius:10px;padding:clamp(16px,4vw,40px);max-width:860px;width:100%}
+.doc .dh{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;border-bottom:2px solid var(--fg);padding-bottom:12px}
+.doc .dh h2{font-family:var(--f-display);font-weight:500;font-size:22px;margin:0}
+.doc .dh .who{font-size:13px;text-align:right}
+.doc .meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px 16px;margin:14px 0;font-size:13px}
+.doc .meta div span{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+.doc .plans{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px}
+.doc .plans figure{margin:0}
+.doc .plans figcaption{font-size:12px;color:var(--muted);margin-bottom:4px}
+.doc .plans svg{width:100%;height:auto;border:1px solid var(--line);border-radius:6px;background:var(--paper)}
+.doc h3{font-size:14px;margin:20px 0 6px;text-transform:uppercase;letter-spacing:.05em}
+.doc table{width:100%;border-collapse:collapse;font-size:13px}
+.doc td,.doc th{padding:6px 4px;border-bottom:1px solid var(--grid);vertical-align:top;text-align:left}
+.doc th{font-weight:500;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.doc .r{text-align:right;font-family:var(--f-mono);white-space:nowrap;font-variant-numeric:tabular-nums}
+.doc tr.gh td{font-weight:600;background:var(--paper)}
+.doc .tot{margin-top:16px;display:grid;grid-template-columns:1fr auto;gap:4px 20px;font-size:14px;max-width:420px;margin-left:auto}
+.doc .tot .big{font-family:var(--f-display);font-weight:500;font-size:22px}
+.doc .fine{font-size:12px;color:var(--muted);margin-top:16px;display:flex;flex-direction:column;gap:4px}
+.doc .sign{display:grid;grid-template-columns:1fr 1fr;gap:30px;margin-top:30px;font-size:12px;color:var(--muted)}
+.doc .sign div{border-top:1px solid var(--fg);padding-top:4px}
+.doc .powered{margin-top:20px;font-size:11px;color:var(--muted);display:flex;align-items:center;gap:6px}
+
+/* dashboard */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}
+.kpi{padding:14px}
+.kpi .v{font:500 24px var(--f-display);font-variant-numeric:tabular-nums;margin-top:4px}
+.kpi .d{font-size:12px;color:var(--muted)}
+.dgrid{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:12px}
+@media (max-width:900px){.dgrid{grid-template-columns:minmax(0,1fr)}}
+.card-h{padding:12px 14px 0;display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.card-h h3{margin:0;font-size:14px}
+.chart{padding:8px 14px 14px}
+.chart svg{width:100%;height:auto;display:block}
+.chart .bar{fill:var(--accent)}
+.chart .bar:hover{fill:var(--fg)}
+.chart .ax{font:11px var(--f-mono);fill:var(--muted)}
+.chart .gl{stroke:var(--grid);stroke-width:1}
+.chart .vl{font:11px var(--f-mono);fill:var(--fg)}
+.hb{display:grid;grid-template-columns:minmax(0,1fr) 90px;gap:4px 10px;align-items:center;font-size:13px;padding:5px 0}
+.hb .tr{grid-column:1/-1;height:8px;background:var(--grid);border-radius:4px;overflow:hidden}
+.hb .tr span{display:block;height:100%;background:var(--accent);border-radius:0 4px 4px 0}
+.st-sel{font-size:12px;padding:3px 6px}
+
+/* modal */
+.ov{position:fixed;inset:0;background:rgba(10,16,18,.55);display:flex;align-items:center;justify-content:center;z-index:50;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:16px}
+.modal{background:var(--surface);border:1px solid var(--line);border-radius:12px;width:min(600px,100%);max-height:100%;overflow:auto;padding:18px}
+.modal h2{margin:0 0 4px;font-family:var(--f-display);font-weight:500;font-size:18px}
+.mrow{display:flex;flex-wrap:wrap;gap:10px 14px;margin:12px 0}
+.mrow .fld{flex:1 1 180px}
+.ol{font-size:13px;border-top:1px solid var(--line);max-height:280px;overflow:auto}
+.ol div{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:10px;padding:5px 0;border-bottom:1px solid var(--grid)}
+.ol .av{font-size:12px;white-space:nowrap}
+.av.y{color:var(--ok)}.av.n{color:var(--warn)}
+.ol .s{font-family:var(--f-mono);text-align:right;min-width:72px}
+.sums{margin-top:10px;display:grid;grid-template-columns:1fr auto;gap:4px 12px;font-size:13px}
+.sums .r{text-align:right;font-family:var(--f-mono)}
+.sums .big{font-weight:600;font-size:15px}
+.mfoot{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end;margin-top:14px}
+pre.msg{white-space:pre-wrap;font:12px/1.5 var(--f-mono);background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:10px;max-height:220px;overflow:auto}
+@media (prefers-reduced-motion:no-preference){.btn,.tab,.nv,.tbtn{transition:border-color .15s,filter .15s,color .15s,background .15s}}
+
+@media print{
+  @page{size:A4;margin:12mm}
+  body{background:#fff!important;color:#000!important}
+  .noprint,.bar,.est-ctrl,.toast,.ov{display:none!important}
+  .est-l{display:block}
+  .doc{border:0;padding:0;max-width:none;--fg:#000;--muted:#555;--line:#bbb;--grid:#ddd;--paper:#f6f6f6;--surface:#fff;background:#fff;color:#000}
+  .doc tr{break-inside:avoid}
+  .wrap{padding:0!important}
+}
+
+</style>
+<script async src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+<div class="wrap">
+<header class="bar" id="bar"></header>
+<main id="view" style="display:flex;flex-direction:column;gap:14px;min-width:0"></main>
+</div>
+<datalist id="roomNames"><option>Санвузол</option><option>Ванна</option><option>Туалет</option><option>Кухня</option><option>Кухня-вітальня</option><option>Коридор</option><option>Котельня</option><option>Пральня</option><option>Кімната</option><option>Спальня</option><option>Вітальня</option><option>Кабінет</option><option>Дитяча</option></datalist>
+<div class="ov" id="ov" hidden role="dialog" aria-modal="true"><div class="modal" id="modal"></div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+(function(){
+"use strict";
+/* ================= helpers ================= */
+const SC=60, M=26, SNAP=0.05;
+const $=id=>document.getElementById(id);
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const f1=n=>(+n).toLocaleString('uk-UA',{maximumFractionDigits:1});
+const f2=n=>(+n).toLocaleString('uk-UA',{maximumFractionDigits:2});
+const money=n=>Math.round(n).toLocaleString('uk-UA')+' ₴';
+const snap=v=>Math.round(v/SNAP)*SNAP;
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const ad=(a,b)=>Math.abs(a-b)>.01;
+const man=(a,b)=>Math.abs(a.x-b.x)+Math.abs(a.y-b.y);
+const uid=()=>Math.random().toString(36).slice(2,9);
+const today=()=>new Date().toISOString().slice(0,10);
+const fmtDate=s=>{try{return new Date(s).toLocaleDateString('uk-UA')}catch(e){return s}};
+const IN_FRAME=(()=>{try{return window.self!==window.top}catch(e){return true}})();
+const inRect=(p,r)=>p.x>=r.x-1e-6&&p.x<=r.x+r.w+1e-6&&p.y>=r.y-1e-6&&p.y<=r.y+r.h+1e-6;
+const overlaps=(a,b)=>a.x<b.x+b.w-.02&&b.x<a.x+a.w-.02&&a.y<b.y+b.h-.02&&b.y<a.y+a.h-.02;
+function toast(t){const el=document.createElement('div');el.className='toast';el.setAttribute('role','status');el.textContent=t;document.body.appendChild(el);setTimeout(()=>el.remove(),2600);}
+function copyText(txt,btn,pre){
+  const sel=()=>{if(pre){const r=document.createRange();r.selectNodeContents(pre);const s=getSelection();s.removeAllRanges();s.addRange(r);}if(btn)btn.textContent='Виділено, натисніть Ctrl+C';};
+  try{navigator.clipboard.writeText(txt).then(()=>{if(btn)btn.textContent='Скопійовано'},sel);}catch(e){sel();}
+}
+function rng(seed){return function(){seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;}}
+
+/* ================= catalog ================= */
+/* key: [article, name, unit, price UAH, group] — demo prices for the fictional network */
+const G={in:'Вузол вводу',w:'Водопостачання',d:'Гаряча вода',s:'Каналізація',h:'Опалення',b:'Котельня',u:'Тепла підлога'};
+const CAT_BASE={
+  i_valve:['SD-BV-34','Кран кульовий 3/4" повнопрохідний','шт',280,'in'],
+  i_filt:['SD-FL-34','Фільтр механічний косий 3/4"','шт',220,'in'],
+  i_meter:['SD-WM-15','Лічильник води DN15 з комплектом приєднання','шт',650,'in'],
+  i_check:['SD-CV-34','Зворотний клапан 3/4"','шт',170,'in'],
+  i_red:['SD-PR-34','Редуктор тиску 3/4" з манометром','шт',1150,'in'],
+
+  w_p20:['PPR-20-PN20','Труба PPR 20×3,4 PN20, холодна (штанга 4 м)','шт',165,'w'],
+  w_p20g:['PPR-20-GF','Труба PPR 20×2,8 армована скловолокном, гаряча (штанга 4 м)','шт',270,'w'],
+  w_p25:['PPR-25-GF','Труба PPR 25×3,5 армована скловолокном, магістраль (штанга 4 м)','шт',390,'w'],
+  w_el20:['PPR-EL20','Кутик PPR 20×90°','шт',9,'w'],
+  w_el25:['PPR-EL25','Кутик PPR 25×90°','шт',15,'w'],
+  w_cp20:['PPR-CP20','Муфта PPR 20','шт',5,'w'],
+  w_cp25:['PPR-CP25','Муфта PPR 25','шт',8,'w'],
+  w_vr20:['PPR-VR20','Водорозетка PPR 20×1/2" ВР','шт',65,'w'],
+  w_ad20:['PPR-AD20','Муфта комбінована PPR 20×1/2" ЗР (на колектор)','шт',70,'w'],
+  w_ad25:['PPR-AD25','Муфта комбінована PPR 25×3/4" ЗР','шт',115,'w'],
+  w_cl20:['PPR-CL20','Кліпса для труби 20 мм','шт',4,'w'],
+  w_cl25:['PPR-CL25','Кліпса для труби 25 мм','шт',5,'w'],
+  w_m16:['MP-16','Труба металопластикова 16×2,0','м',38,'w'],
+  w_m20:['MP-20','Труба металопластикова 20×2,0, магістраль','м',58,'w'],
+  w_me16:['MP-EL16','Кутик прес 16×90°','шт',110,'w'],
+  w_me20:['MP-EL20','Кутик прес 20×90°','шт',150,'w'],
+  w_mvr16:['MP-VR16','Водорозетка прес 16×1/2" ВР','шт',160,'w'],
+  w_mek16:['MP-EK16','Євроконус 16×2,0×3/4" (на колектор)','шт',90,'w'],
+  w_mad20:['MP-AD20','Перехідник прес 20×3/4" ЗР','шт',170,'w'],
+  w_mcl16:['MP-CL16','Кліпса для труби 16 мм','шт',3,'w'],
+  w_mcl20:['MP-CL20','Кліпса для труби 20 мм','шт',4,'w'],
+  w_kout:['COL-34-12','Модуль колектора 3/4"×1/2" з краном (1 вихід)','шт',210,'w'],
+  w_kend:['COL-END','Комплект кінцевий колектора (заглушка, кріплення)','шт',260,'w'],
+  w_cab:['CAB-W','Шафа колекторна вбудована','шт',1450,'w'],
+  w_angle:['AV-1212','Кран кутовий 1/2"×1/2" (під змішувач, бачок)','шт',130,'w'],
+  w_wm:['AV-1234','Кран для пральної/посудомийної машини 1/2"×3/4"','шт',150,'w'],
+  w_ins:['INS-20-13','Теплоізоляція труби 20 мм, стінка 13 мм (2 м)','шт',28,'w'],
+
+  d_h50:['EWH-50','Бойлер електричний 50 л','шт',5600,'d'],
+  d_h80:['EWH-80','Бойлер електричний 80 л','шт',6900,'d'],
+  d_h100:['EWH-100','Бойлер електричний 100 л','шт',7900,'d'],
+  d_safe:['EWH-SV','Група безпеки бойлера 6 бар','шт',380,'d'],
+  d_diel:['DIEL-12','Муфта діелектрична 1/2"','шт',95,'d'],
+  d_valve:['BV-12','Кран кульовий 1/2"','шт',140,'d'],
+
+  s_p50:['PP-50-1','Труба каналізаційна ПП 50, 1 м','шт',70,'s'],
+  s_p110:['PP-110-1','Труба каналізаційна ПП 110, 1 м','шт',145,'s'],
+  s_p110r:['PP-110-2','Труба каналізаційна ПП 110, 2 м (стояк)','шт',260,'s'],
+  s_e50_45:['PP-50-45','Коліно 50×45°','шт',28,'s'],
+  s_e50_87:['PP-50-87','Коліно 50×87° (вихід приладу)','шт',30,'s'],
+  s_e110_45:['PP-110-45','Коліно 110×45°','шт',70,'s'],
+  s_t50:['PP-T50','Трійник 50×50×45°','шт',45,'s'],
+  s_t110_50:['PP-T11050','Трійник 110×50×45° (врізка у стояк)','шт',115,'s'],
+  s_t110:['PP-T110','Трійник 110×110×45°','шт',150,'s'],
+  s_tc:['WC-110','Манжета або відвід для унітаза 110','шт',95,'s'],
+  s_rev:['PP-REV110','Ревізія 110','шт',160,'s'],
+  s_aer:['AAV-110','Аераційний (повітряний) клапан 110','шт',520,'s'],
+  s_comp:['PP-KP110','Компенсаційний патрубок 110 (врізка в існуючий стояк)','шт',210,'s'],
+  s_cl50:['CL-50','Хомут для труби 50 мм','шт',22,'s'],
+  s_cl110:['CL-110','Хомут для труби 110 мм','шт',35,'s'],
+
+  h_bm:['RAD-BM-500','Радіатор біметалевий 500/80, секція (≈150 Вт при ΔT50)','шт',520,'h'],
+  h_bmkit:['RAD-BM-KIT','Комплект біметалевого радіатора: заглушки, Маєвський, 3 кронштейни','шт',290,'h'],
+  h_tv:['TV-12','Кран радіаторний термостатичний з термоголовкою 1/2"','шт',690,'h'],
+  h_lv:['LV-12','Кран радіаторний запірний 1/2" (зворот)','шт',260,'h'],
+  h_rail:['TR-W-500','Рушникосушка водяна 500×800 (≈300 Вт)','шт',2900,'h'],
+  h_railv:['AV-RAIL','Крани для рушникосушки 1/2", пара','шт',420,'h'],
+  h_kout:['HCOL-PAIR','Колектор опалення: пара виходів подача/зворот','шт',520,'h'],
+  h_kend:['HCOL-END','Комплект кінцевий колектора опалення (повітровідвідник, дренаж)','шт',690,'h'],
+  h_m16:['PEXAL-16','Труба PEX-AL-PEX 16×2,0 для опалення','м',40,'h'],
+  h_m20:['PEXAL-20','Труба PEX-AL-PEX 20×2,0, магістраль опалення','м',60,'h'],
+  h_me16:['MP-EL16H','Кутик прес 16×90° (опалення)','шт',110,'h'],
+  h_mad16:['MP-AD16','Перехідник прес 16×1/2" ЗР (до радіатора)','шт',120,'h'],
+  h_mek16:['MP-EK16H','Євроконус 16×2,0×3/4" (на колектор опалення)','шт',90,'h'],
+  h_pp20:['PPR-20-GFH','Труба PPR 20×2,8 армована скловолокном, опалення (штанга 4 м)','шт',270,'h'],
+  h_pp25:['PPR-25-GFH','Труба PPR 25×3,5 армована скловолокном, магістраль опалення (штанга 4 м)','шт',390,'h'],
+  h_pel20:['PPR-EL20H','Кутик PPR 20×90° (опалення)','шт',9,'h'],
+  h_pad20:['PPR-AD20H','Муфта комбінована PPR 20×1/2" (опалення)','шт',70,'h'],
+
+  b_boiler:['GB-24-2','Котел газовий настінний двоконтурний 24 кВт','шт',28500,'b'],
+  b_boiler1:['GB-24-1','Котел газовий настінний одноконтурний 24 кВт','шт',24500,'b'],
+  b_valves:['BV-34-B','Кран кульовий 3/4" для підключення котла','шт',280,'b'],
+  b_dhw:['BV-12-B','Кран кульовий 1/2" для ГВП котла','шт',160,'b'],
+  b_filt:['MF-34','Фільтр магнітний для котла 3/4"','шт',1250,'b'],
+  b_tank8:['EXP-8','Розширювальний бак опалення 8 л','шт',950,'b'],
+  b_tank12:['EXP-12','Розширювальний бак опалення 12 л','шт',1100,'b'],
+  b_tank18:['EXP-18','Розширювальний бак опалення 18 л','шт',1300,'b'],
+  b_tank24:['EXP-24','Розширювальний бак опалення 24 л','шт',1500,'b'],
+  b_tank35:['EXP-35','Розширювальний бак опалення 35 л','шт',1900,'b'],
+  b_tank50:['EXP-50','Розширювальний бак опалення 50 л','шт',2400,'b'],
+
+  u_pex:['PEX-16','Труба PEX-a 16×2,0 з кисневим бар\'єром','м',32,'u'],
+  u_kout:['UFH-OUT','Колектор теплої підлоги: вихід з витратоміром (1 контур)','шт',820,'u'],
+  u_kbase:['UFH-BASE','Колектор теплої підлоги: кінцеві групи, кріплення','шт',1300,'u'],
+  u_mix:['UFH-MIX','Змішувальний вузол з насосом (подача ≤ 55 °C)','шт',6200,'u'],
+  u_cab:['CAB-U','Шафа колекторна збільшена (вода, опалення, тепла підлога)','шт',1650,'u'],
+  u_ek:['EK-16','Євроконус 16×2,0×3/4"','шт',90,'u'],
+  u_xps:['XPS-30','Утеплювач XPS 30 мм','м²',130,'u'],
+  u_film:['FILM-200','Плівка поліетиленова 200 мкм','м²',14,'u'],
+  u_dm:['DMP-8','Демпферна стрічка 8 мм','м',12,'u'],
+  u_sk:['TAK-SK','Скоба-гарпун для такера','шт',2,'u'],
+  u_scr:['SCR-25','Суміш для стяжки М150, 25 кг','шт',145,'u'],
+};
+const PANEL_L=[400,500,600,700,800,900,1000,1100,1200,1400,1600,1800,2000];
+PANEL_L.forEach(L=>{CAT_BASE['h_p22_'+L]=['RAD-P22-500-'+L,`Радіатор сталевий панельний 22/500×${L} (≈${Math.round(L*1.5)} Вт при ΔT50)`,'шт',Math.round(900+L*3.4),'h'];});
+const TANKS=[8,12,18,24,35,50];
+/* item order inside the list */
+const ORDER=Object.keys(CAT_BASE);
+
+/* ================= fixtures ================= */
+const FIX={
+  toilet:{n:'Унітаз',c:1,h:0,s:110,w:.4,d:.65,out:.18,av:1,k:'w'},
+  basin:{n:'Умивальник',c:1,h:1,s:50,w:.6,d:.45,out:.5,av:2,k:'w'},
+  sink:{n:'Кухонна мийка',c:1,h:1,s:50,w:.8,d:.55,out:.5,av:2,k:'w'},
+  shower:{n:'Душова кабіна',c:1,h:1,s:50,w:.9,d:.9,out:.1,k:'w'},
+  bath:{n:'Ванна',c:1,h:1,s:50,w:1.7,d:.75,out:.12,k:'w'},
+  bidet:{n:'Біде',c:1,h:1,s:50,w:.4,d:.55,out:.3,av:2,k:'w'},
+  hyg:{n:'Гігієнічний душ',c:1,h:1,s:0,w:.22,d:.16,k:'w'},
+  washer:{n:'Пральна машина',c:1,h:0,s:50,w:.6,d:.6,out:.6,wm:1,k:'w'},
+  dish:{n:'Посудомийна машина',c:1,h:0,s:50,w:.6,d:.6,out:.6,wm:1,k:'w'},
+  drain:{n:'Трап у підлозі',c:0,h:0,s:50,w:.2,d:.2,out:null,k:'w'},
+  radiator:{n:'Радіатор',k:'heat',w:.8,d:.12},
+  rail:{n:'Рушникосушка',k:'heat',w:.5,d:.1,pw:300},
+  heater:{n:'Бойлер',k:'dhw',w:.5,d:.5},
+  boiler:{n:'Котел',k:'src',w:.45,d:.38},
+};
+const NOUFH=['toilet','shower','bath','washer','dish','sink','bidet'];
+const PALETTE=[
+  ['Вода',['toilet','basin','sink','shower','bath','bidet','hyg','washer','dish','drain']],
+  ['Опалення',['radiator','rail','boiler','heater']],
+];
+
+/* ================= storage ================= */
+const LS_KEY='rozvodka.v3';
+const DEF_PROFILE={name:'Роман Сантехнік',phone:'+380 67 000 00 00',company:'Монтаж під ключ',city:'Пустомити',
+  w:{point:1200,col:2500,input:1500,src:3500,rad:1500,rail:900,ufh:350,riser:1500},reserve:10,maxLoop:80,sys:'ppr',heat:'mp'};
+const DEF_BRAND={name:'СантехДвір',short:'СД',color:'',logo:null,manager:'santehdvir_manager',tagline:'Сантехніка та опалення для професіоналів'};
+const DEF_STORES=[
+  {id:'lv',name:'Львів, Городоцька 210'},
+  {id:'ps',name:'Пустомити, Грушевського 12'},
+  {id:'st',name:'Стрий, Шевченка 45'},
+];
+let DB=null;
+function loadDB(){
+  let d=null;try{d=JSON.parse(localStorage.getItem(LS_KEY)||'null')}catch(e){d=null}
+  if(!d||d.v!==3)d={v:3,role:'master',view:'projects',cur:null,projects:[],profile:JSON.parse(JSON.stringify(DEF_PROFILE)),
+    brand:{...DEF_BRAND},stores:JSON.parse(JSON.stringify(DEF_STORES)),catOv:{},orders:[],templates:[],seq:4800,aStatus:{}};
+  d.profile={...JSON.parse(JSON.stringify(DEF_PROFILE)),...d.profile,w:{...DEF_PROFILE.w,...(d.profile&&d.profile.w)}};
+  d.brand={...DEF_BRAND,...d.brand};
+  return d;
+}
+let saveT=null,saveWarned=false;
+function save(now){
+  clearTimeout(saveT);
+  const go=()=>{try{localStorage.setItem(LS_KEY,JSON.stringify(DB));saveWarned=false;}catch(e){if(!saveWarned){saveWarned=true;toast('Не вдалося зберегти в браузері: забагато даних (зменште фото плану) або збереження заблоковане');}}};
+  if(now)go();else saveT=setTimeout(go,350);
+}
+function cat(key){
+  const b=CAT_BASE[key]||['?',key,'шт',0,'w'];const o=DB.catOv[key]||{};
+  return {key,art:o.art||b[0],name:o.name||b[1],unit:b[2],price:o.price!=null?+o.price:b[3],g:b[4]};
+}
+function curP(){return DB.projects.find(p=>p.id===DB.cur)||null;}
+
+/* ================= rooms ================= */
+function roomTemp(name){
+  const n=(name||'').toLowerCase();
+  if(/ванн|санвуз|душ/.test(n))return 25;
+  if(/кухн/.test(n)&&!/вітал/.test(n))return 18;
+  if(/коридор|передпок|хол|тамбур|сход|котельн|комор|гардер|пральн/.test(n))return 16;
+  return 20;
+}
+const BUILD={new:{q:60,n:'Новий, утеплений'},typical:{q:90,n:'Типовий'},old:{q:120,n:'Старий, без утеплення'}};
+const STEPF={10:1,15:.9,20:.8,25:.7,30:.6};
+
+/* ================= calculation ================= */
+function calc(P){
+  const S=P.set, r=S.reserve/100, CK=[], FX={}, RM={}, q={};
+  const inc=(k,n=1)=>{if(n>0)q[k]=(q[k]||0)+n};
+  const chk=(lvl,t,d,ref,go)=>CK.push({lvl,t,d,ref,go});
+  const floors=P.floors; let z=0; floors.forEach(f=>{f._z=z;z+=+f.h||2.8;});
+  const vert=(a,b)=>Math.abs(floors[a]._z-floors[b]._z);
+  const ppr=S.sys==='ppr', hmp=S.heat==='mp';
+  const vBr=ppr?0.137:0.113, vMain=ppr?0.216:0.201, vHB=hmp?0.113:0.163, vHM=hmp?0.201:0.254;
+  const find=t=>{for(let i=0;i<floors.length;i++){const f=floors[i].fix.find(x=>x.type===t);if(f)return{fi:i,f};}return null;};
+  const boiler=find('boiler'), heater=find('heater');
+  let lenC=0,lenH=0,lenS50=0,lenS110=0,pex=0,ufhArea=0,ufhAll=0,ufhPer=0,lenHB=0,lenHM=0,radVol=0,loopsAll=0;
+  let br20=0,bends20=0,mainSeg=0,lenMain=0,lenHotMain=0,emit=0,heatBends=0;
+  const st={points:0,inputs:0,cols:0,hcols:0,src:0,rads:0,rails:0,ufh:0,riserFl:0};
+  const flr={};const hasHotAny=floors.some(F=>F.fix.some(f=>FIX[f.type].h));
+  const heatOn=S.heatSrc!=='none';
+  const isBath=n=>/ванн|санвуз|душ/.test((n||'').toLowerCase());
+
+  floors.forEach((F,fi)=>{
+    const fn=floors.length>1?`${F.name}: `:'';
+    const rooms=F.rooms, fx=F.fix, col=F.col, ris=F.ris;
+    flr[fi]={water:false,hot:false,heat:false};
+    // geometry
+    for(let i=0;i<rooms.length;i++)for(let j=i+1;j<rooms.length;j++)if(overlaps(rooms[i],rooms[j])){
+      RM[rooms[i].id]={...(RM[rooms[i].id]||{}),bad:1};RM[rooms[j].id]={...(RM[rooms[j].id]||{}),bad:1};
+      chk('err',`${fn}кімнати «${rooms[i].name}» і «${rooms[j].name}» перекриваються`,'Площа рахується двічі. Розсуньте кімнати або змініть розміри.',null,{fi,k:'room',id:rooms[i].id});}
+    fx.forEach(f=>{FX[f.id]={};if(!rooms.some(rm=>inRect(f,rm))){FX[f.id].bad=1;chk('err',`${fn}${FIX[f.type].n} стоїть поза кімнатами`,'Перетягніть прилад усередину кімнати.',null,{fi,k:'fix',id:f.id});}});
+    if(col&&rooms.length&&!rooms.some(rm=>inRect(col,rm)))chk('warn',`${fn}колектор поза кімнатами`,'Колекторна шафа має бути в приміщенні з доступом для обслуговування.',null,{fi,k:'col'});
+
+    const water=fx.filter(f=>FIX[f.type].c||FIX[f.type].h);
+    const sewF=fx.filter(f=>FIX[f.type].s);
+    const emitters=fx.filter(f=>FIX[f.type].k==='heat');
+    const ufhRooms=rooms.filter(rm=>rm.ufh);
+    st.points+=fx.filter(f=>FIX[f.type].k==='w').length;
+    if(water.length&&!col)chk('err',`${fn}немає колектора`,'Поставте колектор: від нього рахуються траси води.',null,{fi,add:'col'});
+    if(sewF.length&&!ris)chk('err',`${fn}немає каналізаційного стояка`,'Поставте стояк: до нього рахуються зливи.',null,{fi,add:'ris'});
+
+    /* water branches */
+    let outC=0,outH=0;
+    if(col)water.forEach(f=>{const d=FIX[f.type];const auto=man(f,col)+.5;const len=f.len!=null?+f.len:auto;
+      FX[f.id].water=len;FX[f.id].waterAuto=auto;
+      const b=(ad(f.x,col.x)&&ad(f.y,col.y)?1:0)+1;
+      if(d.c){lenC+=len;outC++;bends20+=b;br20++;}
+      if(d.h){lenH+=len;outH++;bends20+=b;br20++;}
+      if(d.av)inc('w_angle',d.av);if(d.wm)inc('w_wm',1);});
+    if(outC||outH){inc('w_kout',outC+outH);inc('w_kend',(outC?1:0)+(outH?1:0));st.cols++;}
+    flr[fi].water=outC+outH>0;flr[fi].hot=outH>0;
+    if(outC+outH>12)chk('info',`${fn}${outC+outH} виходів колектора`,'Для великої кількості точок розгляньте два колектори або магістраль 25/26 мм.');
+
+    /* sewer */
+    if(ris){let n50=0,n110=0;
+      sewF.forEach(f=>{const d=FIX[f.type];const auto=man(f,ris)+.3;const len=f.slen!=null?+f.slen:auto;
+        FX[f.id].sew=len;FX[f.id].sewAuto=auto;const turn=ad(f.x,ris.x)&&ad(f.y,ris.y)?1:0;
+        const sl=d.s===110?0.02:0.035;const drop=len*sl;FX[f.id].drop=drop;
+        if(d.s===110){lenS110+=len;n110++;inc('s_e110_45',turn*2);inc('s_tc',1);inc('s_t110',1);
+          if(len>1.05)chk('warn',`${fn}унітаз за ${f1(len)} м від стояка`,'Чим довший відвід 110, тим вищий ризик засмічення. Якщо можливо, наблизьте унітаз до стояка.','практика монтажу',{fi,k:'fix',id:f.id});}
+        else{lenS50+=len;n50++;inc('s_e50_45',turn*2);inc('s_e50_87',1);
+          if(len>3)chk('warn',`${fn}${d.n}: відвід Ø50 довжиною ${f1(len)} м`,'Довгий відвід Ø50 може зривати гідрозатвор. Поставте аераційний клапан на кінці лінії або ведіть магістраль Ø110.','практика монтажу',{fi,k:'fix',id:f.id});}
+        if(d.out!=null){const avail=d.out-0.05;FX[f.id].avail=avail;
+          if(drop>avail){FX[f.id].bad=1;chk('err',`${fn}${d.n}: не вистачає висоти для ухилу`,`Потрібний перепад ${f1(drop*100)} см (ухил ${d.s===110?'0,02':'0,035'} на ${f1(len)} м), а від випуску приладу до входу в стояк лише ≈${f1(Math.max(0,avail)*100)} см. Наблизьте прилад до стояка${f.type==='shower'||f.type==='bath'?' або поставте піддон/ванну на подіум':''}.`,'ДБН В.2.5-64:2012, внутрішня каналізація: ухили відвідних трубопроводів',{fi,k:'fix',id:f.id});}}
+        else chk('info',`${fn}трап: потрібна стяжка з ухилом`,`Перепад до стояка ≈${f1(drop*100)} см плюс висота трапа (≈7 см). Закладіть товщину стяжки заздалегідь.`,'ДБН В.2.5-64:2012, ухил Ø50 — 0,035');});
+      if(n50){inc('s_t50',Math.max(0,n50-1));inc('s_t110_50',1);}
+      if(n50||n110){if(S.type==='house'){inc('s_rev',1);inc('s_cl110',2);st.riserFl++;}else inc('s_comp',1);}
+    }
+
+    /* heating demand per room */
+    rooms.forEach(rm=>{
+      const area=rm.w*rm.h, tin=roomTemp(rm.name);
+      const qb=BUILD[S.build].q*((+S.ceil||2.7)/2.7)*(tin-S.tout)/(20-S.tout)*(rm.corner?1.15:1);
+      const demand=area*qb;
+      const foot=fx.filter(f=>NOUFH.includes(f.type)&&inRect(f,rm)).reduce((s,f)=>s+FIX[f.type].w*FIX[f.type].d,0);
+      const heated=Math.max(0,area-foot-(+rm.furn||0));
+      const tsmax=isBath(rm.name)?33:29;
+      const qmax=8.92*Math.pow(Math.max(1,tsmax-tin),1.1);
+      const ufhOut=rm.ufh?heated*qmax*(STEPF[rm.step]||.9):0;
+      RM[rm.id]={...(RM[rm.id]||{}),area,tin,demand,heated,ufhOut,qmax};
+    });
+
+    /* emitters */
+    rooms.forEach(rm=>{const R=RM[rm.id];const em=emitters.filter(f=>inRect(f,rm));
+      const rails=em.filter(f=>f.type==='rail'),rads=em.filter(f=>f.type==='radiator');
+      let def=Math.max(0,R.demand-R.ufhOut-rails.length*300);
+      let radPw=0;
+      rads.forEach(f=>{const per=def/rads.length;let m;
+        if(S.rad==='panel'){let L=PANEL_L.find(L=>L*1.5>=per);let capped=false;if(!L){L=2000;capped=true;}
+          m={type:'panel',L,pw:L*1.5,w:L/1000,label:`22/${L}`};inc('h_p22_'+L,1);radVol+=L/100*.58;
+          if(capped)chk('warn',`${fn}${rm.name}: одного панельного радіатора замало`,`Потрібно ≈${Math.round(per)} Вт на радіатор. Додайте ще один радіатор у кімнату.`,null,{fi,k:'fix',id:f.id});}
+        else{let n=Math.max(3,Math.ceil(per/150));m={type:'bm',n,pw:n*150,w:n*.08,label:n+' сек'};inc('h_bm',n);inc('h_bmkit',1);radVol+=n*.2;
+          if(n>12)chk('warn',`${fn}${rm.name}: радіатор на ${n} секцій`,'Біметалеві радіатори понад 12 секцій гірше прогріваються. Розділіть на два або поставте панельний.','рекомендації виробників',{fi,k:'fix',id:f.id});}
+        FX[f.id].rad=m;radPw+=m.pw;inc('h_tv',1);inc('h_lv',1);st.rads++;});
+      rails.forEach(f=>{inc('h_rail',1);inc('h_railv',1);st.rails++;FX[f.id].rad={pw:300,w:.5,label:'300 Вт'};});
+      R.out=R.ufhOut+radPw+rails.length*300;
+      if(em.length||rm.ufh)flr[fi].heat=true;
+      if(heatOn&&R.demand>0){
+        if(!em.length&&!rm.ufh){if(R.tin>=18)chk('warn',`${fn}${rm.name}: немає опалення`,`Орієнтовна потреба ≈${Math.round(R.demand)} Вт. Додайте радіатор або теплу підлогу.`,null,{fi,k:'room',id:rm.id});}
+        else if(R.out<R.demand*.95)chk('warn',`${fn}${rm.name}: тепла замало`,`Потреба ≈${Math.round(R.demand)} Вт, прилади дають ≈${Math.round(R.out)} Вт. ${rm.ufh&&!rads.length?'Тепла підлога сама не покриває втрати: додайте радіатор або рушникосушку.':'Додайте радіатор.'}`,'EN 1264: температура поверхні підлоги ≤ 29 °C (ванна ≤ 33 °C)',{fi,k:'room',id:rm.id});}
+    });
+    if(heatOn&&emitters.length){
+      if(S.heatSrc==='boiler'){
+        if(!col)chk('err',`${fn}немає колектора для опалення`,'Радіатори підключаються до колектора опалення в колекторній шафі.',null,{fi,add:'col'});
+        else{emitters.forEach(f=>{const len=man(f,col)+.5;FX[f.id].heat=len;lenHB+=2*len;heatBends+=2*((ad(f.x,col.x)&&ad(f.y,col.y)?1:0)+1);emit++;});
+          inc('h_kout',emitters.length);inc('h_kend',1);st.hcols++;}
+      }else{emitters.forEach(f=>{lenHB+=2;emit++;FX[f.id].heat=1;});}
+    }
+
+    /* underfloor heating */
+    let loops=0;
+    ufhRooms.forEach(rm=>{const R=RM[rm.id];
+      if(!col){return;}
+      if(!heatOn){return;}
+      const nx=clamp(col.x,rm.x,rm.x+rm.w),ny=clamp(col.y,rm.y,rm.y+rm.h);
+      const lead=Math.abs(col.x-nx)+Math.abs(col.y-ny)+.5;
+      const inner=R.heated/(rm.step/100)*1.1;
+      const usable=S.maxLoop-2*lead;
+      if(usable<15){chk('err',`${fn}${rm.name}: колектор задалеко для теплої підлоги`,`Підвідні ділянки ${f1(2*lead)} м з'їдають майже весь контур (${S.maxLoop} м). Перенесіть колектор ближче.`,'EN 1264 / виробники: контур 16 мм ≤ 100 м',{fi,k:'room',id:rm.id});return;}
+      const n=Math.max(1,Math.ceil(inner/usable));const len=inner+2*lead*n;
+      R.loops=n;R.len=len;R.lead=lead;loops+=n;pex+=len;ufhArea+=R.heated;ufhAll+=R.area;ufhPer+=2*(rm.w+rm.h);
+      if(lead>10)chk('warn',`${fn}${rm.name}: довгий транзит ${f1(lead)} м`,'Підвідні труби гріють інші приміщення. Покладіть їх у теплоізоляцію або гофру.','практика монтажу',{fi,k:'room',id:rm.id});
+      st.ufh+=R.heated;});
+    if(loops){inc('u_kout',loops);inc('u_kbase',1);inc('u_cab',1);inc('u_ek',loops*2);if(S.heatSrc==='boiler')inc('u_mix',1);loopsAll+=loops;}
+    else if(outC||outH||(heatOn&&S.heatSrc==='boiler'&&emitters.length&&col))inc('w_cab',1);
+    if(ufhRooms.length&&!heatOn)chk('err',`${fn}тепла підлога без джерела тепла`,'У параметрах об\'єкта виберіть джерело тепла: власний котел.',null,{tab:'set'});
+    if(ufhRooms.length&&heatOn&&!col)chk('err',`${fn}тепла підлога без колектора`,'Поставте колектор, щоб розрахувати контури.',null,{fi,add:'col'});
+  });
+
+  /* ---- mains between input, sources and collectors ---- */
+  const c0=floors[0].col, r0=floors[0].ris;
+  const segTo=(fa,fb)=>{const a=floors[fa].col,b=floors[fb].col;return vert(fa,fb)+(a&&b?man(a,b):0);};
+  const anyWater=Object.values(flr).some(x=>x.water);
+  if(anyWater){
+    if(c0&&r0){lenMain+=man(r0,c0)+.5;mainSeg++;}
+    else if(!r0&&floors[0].fix.length)chk('warn','Немає точки вводу води','Ввід рахується від стояка на першому поверсі. Поставте стояк.',null,{fi:0,add:'ris'});
+    floors.forEach((F,fi)=>{if(fi>0&&flr[fi].water&&F.col){lenMain+=segTo(0,fi);mainSeg++;}});
+    const inputs=1+(S.dhw==='central'&&hasHotAny?1:0);st.inputs=inputs;
+    inc('i_valve',2*inputs);inc('i_filt',inputs);inc('i_check',inputs);if(S.meter)inc('i_meter',inputs);
+    chk('ok','Вузол вводу укомплектовано','Кран, механічний фільтр, '+(S.meter?'лічильник, ':'')+'зворотний клапан на кожному вводі.','ДБН В.2.5-64:2012, п. 3.4');
+    if(S.pressure>4.5){inc('i_red',inputs);chk('ok',`Тиск на вводі ${f1(S.pressure)} бар: додано редуктор`,'Біля приладів тиск не має перевищувати 0,45 МПа (4,5 бар).','ДБН В.2.5-64:2012, п. 6.6, 7.5');}
+    else if(S.pressure>4)chk('info',`Тиск на вводі ${f1(S.pressure)} бар`,'Межа 4,5 бар. Редуктор рекомендовано, якщо тиск коливається.','ДБН В.2.5-64:2012, п. 6.6');
+    else if(S.pressure<2)chk('warn',`Низький тиск: ${f1(S.pressure)} бар`,'Проточні прилади й котел можуть працювати нестабільно. Розгляньте насосну станцію.',null,{tab:'set'});
+  }
+  /* hot water source */
+  const hotMainTo={};
+  if(hasHotAny){
+    if(S.dhw==='central'){
+      if(c0&&r0&&flr[0].hot){lenHotMain+=man(r0,c0)+.5;mainSeg++;hotMainTo[0]=man(r0,c0)+.5;}
+      floors.forEach((F,fi)=>{if(fi>0&&flr[fi].hot&&F.col){const l=segTo(0,fi);lenHotMain+=l;mainSeg++;hotMainTo[fi]=(hotMainTo[0]||0)+l;}});
+    }else{
+      const src=S.dhw==='heater'?heater:boiler;
+      if(!src)chk('err',S.dhw==='heater'?'Немає бойлера для гарячої води':'Немає двоконтурного котла для гарячої води',S.dhw==='heater'?'Додайте бойлер на план або змініть джерело ГВП у параметрах.':'Додайте котел на план або змініть джерело ГВП у параметрах.',null,{tab:'set'});
+      else{const cs=floors[src.fi].col;
+        if(cs){const l=man(src.f,cs)+.5;lenHotMain+=l;lenMain+=l;mainSeg+=2;hotMainTo[src.fi]=l;
+          floors.forEach((F,fi)=>{if(fi!==src.fi&&flr[fi].hot&&F.col){const s=segTo(src.fi,fi);lenHotMain+=s;mainSeg++;hotMainTo[fi]=l+s;}});}
+        if(S.dhw==='heater'){const hasBath=floors.some(F=>F.fix.some(f=>f.type==='bath'));const hasSh=floors.some(F=>F.fix.some(f=>f.type==='shower'));
+          const V=hasBath?100:hasSh?80:50;inc('d_h'+V,1);inc('d_safe',1);inc('d_diel',2);inc('d_valve',2);st.src++;
+          chk('ok',`Бойлер ${V} л з групою безпеки`,'Група безпеки (запобіжний клапан 6 бар) обов\'язкова для накопичувального водонагрівача. Налаштуйте нагрів не нижче 60 °C.','ДБН В.2.5-64:2012, п. 6.2; інструкції виробників');}
+        else{inc('b_dhw',2);chk('info','Гаряча вода від двоконтурного котла','Температура в точках водорозбору має бути не нижче 55–60 °C.','ДБН В.2.5-64:2012, п. 6.2');}
+      }
+    }
+    /* waiting for hot water (pipe volume) */
+    const far=[];floors.forEach((F,fi)=>F.fix.forEach(f=>{if(FIX[f.type].h&&FX[f.id].water!=null){const vol=(hotMainTo[fi]||0)*vMain+FX[f.id].water*vBr;if(vol>3)far.push(`${FIX[f.type].n} (${f1(vol)} л)`);}}));
+    if(far.length)chk('warn','Довге очікування гарячої води',`У трубі до приладу понад 3 л холодної води: ${far.join(', ')}. Наблизьте джерело ГВП або зробіть рециркуляцію.`,'правило 3 л (DVGW W 551), рекомендація');
+    chk('ok','Ізоляція труб гарячої води додана','Товщина ізоляції не менше 10 мм.','ДБН В.2.5-64:2012, п. 7.8');
+  }
+  /* heating source, mains, expansion */
+  const anyHeat=Object.values(flr).some(x=>x.heat);
+  if(anyHeat&&S.heatSrc==='boiler'){
+    if(!boiler)chk('err','Немає котла','Додайте котел на план: від нього живляться радіатори й тепла підлога.',null,{add:'boiler'});
+    else{const cb=floors[boiler.fi].col;inc(S.dhw==='combi'?'b_boiler':'b_boiler1',1);inc('b_valves',2);inc('b_filt',1);st.src++;
+      if(cb){lenHM+=2*(man(boiler.f,cb)+.5);floors.forEach((F,fi)=>{if(fi!==boiler.fi&&flr[fi].heat&&F.col)lenHM+=2*segTo(boiler.fi,fi);});}
+      const vol=lenHB*vHB+lenHM*vHM+pex*.113+radVol+2;
+      if(vol>80){const need=vol*.1;const V=TANKS.find(t=>t>=need)||50;inc('b_tank'+V,1);chk('ok',`Об'єм системи ≈${Math.round(vol)} л: додано бак ${V} л`,'Вбудованого бака котла (≈8 л) не вистачає. Розширювальний бак ≈10 % об\'єму системи.','рекомендації виробників котлів');}
+      else chk('ok',`Об'єм системи ≈${Math.round(vol)} л`,'Вбудованого розширювального бака котла (≈8 л) достатньо.','рекомендації виробників котлів');
+      chk('ok','Магнітний фільтр перед котлом','Захищає теплообмінник від шламу.','вимога гарантії більшості виробників');}
+  }
+  if(anyHeat&&S.heatSrc==='central'&&floors.some(F=>F.rooms.some(rm=>rm.ufh)))chk('warn','Тепла підлога від центрального опалення','У багатоквартирних будинках таке підключення зазвичай не допускається без погодження з теплопостачальною організацією.',null,{tab:'set'});
+  if(st.rads)chk('info','Монтаж радіаторів','Під вікном; від підлоги 100–120 мм (не менше 60), від підвіконня не менше 50 мм, від стіни 20–50 мм; кран з термоголовкою на подачі.','СНиП 3.05.01-85; рекомендації виробників');
+  if(loopsAll)chk('info','Тепла підлога: правила укладання',`Контур ≤ ${S.maxLoop} м (16 мм); подача ≤ 55 °C через змішувальний вузол; стяжка над трубою не менше 45 мм; демпферна стрічка по периметру; не укладати під ванною, душем, унітазом і меблями (вже враховано).`,'ДСТУ EN 1264; рекомендації виробників');
+  /* house riser */
+  if(S.type==='house'){
+    const rf=floors.filter(F=>F.ris);
+    if(rf.length){const h=floors.reduce((s,F)=>s+(+F.h||2.8),0)+1;inc('s_p110r',Math.ceil(h/2));inc('s_aer',1);
+      chk('ok','Стояк з ревізіями та аераційним клапаном','Ревізія на кожному поверсі, де є підключення; вентиляція стояка через покрівлю або аераційний клапан.','ДБН В.2.5-64:2012');}
+    for(let i=1;i<floors.length;i++){const a=floors[i-1].ris,b=floors[i].ris;if(a&&b&&man(a,b)>.3)chk('warn',`Стояк на «${floors[i].name}» зміщено`,'Каналізаційний стояк має йти вертикально. Поставте його в те саме місце, що й на поверсі нижче.',null,{fi:i,k:'ris'});}
+  }
+
+  /* ---- convert lengths into items ---- */
+  const R1=1+r;
+  if(ppr){const s20c=Math.ceil(lenC*R1/4),s20h=Math.ceil(lenH*R1/4),s25=Math.ceil((lenMain+lenHotMain)*R1/4);
+    inc('w_p20',s20c);inc('w_p20g',s20h);inc('w_p25',s25);inc('w_el20',bends20);inc('w_cp20',Math.ceil((lenC+lenH)/4));
+    inc('w_vr20',br20);inc('w_ad20',br20);inc('w_cl20',Math.ceil((lenC+lenH)/.5));
+    if(s25){inc('w_el25',mainSeg*3);inc('w_cp25',Math.ceil((lenMain+lenHotMain)/4));inc('w_ad25',mainSeg*2);inc('w_cl25',Math.ceil((lenMain+lenHotMain)/.6));}}
+  else{inc('w_m16',Math.ceil((lenC+lenH)*R1));inc('w_m20',Math.ceil((lenMain+lenHotMain)*R1));inc('w_me16',bends20);inc('w_mvr16',br20);inc('w_mek16',br20);
+    inc('w_mcl16',Math.ceil((lenC+lenH)/.5));if(lenMain+lenHotMain>0){inc('w_me20',mainSeg*3);inc('w_mad20',mainSeg*2);inc('w_mcl20',Math.ceil((lenMain+lenHotMain)/.6));}}
+  if(lenH+lenHotMain>0)inc('w_ins',Math.ceil((lenH+lenHotMain)*R1/2));
+  inc('s_p50',Math.ceil(lenS50*R1));inc('s_p110',Math.ceil(lenS110*R1));inc('s_cl50',Math.ceil(lenS50/.6));inc('s_cl110',Math.ceil(lenS110/.6));
+  if(lenHB+lenHM>0){
+    if(hmp){inc('h_m16',Math.ceil(lenHB*R1));inc('h_m20',Math.ceil(lenHM*R1));inc('h_me16',heatBends);inc('h_mad16',emit*2);if(S.heatSrc==='boiler')inc('h_mek16',emit*2);}
+    else{inc('h_pp20',Math.ceil(lenHB*R1/4));inc('h_pp25',Math.ceil(lenHM*R1/4));inc('h_pel20',heatBends);inc('h_pad20',emit*(S.heatSrc==='boiler'?4:2));}
+  }
+  if(pex){inc('u_pex',Math.ceil(pex*R1));inc('u_xps',Math.ceil(ufhAll*1.05));inc('u_film',Math.ceil(ufhAll*1.15));inc('u_dm',Math.ceil(ufhPer));inc('u_sk',Math.ceil(pex/.35));inc('u_scr',Math.ceil(ufhAll*0.065*1800/25));}
+
+  const notes={w_p20:`${f1(lenC*R1)} м з запасом`,w_p20g:`${f1(lenH*R1)} м з запасом`,w_p25:`${f1((lenMain+lenHotMain)*R1)} м з запасом`,
+    w_m16:`холодна ${f1(lenC*R1)} м, гаряча ${f1(lenH*R1)} м`,s_p50:`${f1(lenS50*R1)} м з запасом`,s_p110:`${f1(lenS110*R1)} м з запасом`,
+    u_pex:`${loopsAll} конт., до ${S.maxLoop} м кожен`,u_xps:`${f1(ufhAll)} м² + 5 %`,u_scr:'стяжка ≈65 мм (45 мм над трубою)',
+    h_m16:`${f1(lenHB*R1)} м подача + зворот`,h_pp20:`${f1(lenHB*R1)} м подача + зворот`,w_ins:'ДБН В.2.5-64, п. 7.8: ≥ 10 мм'};
+  const items=ORDER.filter(k=>q[k]>0).map(k=>{const c=cat(k);const auto=Math.ceil(q[k]-1e-9);const o=P.ov[k];
+    return {...c,auto,qty:o!=null?+o:auto,ov:o!=null,note:notes[k]||''};});
+  // overrides for items no longer in calc are kept but ignored
+  const errs=CK.filter(c=>c.lvl==='err').length,warns=CK.filter(c=>c.lvl==='warn').length;
+  st.ufh=Math.round(st.ufh*10)/10;
+  return {items,checks:CK,FX,RM,st,errs,warns,total:items.reduce((s,x)=>s+x.qty*x.price,0)};
+}
+
+/* ================= projects ================= */
+function blankSet(){const p=DB.profile;return {type:'flat',sys:p.sys,heat:p.heat,reserve:p.reserve,pressure:4,meter:true,dhw:'combi',heatSrc:'boiler',build:'typical',ceil:2.7,tout:-20,rad:'bimetal',maxLoop:p.maxLoop};}
+function newFloor(name){return {id:'f'+uid(),name,h:2.8,rooms:[],fix:[],col:null,ris:null,under:null};}
+function mkRoom(name,x,y,w,h,o){return {id:'r'+uid(),name,x,y,w,h,ufh:false,step:15,furn:0,corner:false,...(o||{})};}
+function mkFix(type,x,y,o){return {id:'x'+uid(),type,x,y,len:null,slen:null,...(o||{})};}
+function newProject(kind){
+  const P={id:'p'+uid(),name:'Новий об\'єкт',client:{name:'',phone:'',addr:''},status:'draft',created:today(),updated:Date.now(),
+    set:blankSet(),size:[10,7],floors:[newFloor('Поверх 1')],ov:{},est:{markup:10,detail:true,valid:14,prepay:50,note:''}};
+  if(kind==='flat'){
+    P.name='Квартира 2 кімнати, вул. Шевченка 14';P.client={name:'Олена Петрівна',phone:'+380 67 123 45 67',addr:'м. Пустомити, вул. Шевченка 14, кв. 27'};
+    const F=P.floors[0];F.col={x:3.75,y:2.7};F.ris={x:.5,y:1.6};
+    F.rooms=[mkRoom('Санвузол',.3,.3,2.7,2.5,{ufh:true,step:10}),mkRoom('Коридор',3,.3,1.5,4.2),mkRoom('Кухня',4.5,.3,3.6,3.1,{ufh:true,step:15,furn:1.8,corner:true}),mkRoom('Кімната',4.5,3.4,4.2,3.3,{corner:true}),mkRoom('Спальня',.3,2.8,2.7,3.9)];
+    F.fix=[mkFix('bath',1.85,1.3),mkFix('basin',1.45,2.45),mkFix('toilet',.6,2.25),mkFix('washer',2.55,2.15),mkFix('rail',2.6,2.68),
+      mkFix('sink',7.4,3.0),mkFix('dish',6.6,3.0),mkFix('boiler',7.8,1.4),mkFix('radiator',6.3,3.55),mkFix('radiator',6.6,6.55),mkFix('radiator',1.6,6.55)];
+  }
+  if(kind==='house'){
+    P.name='Приватний будинок, 2 поверхи';P.client={name:'Ігор Ковальчук',phone:'+380 50 765 43 21',addr:'с. Солонка, вул. Садова 8'};
+    P.set.type='house';P.set.dhw='heater';P.set.build='new';P.set.rad='panel';P.size=[11,9];
+    const F1=P.floors[0];F1.name='Поверх 1';F1.h=3;
+    F1.col={x:2.2,y:2.3};F1.ris={x:.5,y:3.9};
+    F1.rooms=[mkRoom('Котельня',.3,.3,2.4,2.3),mkRoom('Санвузол',.3,2.6,2.4,2.2,{ufh:true,step:10}),mkRoom('Коридор',2.7,.3,1.8,4.5),
+      mkRoom('Кухня-вітальня',4.5,.3,6.2,5,{ufh:true,step:15,furn:3,corner:true}),mkRoom('Кабінет',.3,4.8,4.2,3.9,{corner:true}),mkRoom('Тамбур',4.5,5.3,2,3.4)];
+    F1.fix=[mkFix('boiler',.75,1.6),mkFix('heater',1.5,1.65),mkFix('toilet',.75,4.35),mkFix('basin',1.7,4.45),mkFix('rail',2.55,3.3),mkFix('shower',.85,3.45),mkFix('washer',1.9,3.6),
+      mkFix('sink',5.2,4.7),mkFix('dish',6.0,4.7),mkFix('radiator',2.4,8.55),mkFix('radiator',8.2,5.15)];
+    const F2=newFloor('Поверх 2');F2.h=2.8;F2.col={x:2.2,y:2.3};F2.ris={x:.5,y:3.9};
+    F2.rooms=[mkRoom('Ванна',.3,.3,2.4,4.5,{ufh:true,step:10}),mkRoom('Коридор',2.7,.3,1.8,8.4),mkRoom('Спальня',4.5,.3,6.2,4.2,{corner:true}),
+      mkRoom('Дитяча',4.5,4.5,6.2,4.2,{corner:true}),mkRoom('Гардероб',.3,4.8,2.4,3.9)];
+    F2.fix=[mkFix('bath',1.55,4.4),mkFix('basin',1.6,2.6),mkFix('toilet',.6,3.3),mkFix('rail',2.55,1.6),mkFix('radiator',7.6,.42),mkFix('radiator',7.6,8.55)];
+    P.floors.push(F2);
+  }
+  return P;
+}
+
+/* ================= editor ================= */
+const ED={fi:0,sel:null,tab:'mat',uedit:false,R:null,drag:null,draft:null};
+const ROOM_NAMES=['Санвузол','Ванна','Туалет','Кухня','Коридор','Котельня','Пральня','Кімната','Спальня','Вітальня','Кабінет','Дитяча'];
+const BUILTIN_T=[
+  {id:'t1',name:'Санвузол з ванною',w:2.4,h:1.8,ufh:true,step:10,fix:[['bath',.9,.42],['toilet',2.1,1.3],['basin',.55,1.55],['washer',1.4,1.45],['rail',2.15,.12]]},
+  {id:'t2',name:'Душова з туалетом',w:1.8,h:2,ufh:true,step:10,fix:[['shower',.5,.5],['toilet',1.4,1.6],['basin',1.35,.3]]},
+  {id:'t3',name:'Кухня',w:3,h:3.5,furn:1.8,fix:[['sink',1.2,.35],['dish',2,.35],['radiator',1.5,3.42]]},
+  {id:'t4',name:'Котельня',w:2,h:2,fix:[['boiler',.5,.25],['heater',1.35,.3]]},
+  {id:'t5',name:'Кімната з радіатором',w:4,h:3.5,fix:[['radiator',2,3.42]]},
+];
+const X=m=>M+m*SC;
+function F_(){const P=curP();return P.floors[Math.min(ED.fi,P.floors.length-1)];}
+
+function glyph(f,R,live,sel,bad){
+  const d=FIX[f.type];let w=d.w*SC,h=d.d*SC;const rr=R&&R.FX[f.id]&&R.FX[f.id].rad;if(rr&&f.type==='radiator')w=rr.w*SC;
+  const cx=X(f.x),cy=X(f.y),x=cx-w/2,y=cy-h/2;let g='';
+  switch(f.type){
+    case'toilet':g=`<rect class="b" x="${x}" y="${y}" width="${w}" height="${h*.28}" rx="3"/><ellipse class="b" cx="${cx}" cy="${y+h*.62}" rx="${w*.42}" ry="${h*.34}"/><ellipse class="d" cx="${cx}" cy="${y+h*.64}" rx="${w*.24}" ry="${h*.2}"/>`;break;
+    case'bidet':g=`<rect class="b" x="${x}" y="${y}" width="${w}" height="${h*.22}" rx="3"/><ellipse class="b" cx="${cx}" cy="${y+h*.6}" rx="${w*.42}" ry="${h*.36}"/><circle class="d" cx="${cx}" cy="${y+h*.45}" r="2.5"/>`;break;
+    case'basin':g=`<rect class="b" x="${x}" y="${y}" width="${w}" height="${h}" rx="5"/><ellipse class="d" cx="${cx}" cy="${cy+2}" rx="${w*.32}" ry="${h*.28}"/><circle class="d" cx="${cx}" cy="${cy+2}" r="2"/>`;break;
+    case'shower':g=`<rect class="b" x="${x}" y="${y}" width="${w}" height="${h}" rx="2"/><line class="d" x1="${x}" y1="${y}" x2="${x+w}" y2="${y+h}"/><line class="d" x1="${x+w}" y1="${y}" x2="${x}" y2="${y+h}"/><circle class="b" cx="${cx}" cy="${cy}" r="4"/>`;break;
+    case'bath':g=`<rect class="b" x="${x}" y="${y}" width="${w}" height="${h}" rx="6"/><rect class="d" x="${x+6}" y="${y+6}" width="${w-12}" height="${h-12}" rx="${(h-12)/2}"/><circle class="d" cx="${x+w-16}" cy="${cy}" r="3"/>`;break;
+    case'washer':case'dish':g=`<rect class="b" x="${x}" y="${y}" width="${w}" height="${h}" rx="3"/>${f.type==='washer'?`<circle class="d" cx="${cx}" cy="${cy+2}" r="${w*.3}"/>`:`<rect class="d" x="${x+6}" y="${y+9}" width="${w-12}" height="${h-15}" rx="2"/>`}<line class="d" x1="${x+4}" y1="${y+6}" x2="${x+w*.4}" y2="${y+6}"/>`;break;
+    case'sink':g=`<rect class="b" x="${x}" y="${y}" width="${w}" height="${h}" rx="3"/><rect class="d" x="${x+5}" y="${y+5}" width="${w*.55}" height="${h-10}" rx="4"/><circle class="d" cx="${x+5+w*.275}" cy="${cy}" r="2.5"/>`;break;
+    case'hyg':g=`<rect class="b" x="${x}" y="${y}" width="${w}" height="${h}" rx="3"/><circle class="d" cx="${cx}" cy="${cy}" r="3"/>`;break;
+    case'drain':g=`<rect class="b" x="${x}" y="${y}" width="${w}" height="${h}" rx="1"/><line class="d" x1="${x+3}" y1="${cy-3}" x2="${x+w-3}" y2="${cy-3}"/><line class="d" x1="${x+3}" y1="${cy+3}" x2="${x+w-3}" y2="${cy+3}"/>`;break;
+    case'radiator':case'rail':{const n=Math.max(3,Math.round(w/10));let ln='';for(let i=1;i<n;i++)ln+=`<line class="d" x1="${x+i*w/n}" y1="${y}" x2="${x+i*w/n}" y2="${y+h}"/>`;g=`<rect class="hb" x="${x}" y="${y}" width="${w}" height="${h}" rx="2"/>${ln}`;break;}
+    case'heater':g=`<circle class="b" cx="${cx}" cy="${cy}" r="${w/2}"/><text class="fxl" x="${cx}" y="${cy+4}" text-anchor="middle">Б</text>`;break;
+    case'boiler':g=`<rect class="hb" x="${x}" y="${y}" width="${w}" height="${h}" rx="3"/><text class="fxl" x="${cx}" y="${cy+4}" text-anchor="middle">КОТ</text>`;break;
+  }
+  let lab='';if(rr&&f.type==='radiator')lab=`<text class="ptlbl" x="${cx}" y="${y-4}" text-anchor="middle">${rr.label}</text>`;
+  return `<g class="fx${sel?' sel':''}${bad?' bad':''}" ${live?`data-k="fix" data-id="${f.id}"`:''}><title>${d.n}</title><rect class="hit" x="${x-5}" y="${y-5}" width="${w+10}" height="${h+10}" rx="6"/>${g}${lab}</g>`;
+}
+function iconSvg(type){const d=FIX[type];const s=Math.max(d.w,d.d)*SC+10;const f={type,x:0,y:0};
+  return `<svg viewBox="${X(0)-s/2} ${X(0)-s/2} ${s} ${s}" aria-hidden="true" class="plan" style="width:22px;height:22px">${glyph(f,null,false).replace(/<title>.*?<\/title>/,'')}</svg>`;}
+
+function routePts(f,t,flip){return flip?`${X(f.x)},${X(f.y)} ${X(f.x)},${X(t.y)} ${X(t.x)},${X(t.y)}`:`${X(f.x)},${X(f.y)} ${X(t.x)},${X(f.y)} ${X(t.x)},${X(t.y)}`;}
+function routePtsO(f,t,flip,o){return flip?`${X(f.x)+o},${X(f.y)} ${X(f.x)+o},${X(t.y)+o} ${X(t.x)+o},${X(t.y)+o}`:`${X(f.x)},${X(f.y)+o} ${X(t.x)+o},${X(f.y)+o} ${X(t.x)+o},${X(t.y)}`;}
+
+function renderPlan(svg,P,F,R,live,pid){
+  const sel=live?ED.sel:null;const PW=P.size[0],PH=P.size[1];const VW=PW*SC+2*M,VH=PH*SC+2*M;let s='';
+  svg.setAttribute('viewBox',`0 0 ${VW} ${VH}`);
+  s+=`<defs><pattern id="${pid}" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="9" class="hatch"/></pattern></defs>`;
+  s+=`<rect class="paperbg" x="0" y="0" width="${VW}" height="${VH}"/>`;
+  for(let i=0;i<=PW*2;i++){const x=X(i/2);s+=`<line class="${i%2?'g1':'g2'}" x1="${x}" y1="${M}" x2="${x}" y2="${X(PH)}"/>`;}
+  for(let i=0;i<=PH*2;i++){const y=X(i/2);s+=`<line class="${i%2?'g1':'g2'}" x1="${M}" y1="${y}" x2="${X(PW)}" y2="${y}"/>`;}
+  if(F.under&&F.under.src&&live)s+=`<image class="uimg${ED.uedit?' edit':''}" ${ED.uedit?'data-k="under"':''} href="${F.under.src}" x="${X(F.under.x)}" y="${X(F.under.y)}" width="${F.under.w*SC}" preserveAspectRatio="xMinYMin meet" opacity="${F.under.op}"/>`;
+  F.rooms.forEach(r=>{const on=sel&&sel.k==='room'&&sel.id===r.id;const bad=R&&R.RM[r.id]&&R.RM[r.id].bad;
+    s+=`<rect class="room${on?' sel':''}${bad?' bad':''}" ${live?`data-k="room" data-id="${r.id}"`:''} x="${X(r.x)}" y="${X(r.y)}" width="${r.w*SC}" height="${r.h*SC}"/>`;
+    if(r.ufh)s+=`<rect x="${X(r.x)+2}" y="${X(r.y)+2}" width="${r.w*SC-4}" height="${r.h*SC-4}" fill="url(#${pid})" style="pointer-events:none"/>`;});
+  const col=F.col,ris=F.ris;
+  if(col)F.rooms.filter(r=>r.ufh).forEach(r=>{const nx=clamp(col.x,r.x,r.x+r.w),ny=clamp(col.y,r.y,r.y+r.h);const cx=r.x+r.w/2,cy=r.y+r.h/2;
+    s+=`<polyline class="rc u" points="${X(cx)},${X(cy)} ${X(nx)},${X(ny)} ${X(col.x)},${X(ny)} ${X(col.x)},${X(col.y)}"/>`;});
+  if(ris)F.fix.filter(f=>FIX[f.type].s).forEach(f=>{s+=`<polyline class="rc s" points="${X(f.x)},${X(f.y)} ${X(f.x)},${X(ris.y)} ${X(ris.x)},${X(ris.y)}"/>`;});
+  if(col){
+    F.fix.forEach(f=>{const d=FIX[f.type];
+      if(d.c)s+=`<polyline class="rc c" points="${routePts(f,col,f.flip)}"/>`;
+      if(d.h)s+=`<polyline class="rc h" points="${routePtsO(f,col,f.flip,5)}"/>`;
+      if(d.k==='heat'&&P.set.heatSrc==='boiler'){s+=`<polyline class="rc ht" points="${routePtsO(f,col,f.flip,-5)}"/><polyline class="rc hr" points="${routePtsO(f,col,f.flip,-9)}"/>`;}
+      if(d.k==='src'&&P.set.heatSrc==='boiler'){s+=`<polyline class="rc ht" points="${routePtsO(f,col,f.flip,-5)}"/>`;}
+      if((d.k==='dhw'&&P.set.dhw==='heater')||(d.k==='src'&&P.set.dhw==='combi')){s+=`<polyline class="rc c" points="${routePtsO(f,col,f.flip,2)}"/><polyline class="rc h" points="${routePtsO(f,col,f.flip,7)}"/>`;}
+    });
+  }
+  const labels=F.rooms.map(r=>{const tx=X(r.x)+8,ty=X(r.y)+18;const RR=R&&R.RM[r.id];
+    return `<text class="rname" x="${tx}" y="${ty}">${esc(r.name)}${r.ufh?' · ТП':''}</text><text class="rmeta" x="${tx}" y="${ty+15}">${r.w>=3.3?`${f1(r.w)}×${f1(r.h)} м · `:''}${f1(r.w*r.h)} м²${RR&&P.set.heatSrc!=='none'&&r.w>=1.9?` · ${roomTemp(r.name)}°`:''}</text>`;}).join('');
+  F.fix.forEach(f=>{s+=glyph(f,R,live,sel&&sel.k==='fix'&&sel.id===f.id,R&&R.FX[f.id]&&R.FX[f.id].bad)});
+  s+=labels;
+  const cOn=sel&&sel.k==='col',rOn=sel&&sel.k==='ris';
+  if(col){s+=`<g class="col${cOn?' sel':''}" ${live?'data-k="col"':''}><rect x="${X(col.x)-17}" y="${X(col.y)-10}" width="34" height="20" rx="3"/><text x="${X(col.x)}" y="${X(col.y)+4}" text-anchor="middle">КОЛ</text></g>`;}
+  if(ris){s+=`<g class="ris${rOn?' sel':''}" ${live?'data-k="ris"':''}><circle cx="${X(ris.x)}" cy="${X(ris.y)}" r="11"/><text x="${X(ris.x)}" y="${X(ris.y)+4}" text-anchor="middle">СТ</text></g>`;}
+  if(sel&&sel.k==='room'){const r=F.rooms.find(x=>x.id===sel.id);if(r)s+=`<rect class="rs" data-k="rs" data-id="${r.id}" x="${X(r.x+r.w)-9}" y="${X(r.y+r.h)-9}" width="18" height="18" rx="3"/>`;}
+  if(live&&ED.draft){const d=normDraft();if(d)s+=`<rect class="draft" x="${X(d.x)}" y="${X(d.y)}" width="${d.w*SC}" height="${d.h*SC}"/><text class="draftlbl" x="${X(d.x)+8}" y="${X(d.y)+20}">${f1(d.w)} × ${f1(d.h)} м</text>`;}
+  if(live&&!F.rooms.length&&!ED.draft){const cx=VW/2,cy=VH/2;s+=`<text class="emptytxt b" x="${cx}" y="${cy-14}" text-anchor="middle">Проведіть по плану, щоб намалювати кімнату</text><text class="emptytxt" x="${cx}" y="${cy+14}" text-anchor="middle">або натисніть «+ Кімната» чи виберіть шаблон</text>`;}
+  svg.innerHTML=s;
+}
+
+/* ---------- editor shell ---------- */
+function viewEditor(root){
+  const P=curP();if(!P){DB.view='projects';return render();}
+  if(ED.fi>=P.floors.length)ED.fi=0;
+  root.innerHTML=`<div class="ed">
+  <section class="panel" aria-label="План об'єкта">
+    <div class="ed-top">
+      <label class="fld pname">Об'єкт<input id="pName" type="text" value="${esc(P.name)}"></label>
+      <div class="floors" id="floors" role="group" aria-label="Поверхи"></div>
+    </div>
+    <div class="toolbar">
+      <div class="tgroup"><span class="lbl">Кімнати</span>
+        <button class="btn sm" id="addRoom">+ Кімната</button>
+        <select id="tplSel" aria-label="Вставити шаблон"><option value="">Шаблон…</option></select>
+        <button class="btn sm" id="photoBtn">Фото плану</button><input type="file" id="photoIn" accept="image/*" hidden>
+      </div>
+      <div class="tgroup"><span class="lbl">Вузли</span>
+        <button class="btn sm" data-add="col">Колектор</button><button class="btn sm" data-add="ris">Стояк</button></div>
+    </div>
+    <div class="toolbar" id="pal"></div>
+    <div class="ubar" id="ubar" hidden></div>
+    <ol class="steps" id="steps"></ol>
+    <div class="plan-wrap"><svg class="plan" id="plan" aria-label="План приміщення"></svg></div>
+    <div class="legend">
+      <span><b style="border-color:var(--cold)"></b>Холодна</span><span><b style="border-color:var(--hot)"></b>Гаряча</span>
+      <span><b style="border-color:var(--sew);border-top-style:dashed"></b>Каналізація</span><span><b style="border-color:var(--heat)"></b>Опалення</span>
+      <span><b style="border-color:var(--hot);border-top-style:dotted"></b>Тепла підлога</span><span>КОЛ — колектор · СТ — стояк</span><span>Сітка 0,5 м</span></div>
+    <div class="insp" id="insp"></div>
+  </section>
+  <aside class="panel" aria-label="Розрахунок">
+    <div class="tabs" role="tablist">
+      <button class="tab" role="tab" data-tab="mat">Матеріали</button>
+      <button class="tab" role="tab" data-tab="chk">Норми <span id="chkBadge"></span></button>
+      <button class="tab" role="tab" data-tab="set">Параметри</button></div>
+    <div class="side-body" id="side"></div>
+  </aside></div>`;
+  $('pName').oninput=e=>{P.name=e.target.value;touch(P);};
+  $('pal').innerHTML=PALETTE.map(([g,ts])=>`<div class="tgroup"><span class="lbl">${g}</span>${ts.map(t=>`<button class="tbtn" data-add="${t}" title="${FIX[t].n}">${iconSvg(t)}${FIX[t].n}</button>`).join('')}</div>`).join('');
+  root.querySelectorAll('[data-add]').forEach(b=>b.onclick=()=>addThing(b.dataset.add));
+  $('addRoom').onclick=()=>{ED.sel={k:'newroom'};renderInspector();};
+  fillTplSel();
+  $('tplSel').onchange=e=>{const v=e.target.value;e.target.value='';if(v)insertTemplate(v);};
+  $('photoBtn').onclick=()=>$('photoIn').click();
+  $('photoIn').onchange=e=>{const file=e.target.files[0];e.target.value='';if(file)loadUnderlay(file);};
+  root.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{ED.tab=t.dataset.tab;renderSide();});
+  bindPlan();
+  renderInspector();update();
+}
+function fillTplSel(){const s=$('tplSel');if(!s)return;
+  s.innerHTML='<option value="">Шаблон…</option><optgroup label="Готові">'+BUILTIN_T.map(t=>`<option value="${t.id}">${esc(t.name)} ${f1(t.w)}×${f1(t.h)}</option>`).join('')+'</optgroup>'+
+  (DB.templates.length?'<optgroup label="Мої">'+DB.templates.map(t=>`<option value="${t.id}">${esc(t.name)} ${f1(t.w)}×${f1(t.h)}</option>`).join('')+'</optgroup>':'');}
+function touch(P){P.updated=Date.now();save();}
+
+function update(){
+  const P=curP();if(!P||DB.view!=='editor')return;const F=F_();
+  ED.R=calc(P);P._total=ED.R.total;
+  renderFloors();renderSteps();renderUbar();
+  renderPlan($('plan'),P,F,ED.R,true,'hp');readouts();renderSide();touch(P);
+}
+function renderFloors(){const P=curP();
+  $('floors').innerHTML=P.floors.map((f,i)=>`<button class="fl" data-fi="${i}" aria-pressed="${i===ED.fi}">${esc(f.name)}</button>`).join('')+`<button class="fl" id="addFloor">+ Поверх</button>`;
+  $('floors').querySelectorAll('[data-fi]').forEach(b=>b.onclick=()=>{ED.fi=+b.dataset.fi;ED.sel=null;ED.uedit=false;renderInspector();update();});
+  $('addFloor').onclick=()=>{const n=P.floors.length+1;const F=newFloor('Поверх '+n);const prev=P.floors[P.floors.length-1];
+    if(prev.ris)F.ris={...prev.ris};if(prev.col)F.col={...prev.col};P.floors.push(F);ED.fi=P.floors.length-1;ED.sel=null;
+    if(P.set.type==='flat'){P.set.type='house';toast('Тип об\'єкта змінено на «Приватний будинок»');}
+    renderInspector();update();};
+}
+function renderSteps(){const P=curP(),R=ED.R;const fl=P.floors;
+  const any=fn=>fl.some(fn);
+  const needSrc=R.checks.some(c=>c.lvl==='err'&&/котл|бойлер|джерела тепла/.test(c.t));
+  const st=[
+    {t:'Кімнати',d:any(F=>F.rooms.length)},
+    {t:'Колектор і стояк',d:any(F=>F.col&&F.ris)},
+    {t:'Прилади',d:any(F=>F.fix.some(f=>FIX[f.type].k==='w'))},
+    {t:'Опалення і джерела',d:any(F=>F.fix.some(f=>FIX[f.type].k==='w'))&&!needSrc},
+    {t:'Норми без помилок',d:R.errs===0&&any(F=>F.fix.length)},
+    {t:'Кошторис і замовлення',d:P.status!=='draft'},
+  ];const now=st.find(s=>!s.d);
+  $('steps').innerHTML=st.map(s=>`<li class="${s.d?'done':s===now?'now':''}">${s.t}</li>`).join('');
+}
+function renderUbar(){const F=F_(),u=F.under,el=$('ubar');if(!u){el.hidden=true;return;}el.hidden=false;
+  if(el.dataset.bound===F.id+(ED.uedit?'1':'0'))return;el.dataset.bound=F.id+(ED.uedit?'1':'0');
+  el.innerHTML=`<span class="lbl" style="align-self:center">Фото плану</span>
+   <label class="fld">Ширина фото на плані, м<input class="inp" type="number" id="uW" min="1" max="60" step="0.1" value="${u.w}" style="width:90px"></label>
+   <label class="fld">Прозорість<input type="range" id="uOp" min="0.1" max="1" step="0.05" value="${u.op}"></label>
+   <button class="btn sm" id="uEdit" aria-pressed="${ED.uedit}">${ED.uedit?'Готово':'Пересунути фото'}</button>
+   <button class="btn sm danger" id="uDel">Прибрати фото</button>
+   <span class="hint" style="flex-basis:100%">Вкажіть реальну ширину того, що на фото (наприклад, ширину квартири з плану), тоді кімнати обводяться в масштабі.</span>`;
+  $('uW').oninput=e=>{const v=parseFloat(e.target.value);if(v>0){u.w=v;renderPlan($('plan'),curP(),F,ED.R,true,'hp');touch(curP());}};
+  $('uOp').oninput=e=>{u.op=+e.target.value;renderPlan($('plan'),curP(),F,ED.R,true,'hp');touch(curP());};
+  $('uEdit').onclick=()=>{ED.uedit=!ED.uedit;update();};
+  $('uDel').onclick=()=>{F.under=null;ED.uedit=false;update();};
+}
+function loadUnderlay(file){
+  const rd=new FileReader();rd.onload=()=>{const img=new Image();img.onload=()=>{
+    const k=Math.min(1,1400/Math.max(img.width,img.height));const c=document.createElement('canvas');c.width=Math.round(img.width*k);c.height=Math.round(img.height*k);
+    c.getContext('2d').drawImage(img,0,0,c.width,c.height);let src;try{src=c.toDataURL('image/jpeg',.72);}catch(e){src=rd.result;}
+    const P=curP();F_().under={src,w:Math.round(P.size[0]*.9*10)/10,x:.2,y:.2,op:.5};ED.uedit=false;toast('Фото додано. Вкажіть його ширину в метрах і обведіть кімнати.');update();};
+    img.onerror=()=>toast('Не вдалося відкрити зображення. Спробуйте JPG або PNG.');img.src=rd.result;};
+  rd.readAsDataURL(file);
+}
+
+/* ---------- adding ---------- */
+function findSpot(F,P,w,h){
+  const PW=P.size[0],PH=P.size[1];const c=[];
+  if(!F.rooms.length)c.push({x:.3,y:.3});
+  F.rooms.forEach(r=>{c.push({x:r.x+r.w,y:r.y},{x:r.x,y:r.y+r.h});});
+  for(let y=0;y<=PH-h+1e-6;y+=.5)for(let x=0;x<=PW-w+1e-6;x+=.5)c.push({x,y});
+  for(const p of c){const t={x:p.x,y:p.y,w,h};if(t.x+w<=PW+1e-6&&t.y+h<=PH+1e-6&&!F.rooms.some(r=>overlaps(t,r)))return{x:snap(p.x),y:snap(p.y)};}
+  return null;
+}
+function nextRoomName(F){const used=F.rooms.map(r=>r.name);return ROOM_NAMES.find(n=>!used.includes(n))||('Кімната '+(F.rooms.length+1));}
+function addThing(t){const P=curP(),F=F_();
+  const sr=ED.sel&&ED.sel.k==='room'&&F.rooms.find(x=>x.id===ED.sel.id);
+  let cx=P.size[0]/2,cy=P.size[1]/2;if(sr){cx=sr.x+sr.w/2;cy=sr.y+sr.h/2;}
+  else if(F.rooms.length){const r=F.rooms[F.rooms.length-1];cx=r.x+r.w/2;cy=r.y+r.h/2;}
+  if(t==='col'||t==='ris'){if(!F[t])F[t]=sr?{x:snap(t==='col'?sr.x+.4:sr.x+sr.w-.4),y:snap(sr.y+sr.h-.4)}:{x:snap(cx),y:snap(cy)};ED.sel={k:t};}
+  else{if(t==='boiler'&&P.floors.some(F=>F.fix.some(f=>f.type==='boiler'))){toast('Котел уже є на плані');return;}
+    if(t==='heater'&&P.floors.some(F=>F.fix.some(f=>f.type==='heater'))){toast('Бойлер уже є на плані');return;}
+    const f=mkFix(t,snap(cx),snap(cy));F.fix.push(f);ED.sel={k:'fix',id:f.id};
+    if(t==='heater'&&P.set.dhw!=='heater'){P.set.dhw='heater';toast('Гаряча вода: від бойлера');}
+    if(t==='boiler'&&P.set.heatSrc!=='boiler'){P.set.heatSrc='boiler';toast('Джерело тепла: власний котел');}}
+  renderInspector();update();
+}
+function insertTemplate(id){const P=curP(),F=F_();const t=BUILTIN_T.concat(DB.templates).find(x=>x.id===id);if(!t)return;
+  const p=findSpot(F,P,t.w,t.h);if(!p){toast('Немає вільного місця. Збільште поле в «Параметрах».');return;}
+  const r=mkRoom(t.name.replace(/ з .*/,''),p.x,p.y,t.w,t.h,{ufh:!!t.ufh,step:t.step||15,furn:t.furn||0});F.rooms.push(r);
+  t.fix.forEach(([type,dx,dy])=>{if((type==='boiler'||type==='heater')&&P.floors.some(F=>F.fix.some(f=>f.type===type)))return;F.fix.push(mkFix(type,snap(p.x+dx),snap(p.y+dy)));});
+  ED.sel={k:'room',id:r.id};toast(`Вставлено шаблон «${t.name}»`);renderInspector();update();}
+
+/* ---------- inspector ---------- */
+function renderInspector(){
+  const el=$('insp');if(!el)return;const P=curP(),F=F_(),sel=ED.sel;
+  if(!sel){el.innerHTML=`<p class="hint">Проведіть по вільному місцю плану, щоб намалювати кімнату. Торкніться кімнати, приладу, колектора чи стояка, щоб змінити параметри. Кімната переїжджає разом із приладами всередині.</p>`;return;}
+  if(sel.k==='newroom'){const def=nextRoomName(F);
+    el.innerHTML=`<h3>Нова кімната <small>з'явиться на вільному місці, далі її можна перетягнути</small></h3>
+    <label class="fld">Назва<input class="inp" type="text" id="n-name" list="roomNames" value="${esc(def)}"></label>
+    <label class="fld">Ширина, м<input class="inp" type="number" id="n-w" min="0.8" step="0.1" value="2.5"></label>
+    <label class="fld">Довжина, м<input class="inp" type="number" id="n-h" min="0.8" step="0.1" value="2"></label>
+    <label class="chk"><input type="checkbox" id="n-ufh"> Тепла підлога</label>
+    <button class="btn primary" id="n-add">Додати на план</button><button class="btn" id="n-cancel">Скасувати</button>
+    <span class="ro" id="n-msg" style="color:var(--err)"></span>`;
+    $('n-name').focus();$('n-name').select();
+    $('n-cancel').onclick=()=>{ED.sel=null;renderInspector();};
+    $('n-add').onclick=()=>{const w=snap(parseFloat($('n-w').value)||0),h=snap(parseFloat($('n-h').value)||0);
+      if(w<.8||h<.8){$('n-msg').textContent='Мінімальний розмір 0,8 м';return;}
+      if(w>P.size[0]||h>P.size[1]){$('n-msg').textContent=`Не вміщається в поле ${P.size[0]}×${P.size[1]} м. Збільште поле в «Параметрах».`;return;}
+      const p=findSpot(F,P,w,h);if(!p){$('n-msg').textContent='Немає вільного місця. Збільште поле або пересуньте кімнати.';return;}
+      const r=mkRoom($('n-name').value.trim()||def,p.x,p.y,w,h,{ufh:$('n-ufh').checked,step:/ванн|санвуз/i.test($('n-name').value)?10:15});F.rooms.push(r);ED.sel={k:'room',id:r.id};renderInspector();update();};
+    return;}
+  if(sel.k==='room'){const r=F.rooms.find(x=>x.id===sel.id);if(!r){ED.sel=null;return renderInspector();}
+    el.innerHTML=`<h3>${esc(r.name)} <small>${f1(r.w*r.h)} м² · розрахункова t° ${roomTemp(r.name)} °C <span data-ro="heat"></span></small></h3>
+    <label class="fld">Назва<input class="inp" type="text" id="i-name" list="roomNames" value="${esc(r.name)}"></label>
+    <label class="fld">Ширина, м<input class="inp" type="number" id="i-w" min="0.8" step="0.1" value="${r.w}"></label>
+    <label class="fld">Довжина, м<input class="inp" type="number" id="i-h" min="0.8" step="0.1" value="${r.h}"></label>
+    <label class="chk"><input type="checkbox" id="i-corner" ${r.corner?'checked':''}> Кутова (+15 %)</label>
+    <label class="chk"><input type="checkbox" id="i-ufh" ${r.ufh?'checked':''}> Тепла підлога</label>
+    <label class="fld">Крок<select id="i-step" ${r.ufh?'':'disabled'}>${[10,15,20,25].map(v=>`<option value="${v}" ${r.step==v?'selected':''}>${v} см</option>`).join('')}</select></label>
+    <label class="fld">Під меблями, м²<input class="inp" type="number" id="i-furn" min="0" step="0.1" value="${r.furn||0}" ${r.ufh?'':'disabled'}></label>
+    <span class="ro" data-ro="ufh"></span>
+    <span style="display:flex;gap:6px;flex-wrap:wrap;width:100%"><button class="btn sm" id="i-tpl">Зберегти як шаблон</button><button class="btn sm danger" id="i-del">Видалити кімнату</button></span>`;
+    $('i-name').oninput=e=>{r.name=e.target.value||'Кімната';update()};
+    const sz=(k,v)=>{const old=r[k];r[k]=v;if(F.rooms.some(o=>o!==r&&overlaps(o,r))||r.x+r.w>P.size[0]+1e-6||r.y+r.h>P.size[1]+1e-6){r[k]=old;toast('Так кімната перекриє іншу або вийде за поле');return false;}return true;};
+    $('i-w').onchange=e=>{const v=snap(parseFloat(e.target.value));if(v>=.8&&sz('w',v))update();else e.target.value=r.w};
+    $('i-h').onchange=e=>{const v=snap(parseFloat(e.target.value));if(v>=.8&&sz('h',v))update();else e.target.value=r.h};
+    $('i-corner').onchange=e=>{r.corner=e.target.checked;update()};
+    $('i-ufh').onchange=e=>{r.ufh=e.target.checked;$('i-step').disabled=!r.ufh;$('i-furn').disabled=!r.ufh;update()};
+    $('i-step').onchange=e=>{r.step=+e.target.value;update()};
+    $('i-furn').oninput=e=>{r.furn=Math.max(0,parseFloat(e.target.value)||0);update()};
+    $('i-tpl').onclick=()=>{const fx=F.fix.filter(f=>inRect(f,r)).map(f=>[f.type,Math.round((f.x-r.x)*100)/100,Math.round((f.y-r.y)*100)/100]);
+      DB.templates.push({id:'u'+uid(),name:r.name,w:r.w,h:r.h,ufh:r.ufh,step:r.step,furn:r.furn,fix:fx});save();fillTplSel();toast(`Шаблон «${r.name}» збережено`);};
+    $('i-del').onclick=()=>{const inside=F.fix.filter(f=>inRect(f,r));
+      el.querySelector('#i-del').outerHTML=`<span class="confirm">Видалити${inside.length?` разом з ${inside.length} прил.`:''}? <button class="btn sm danger" id="i-yes">Так</button><button class="btn sm" id="i-no">Ні</button></span>`;
+      $('i-yes').onclick=()=>{F.rooms=F.rooms.filter(x=>x!==r);F.fix=F.fix.filter(f=>!inside.includes(f));ED.sel=null;renderInspector();update();};
+      $('i-no').onclick=renderInspector;};
+    return;}
+  if(sel.k==='fix'){const f=F.fix.find(x=>x.id===sel.id);if(!f){ED.sel=null;return renderInspector();}const d=FIX[f.type];
+    const water=d.c||d.h, heat=d.k==='heat';
+    el.innerHTML=`<h3>${d.n} <small>${d.k==='w'?[d.c?'холодна':'',d.h?'гаряча':'',d.s?'каналізація Ø'+d.s:''].filter(Boolean).join(' · '):d.k==='heat'?'опалення':d.k==='src'?'джерело тепла'+(P.set.dhw==='combi'?' і гарячої води':''):'джерело гарячої води'}</small></h3>
+    ${water?`<label class="fld">Траса води до колектора, м<input class="inp" type="number" id="i-len" step="0.1" min="0.3" placeholder="авто"><span class="muted" data-ro="wl"></span></label>`:''}
+    ${d.s?`<label class="fld">Злив до стояка, м<input class="inp" type="number" id="i-slen" step="0.1" min="0.3" placeholder="авто"><span class="muted" data-ro="sl"></span></label>`:''}
+    ${heat?`<div class="fld">Підбір<span class="ro" data-ro="rad"></span></div>`:''}
+    <button class="btn sm" id="i-flip" title="Змінює, з якого боку йде траса">Повернути трасу</button>
+    <button class="btn sm danger" id="i-del">Видалити</button>`;
+    if($('i-len')){$('i-len').value=f.len!=null?f.len:'';$('i-len').onchange=e=>{const v=parseFloat(e.target.value);f.len=v>0?v:null;update();};}
+    if($('i-slen')){$('i-slen').value=f.slen!=null?f.slen:'';$('i-slen').onchange=e=>{const v=parseFloat(e.target.value);f.slen=v>0?v:null;update();};}
+    $('i-flip').onclick=()=>{f.flip=!f.flip;update();};
+    $('i-del').onclick=()=>{F.fix=F.fix.filter(x=>x!==f);ED.sel=null;renderInspector();update();};
+    return;}
+  if(sel.k==='col'){el.innerHTML=`<h3>Колектор <small>вода, опалення і тепла підлога в одній шафі</small></h3><p class="hint">Від нього розходяться траси до приладів, радіаторів і контури теплої підлоги. Ставте там, де буде колекторна шафа з доступом.</p><button class="btn sm danger" id="i-del">Прибрати колектор</button>`;
+    $('i-del').onclick=()=>{F.col=null;ED.sel=null;renderInspector();update()};return;}
+  if(sel.k==='ris'){el.innerHTML=`<h3>Каналізаційний стояк <small>і ввід води на першому поверсі</small></h3><p class="hint">Зливи ведуться до нього: унітаз трубою 110 мм, решта приладів 50 мм. На першому поверсі тут же рахується ввід води.</p><button class="btn sm danger" id="i-del">Прибрати стояк</button>`;
+    $('i-del').onclick=()=>{F.ris=null;ED.sel=null;renderInspector();update()};}
+}
+function readouts(){const sel=ED.sel,R=ED.R;if(!sel||!R)return;const q=k=>document.querySelector(`#insp [data-ro="${k}"]`);
+  if(sel.k==='room'){const RR=R.RM[sel.id];if(!RR)return;const P=curP();
+    if(q('heat'))q('heat').textContent=P.set.heatSrc!=='none'?`· потреба ≈${Math.round(RR.demand)} Вт`:'';
+    if(q('ufh'))q('ufh').textContent=RR.loops?`ТП: ${f1(RR.heated)} м² · ${f1(RR.len)} м труби · ${RR.loops} конт. · ≈${Math.round(RR.ufhOut)} Вт`:'';}
+  if(sel.k==='fix'){const x=R.FX[sel.id];if(!x)return;
+    if(q('wl'))q('wl').textContent=x.waterAuto!=null?`авто ${f1(x.waterAuto)} м`:'поставте колектор';
+    if(q('sl'))q('sl').textContent=x.sewAuto!=null?`авто ${f1(x.sewAuto)} м · перепад ${f1(x.drop*100)} см${x.avail!=null?` з ${f1(Math.max(0,x.avail)*100)} см`:''}`:'поставте стояк';
+    if(q('rad'))q('rad').textContent=x.rad?`${x.rad.type==='panel'?'панельний ':x.rad.type==='bm'?'біметал ':''}${x.rad.label} · ${Math.round(x.rad.pw)} Вт`:'поза кімнатою';}
+}
+
+/* ---------- side panel ---------- */
+function renderSide(){const P=curP(),R=ED.R,el=$('side');if(!el||!R)return;
+  document.querySelectorAll('.tab').forEach(t=>t.setAttribute('aria-selected',t.dataset.tab===ED.tab));
+  $('chkBadge').innerHTML=R.errs?`<span class="pill err">${R.errs}</span>`:R.warns?`<span class="pill warn">${R.warns}</span>`:'<span class="pill ok">✓</span>';
+  if(ED.tab==='mat'){
+    if(el.dataset.v==='mat'&&document.activeElement&&el.contains(document.activeElement)&&document.activeElement.dataset.key){refreshMatTotals();return;}
+    el.dataset.v='mat';
+    let h='';Object.keys(G).forEach(g=>{const items=R.items.filter(x=>x.g===g);if(!items.length)return;const gs=items.reduce((s,x)=>s+x.qty*x.price,0);
+      h+=`<div class="grp"><div class="grp-h">${G[g]}<b>${money(gs)}</b></div>`+items.map(x=>`<div class="it"><div class="n">${esc(x.name)}<small>${esc(x.art)}${x.note?' · '+esc(x.note):''} · ${money(x.price)}/${x.unit}</small></div>
+      <div class="q"><input type="number" min="0" step="1" data-key="${x.key}" data-auto="${x.auto}" value="${x.qty}" class="${x.ov?'ov':''}" aria-label="Кількість">${x.unit}${x.ov?`<button data-reset="${x.key}" title="Повернути розрахунок: ${x.auto}">↺</button>`:''}</div>
+      <div class="s">${money(x.qty*x.price)}</div></div>`).join('')+'</div>';});
+    if(!R.items.length)h='<p class="empty">Додайте кімнати, колектор, стояк і прилади, і тут з\'явиться список матеріалів.</p>';
+    el.innerHTML=h+`<div class="total"><span>Матеріали за прайсом</span><b id="matTot">${money(R.total)}</b></div>
+      ${R.errs?`<p class="note" style="color:var(--err)">Є ${R.errs} помилк${R.errs===1?'а':'и'} за нормами. Перевірте вкладку «Норми» перед замовленням.</p>`:''}
+      <div class="actions"><button class="btn lg" id="goEst">Кошторис клієнту</button><button class="btn primary lg" id="goOrd" ${R.items.length?'':'disabled'}>Замовити</button></div>
+      <p class="note">Кількість можна виправити вручну: змінене поле підсвічується, ↺ повертає розрахунок.</p>`;
+    el.onchange=e=>{const t=e.target;if(!t.dataset.key)return;const v=parseFloat(t.value);if(isNaN(v)||v===+t.dataset.auto)delete P.ov[t.dataset.key];else P.ov[t.dataset.key]=Math.max(0,v);el.dataset.v='';update();};
+    el.onclick=e=>{const k=e.target.dataset&&e.target.dataset.reset;if(k){delete P.ov[k];el.dataset.v='';update();}};
+    $('goEst').onclick=()=>{DB.view='estimate';render();};$('goOrd').onclick=()=>openOrder(P);
+    return;}
+  el.onchange=null;el.onclick=null;el.dataset.v=ED.tab;
+  if(ED.tab==='chk'){const ord={err:0,warn:1,ok:2,info:3},sym={err:'!',warn:'!',ok:'✓',info:'i'};
+    const list=[...R.checks].sort((a,b)=>ord[a.lvl]-ord[b.lvl]);const oks=R.checks.filter(c=>c.lvl==='ok').length;
+    el.innerHTML=`<div class="chk-sum"><span class="pill err"><span class="dot"></span>${R.errs} помилок</span><span class="pill warn"><span class="dot"></span>${R.warns} попереджень</span><span class="pill ok"><span class="dot"></span>${oks} виконано</span></div>
+    ${list.length?list.map((c,i)=>`<div class="ck ${c.lvl}"><i>${sym[c.lvl]}</i><b>${esc(c.t)}</b><p>${esc(c.d)}</p>${c.ref?`<span class="ref">${esc(c.ref)}</span>`:''}${c.go?`<button class="btn sm go" data-go="${i}">${c.go.add?'Додати':c.go.tab?'Відкрити параметри':'Показати на плані'}</button>`:''}</div>`).join(''):'<p class="empty">Додайте прилади, щоб перевірити проєкт.</p>'}
+    <p class="note">Розрахунок тепла орієнтовний і не замінює проєкт. Ухили, тиск, ізоляція і вузол вводу перевіряються за ДБН В.2.5-64:2012; тепла підлога за ДСТУ EN 1264.</p>`;
+    el.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>{const g=list[+b.dataset.go].go;if(g.fi!=null)ED.fi=g.fi;
+      if(g.tab){ED.tab=g.tab;renderSide();return;}if(g.add){addThing(g.add);return;}
+      ED.sel=g.k==='col'||g.k==='ris'?{k:g.k}:{k:g.k,id:g.id};renderInspector();update();$('plan').scrollIntoView({behavior:'smooth',block:'center'});});
+    return;}
+  // settings
+  const S=P.set;const opt=(v,cur,t)=>`<option value="${v}" ${String(cur)===String(v)?'selected':''}>${t}</option>`;
+  el.innerHTML=`<div class="sec-h" style="margin-top:0">Клієнт</div><div class="setgrid">
+    <label class="fld wide">Ім'я клієнта<input class="inp" id="c-name" value="${esc(P.client.name)}"></label>
+    <label class="fld">Телефон<input class="inp" id="c-phone" value="${esc(P.client.phone)}"></label>
+    <label class="fld">Адреса<input class="inp" id="c-addr" value="${esc(P.client.addr)}"></label></div>
+  <div class="sec-h">Об'єкт</div><div class="setgrid">
+    <label class="fld">Тип<select data-s="type">${opt('flat',S.type,'Квартира')}${opt('house',S.type,'Приватний будинок')}</select></label>
+    <label class="fld">Будівля<select data-s="build">${Object.entries(BUILD).map(([k,v])=>opt(k,S.build,v.n)).join('')}</select></label>
+    <label class="fld">Висота стелі, м<input class="inp" type="number" step="0.05" data-s="ceil" value="${S.ceil}"></label>
+    <label class="fld">Зовнішня t° розрах., °C<input class="inp" type="number" step="1" data-s="tout" value="${S.tout}"></label>
+    <label class="fld">Поле плану<select id="s-size">${[[10,7],[11,9],[14,10],[20,14]].map(([w,h])=>opt(w+'x'+h,P.size.join('x'),w+' × '+h+' м')).join('')}</select></label></div>
+  <div class="sec-h">Вода і каналізація</div><div class="setgrid">
+    <label class="fld">Труби<select data-s="sys">${opt('ppr',S.sys,'PPR, пайка')}${opt('mp',S.sys,'Металопластик, прес')}</select></label>
+    <label class="fld">Гаряча вода<select data-s="dhw">${opt('combi',S.dhw,'Двоконтурний котел')}${opt('heater',S.dhw,'Бойлер')}${opt('central',S.dhw,'Централізована')}</select></label>
+    <label class="fld">Тиск на вводі, бар<input class="inp" type="number" step="0.1" min="0" data-s="pressure" value="${S.pressure}"></label>
+    <label class="chk" style="align-self:end;padding-bottom:6px"><input type="checkbox" data-s="meter" ${S.meter?'checked':''}> Лічильник на вводі</label>
+    <label class="fld">Запас на трубу<select data-s="reserve">${[5,10,15].map(v=>opt(v,S.reserve,v+' %')).join('')}</select></label></div>
+  <div class="sec-h">Опалення</div><div class="setgrid">
+    <label class="fld">Джерело тепла<select data-s="heatSrc">${opt('boiler',S.heatSrc,'Власний котел')}${opt('central',S.heatSrc,'Центральне')}${opt('none',S.heatSrc,'Без опалення')}</select></label>
+    <label class="fld">Труби опалення<select data-s="heat">${opt('mp',S.heat,'PEX-AL-PEX 16, колекторна')}${opt('ppr',S.heat,'PPR 20, армована')}</select></label>
+    <label class="fld">Радіатори<select data-s="rad">${opt('bimetal',S.rad,'Біметалеві секційні')}${opt('panel',S.rad,'Сталеві панельні 22')}</select></label>
+    <label class="fld">Контур ТП, макс.<select data-s="maxLoop">${opt(80,S.maxLoop,'80 м (рекоменд.)')}${opt(100,S.maxLoop,'100 м')}</select></label></div>
+  <div class="sec-h">Поверхи</div>
+  ${P.floors.map((f,i)=>`<div class="setgrid" style="margin-bottom:6px"><label class="fld">Назва<input class="inp" data-fn="${i}" value="${esc(f.name)}"></label>
+    <label class="fld">Висота поверху, м<span style="display:flex;gap:6px"><input class="inp" type="number" step="0.05" data-fh="${i}" value="${f.h}" style="width:90px">${P.floors.length>1?`<button class="btn sm danger" data-fdel="${i}">Видалити</button>`:''}</span></label></div>`).join('')}`;
+  const num=['ceil','tout','pressure','reserve','maxLoop'];
+  el.querySelectorAll('[data-s]').forEach(i=>i.onchange=()=>{const k=i.dataset.s;let v=i.type==='checkbox'?i.checked:i.value;if(num.includes(k))v=parseFloat(v)||0;
+    if(k==='sys'||k==='heat'){P.ov={};toast('Ручні правки кількостей скинуто: змінилась система труб');}S[k]=v;update();});
+  ['name','phone','addr'].forEach(k=>$('c-'+k).oninput=e=>{P.client[k]=e.target.value;touch(P);});
+  $('s-size').onchange=e=>{const [w,h]=e.target.value.split('x').map(Number);
+    const fits=P.floors.every(F=>F.rooms.every(r=>r.x+r.w<=w+1e-6&&r.y+r.h<=h+1e-6)&&F.fix.every(f=>f.x<=w&&f.y<=h));
+    if(!fits){e.target.value=P.size.join('x');toast(`План не вміщається в ${w}×${h} м. Спершу пересуньте кімнати.`);return;}P.size=[w,h];update();};
+  el.querySelectorAll('[data-fn]').forEach(i=>i.oninput=()=>{P.floors[+i.dataset.fn].name=i.value||'Поверх';renderFloors();touch(P);});
+  el.querySelectorAll('[data-fh]').forEach(i=>i.onchange=()=>{P.floors[+i.dataset.fh].h=Math.max(2,parseFloat(i.value)||2.8);update();});
+  el.querySelectorAll('[data-fdel]').forEach(b=>b.onclick=()=>{const i=+b.dataset.fdel;b.outerHTML=`<span class="confirm">Видалити поверх? <button class="btn sm danger" id="fyes">Так</button></span>`;
+    $('fyes').onclick=()=>{P.floors.splice(i,1);ED.fi=0;ED.sel=null;renderInspector();update();};});
+}
+function refreshMatTotals(){const R=ED.R;if($('matTot'))$('matTot').textContent=money(R.total);}
+
+/* ---------- pointer ---------- */
+function toM(e){const svg=$('plan');const p=svg.createSVGPoint();p.x=e.clientX;p.y=e.clientY;const q=p.matrixTransform(svg.getScreenCTM().inverse());return{x:(q.x-M)/SC,y:(q.y-M)/SC};}
+function normDraft(){const d=ED.draft;if(!d)return null;const P=curP();const PW=P.size[0],PH=P.size[1];
+  const x=clamp(snap(Math.min(d.x0,d.x1)),0,PW),y=clamp(snap(Math.min(d.y0,d.y1)),0,PH),x2=clamp(snap(Math.max(d.x0,d.x1)),0,PW),y2=clamp(snap(Math.max(d.y0,d.y1)),0,PH);return{x,y,w:x2-x,h:y2-y};}
+function bindPlan(){const svg=$('plan');
+  svg.addEventListener('pointerdown',e=>{const P=curP(),F=F_();const t=e.target.closest('[data-k]');const p=toM(e);
+    if(!t){ED.draft={x0:p.x,y0:p.y,x1:p.x,y1:p.y,moved:false};svg.setPointerCapture(e.pointerId);e.preventDefault();return;}
+    const k=t.dataset.k,id=t.dataset.id;let o;
+    if(k==='room'||k==='rs')o=F.rooms.find(x=>x.id===id);else if(k==='fix')o=F.fix.find(x=>x.id===id);else if(k==='col')o=F.col;else if(k==='ris')o=F.ris;else if(k==='under')o=F.under;
+    if(!o)return;
+    const D={k,o,sx:p.x,sy:p.y,ox:o.x,oy:o.y,ow:o.w,oh:o.h,moved:false};
+    if(k==='room'){D.kids=F.fix.filter(f=>inRect(f,o)).map(f=>({f,x:f.x,y:f.y}));['col','ris'].forEach(n=>{if(F[n]&&inRect(F[n],o))D.kids.push({f:F[n],x:F[n].x,y:F[n].y});});}
+    ED.drag=D;
+    if(k!=='under'){const nk=k==='rs'?'room':k;if(!ED.sel||ED.sel.k!==nk||ED.sel.id!==id){ED.sel={k:nk,id};renderInspector();}}
+    svg.setPointerCapture(e.pointerId);renderPlan(svg,P,F,ED.R,true,'hp');e.preventDefault();});
+  svg.addEventListener('pointermove',e=>{const P=curP(),F=F_();
+    if(ED.draft){const p=toM(e);const d=ED.draft;d.x1=p.x;d.y1=p.y;if(Math.abs(p.x-d.x0)+Math.abs(p.y-d.y0)>.25)d.moved=true;if(d.moved)renderPlan(svg,P,F,ED.R,true,'hp');return;}
+    const D=ED.drag;if(!D)return;const p=toM(e),dx=p.x-D.sx,dy=p.y-D.sy,o=D.o;if(Math.abs(dx)+Math.abs(dy)>.02)D.moved=true;const PW=P.size[0],PH=P.size[1];
+    if(D.k==='rs'){o.w=clamp(snap(D.ow+dx),.8,PW-o.x);o.h=clamp(snap(D.oh+dy),.8,PH-o.y);}
+    else if(D.k==='room'){o.x=clamp(snap(D.ox+dx),0,PW-o.w);o.y=clamp(snap(D.oy+dy),0,PH-o.h);D.kids.forEach(c=>{c.f.x=c.x+(o.x-D.ox);c.f.y=c.y+(o.y-D.oy);});}
+    else if(D.k==='under'){o.x=Math.round((D.ox+dx)*20)/20;o.y=Math.round((D.oy+dy)*20)/20;}
+    else{o.x=clamp(snap(D.ox+dx),.05,PW-.05);o.y=clamp(snap(D.oy+dy),.05,PH-.05);}
+    ED.R=calc(P);renderPlan(svg,P,F,ED.R,true,'hp');});
+  const end=()=>{const P=curP(),F=F_();
+    if(ED.draft){const d=normDraft(),moved=ED.draft.moved;ED.draft=null;
+      if(moved&&d.w>=.8&&d.h>=.8){if(F.rooms.some(r=>overlaps(d,r)))toast('Кімнати не можуть перекриватися');
+        else{const r=mkRoom(nextRoomName(F),d.x,d.y,d.w,d.h);if(/ванн|санвуз/i.test(r.name))r.step=10;F.rooms.push(r);ED.sel={k:'room',id:r.id};}}
+      else if(moved)toast('Кімната має бути щонайменше 0,8 × 0,8 м');
+      else ED.sel=null;
+      renderInspector();update();return;}
+    const D=ED.drag;if(!D)return;ED.drag=null;
+    if((D.k==='room'||D.k==='rs')&&F.rooms.some(r=>r!==D.o&&overlaps(r,D.o))){D.o.x=D.ox;D.o.y=D.oy;D.o.w=D.ow;D.o.h=D.oh;if(D.kids)D.kids.forEach(c=>{c.f.x=c.x;c.f.y=c.y;});toast('Кімнати не можуть перекриватися');}
+    if(D.k==='room'||D.k==='rs')renderInspector();update();};
+  svg.addEventListener('pointerup',end);svg.addEventListener('pointercancel',end);
+}
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'&&!$('ov').hidden){closeModal();return;}
+  if(DB.view!=='editor'||!ED.sel||!$('ov').hidden)return;if(/INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName))return;
+  if(e.key==='Delete'||e.key==='Backspace'){const F=F_();
+    if(ED.sel.k==='fix')F.fix=F.fix.filter(x=>x.id!==ED.sel.id);else if(ED.sel.k==='col')F.col=null;else if(ED.sel.k==='ris')F.ris=null;else return;
+    ED.sel=null;renderInspector();update();e.preventDefault();}
+});
+
+/* ================= shell ================= */
+const VIEWS_M=[['projects','Об\'єкти'],['editor','Редактор'],['estimate','Кошторис'],['orders','Мої замовлення'],['catalog','Каталог'],['profile','Профіль']];
+const VIEWS_A=[['dash','Огляд'],['aorders','Замовлення'],['masters','Майстри'],['catalog','Каталог і прайс'],['brand','Бренд і магазини']];
+const STATUS={new:['Нове','acc'],pick:['Збирається','warn'],ready:['Готове до видачі','ok'],done:['Видано',''],cancel:['Скасовано','err']};
+const PSTATUS={draft:['Чернетка',''],sent:['Кошторис надіслано','acc'],ordered:['Замовлено','ok'],done:['Виконано','']};
+
+function applyBrand(){const b=DB.brand;const root=document.documentElement;
+  if(b.color){root.style.setProperty('--accent',b.color);
+    const c=b.color.replace('#','');const n=parseInt(c.length===3?c.split('').map(x=>x+x).join(''):c,16);const L=(.299*(n>>16&255)+.587*(n>>8&255)+.114*(n&255))/255;
+    root.style.setProperty('--accent-ink',L>.6?'#1A1206':'#FFFFFF');root.style.setProperty('--accent-soft',`color-mix(in srgb, ${b.color} 18%, var(--surface))`);}
+  else ['--accent','--accent-ink','--accent-soft'].forEach(v=>root.style.removeProperty(v));
+  document.title='Розводка · '+b.name;}
+function logoHtml(){const b=DB.brand;return `<div class="logo">${b.logo?`<img src="${b.logo}" alt="${esc(b.name)}">`:esc(b.short||b.name.slice(0,2))}</div>`;}
+function renderBar(){const views=DB.role==='admin'?VIEWS_A:VIEWS_M;const newOrders=DB.role==='admin'?allOrders().filter(o=>o.status==='new').length:0;
+  $('bar').innerHTML=`<div class="brand">${logoHtml()}<div class="brand-t"><b>Розводка</b><span>${esc(DB.brand.name)} · ${DB.role==='admin'?'кабінет мережі':'для майстрів'}</span></div></div>
+  <nav class="nav" aria-label="Розділи">${views.map(([v,t])=>`<button class="nv" data-v="${v}" ${DB.view===v?'aria-current="page"':''}>${t}${v==='aorders'&&newOrders?`<span class="cnt">${newOrders}</span>`:''}</button>`).join('')}</nav>
+  <div class="role" role="group" aria-label="Режим"><button data-role="master" aria-pressed="${DB.role==='master'}">Майстер</button><button data-role="admin" aria-pressed="${DB.role==='admin'}">Мережа</button></div>`;
+  $('bar').querySelectorAll('[data-v]').forEach(b=>b.onclick=()=>{if(b.dataset.v==='editor'&&!curP()){toast('Спершу відкрийте або створіть об\'єкт');DB.view='projects';}else DB.view=b.dataset.v;render();});
+  $('bar').querySelectorAll('[data-role]').forEach(b=>b.onclick=()=>{DB.role=b.dataset.role;DB.view=DB.role==='admin'?'dash':'projects';render();});
+}
+function render(){applyBrand();
+  const valid=(DB.role==='admin'?VIEWS_A:VIEWS_M).some(([v])=>v===DB.view);if(!valid)DB.view=DB.role==='admin'?'dash':'projects';
+  if((DB.view==='editor'||DB.view==='estimate')&&!curP())DB.view='projects';
+  renderBar();const root=$('view');root.innerHTML='';
+  ({projects:viewProjects,editor:viewEditor,estimate:viewEstimate,orders:viewOrders,catalog:viewCatalog,profile:viewProfile,dash:viewDash,aorders:viewAOrders,masters:viewMasters,brand:viewBrand}[DB.view])(root);
+  save();window.scrollTo(0,0);
+}
+function openModal(html){$('modal').innerHTML=html;$('ov').hidden=false;const f=$('modal').querySelector('input,select,button');if(f)f.focus();}
+function closeModal(){$('ov').hidden=true;$('modal').innerHTML='';}
+
+/* ================= projects ================= */
+function projTotal(P){if(P._total==null){try{P._total=calc(P).total}catch(e){P._total=0}}return P._total;}
+function viewProjects(root){
+  const ps=[...DB.projects].sort((a,b)=>b.updated-a.updated);
+  root.innerHTML=`<div class="vh"><h1 class="vt">Об'єкти</h1><div class="acts"><button class="btn primary" id="np">+ Новий об'єкт з нуля</button></div></div>
+  ${ps.length?'':`<div class="start"><div class="panel hero"><h2>Розрахунок сантехніки за 10 хвилин</h2><p class="hint">Намалюйте план, розставте прилади, а Розводка порахує матеріали, перевірить ухили, тиск і теплу підлогу за нормами, складе кошторис для клієнта й надішле замовлення в магазин.</p>
+    <ol><li>Кімнати: малюйте пальцем, вставляйте шаблони або обводьте фото плану</li><li>Колектор, стояк і прилади: траси прокладаються самі</li><li>Норми: помилки видно одразу, з порадою, як виправити</li><li>Кошторис у PDF і замовлення зі знижкою майстра</li></ol></div>
+    <div class="panel hero"><h2>Спробуйте на прикладі</h2><p class="hint">Готові об'єкти, щоб побачити все за хвилину.</p><div style="display:flex;flex-direction:column;gap:8px;margin-top:12px"><button class="btn lg" data-demo="flat">Квартира з котлом і теплою підлогою</button><button class="btn lg" data-demo="house">Будинок на 2 поверхи з бойлером</button></div></div></div>`}
+  <div class="pgrid">${ps.map(P=>{const [st,cl]=PSTATUS[P.status]||PSTATUS.draft;const n=P.floors.reduce((s,F)=>s+F.fix.length,0);
+    return `<div class="panel pcard"><div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start"><h3>${esc(P.name)}</h3><span class="pill ${cl}">${st}</span></div>
+    <div class="meta">${esc(P.client.name||'Клієнт не вказаний')}${P.client.addr?' · '+esc(P.client.addr):''}</div>
+    <div class="meta">${P.floors.length>1?P.floors.length+' поверхи · ':''}${P.floors.reduce((s,F)=>s+F.rooms.length,0)} прим. · ${n} прил. · змінено ${fmtDate(P.updated)}</div>
+    <div class="sum"><span class="muted">Матеріали</span><b>${money(projTotal(P))}</b></div>
+    <div class="acts" data-pid="${P.id}"><button class="btn primary sm" data-a="open">Відкрити</button><button class="btn sm" data-a="est">Кошторис</button><button class="btn sm" data-a="dup">Копія</button><button class="btn sm danger" data-a="del">Видалити</button></div></div>`;}).join('')}
+    ${ps.length?`<div class="panel pcard new"><b>Приклади</b><button class="btn" data-demo="flat">+ Квартира</button><button class="btn" data-demo="house">+ Будинок на 2 поверхи</button></div>`:''}</div>`;
+  const open=(P,v)=>{DB.cur=P.id;ED.fi=0;ED.sel=null;ED.tab='mat';DB.view=v;render();};
+  $('np').onclick=()=>{const P=newProject('empty');DB.projects.push(P);open(P,'editor');};
+  root.querySelectorAll('[data-demo]').forEach(b=>b.onclick=()=>{const P=newProject(b.dataset.demo);DB.projects.push(P);open(P,'editor');});
+  root.querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>{const P=DB.projects.find(p=>p.id===b.parentElement.dataset.pid);const a=b.dataset.a;
+    if(a==='open')open(P,'editor');if(a==='est')open(P,'estimate');
+    if(a==='dup'){const C=JSON.parse(JSON.stringify(P));C.id='p'+uid();C.name=P.name+' (копія)';C.status='draft';C.updated=Date.now();C.created=today();DB.projects.push(C);render();}
+    if(a==='del'){b.outerHTML=`<span class="confirm">Видалити? <button class="btn sm danger" data-y>Так</button></span>`;root.querySelector('[data-y]').onclick=()=>{DB.projects=DB.projects.filter(p=>p!==P);if(DB.cur===P.id)DB.cur=null;render();};}});
+}
+
+/* ================= estimate ================= */
+function works(P,R){const w=DB.profile.w,st=R.st;const L=[];
+  const add=(n,q,u,p)=>{if(q>0)L.push({n,q,u,p});};
+  add('Вузол вводу: кран, фільтр, лічильник, зворотний клапан',st.inputs,'шт',w.input);
+  add('Монтаж точки водопостачання і каналізації',st.points,'точка',w.point);
+  add('Монтаж колекторного вузла водопостачання',st.cols,'шт',w.col);
+  add('Монтаж колектора опалення',st.hcols,'шт',w.col);
+  add('Каналізаційний стояк з ревізією',st.riserFl,'поверх',w.riser);
+  add('Монтаж і підключення котла / бойлера',st.src,'шт',w.src);
+  add('Монтаж радіатора з кранами',st.rads,'шт',w.rad);
+  add('Монтаж рушникосушки',st.rails,'шт',w.rail);
+  add('Тепла підлога: утеплювач, плівка, укладання труби, опресування',Math.round(st.ufh*10)/10,'м²',w.ufh);
+  return L;}
+function viewEstimate(root){const P=curP();const R=calc(P);const E=P.est;const pr=DB.profile;
+  const W=works(P,R);const mk=1+E.markup/100;
+  const mat=R.items.reduce((s,x)=>s+x.qty*x.price,0)*mk,wk=W.reduce((s,x)=>s+x.q*x.p,0),tot=mat+wk;
+  const no='К-'+P.id.slice(1,6).toUpperCase();
+  root.innerHTML=`<div class="vh noprint"><h1 class="vt">Кошторис клієнту</h1><div class="acts"><button class="btn" id="back">← До плану</button></div></div>
+  <div class="est-l"><div class="panel est-ctrl noprint">
+    <label class="fld">Націнка на матеріали, %<input class="inp" type="number" id="e-mk" min="0" max="100" value="${E.markup}"></label>
+    <label class="chk"><input type="checkbox" id="e-det" ${E.detail?'checked':''}> Показати матеріали по позиціях</label>
+    <label class="fld">Дійсний, днів<input class="inp" type="number" id="e-val" min="1" value="${E.valid}"></label>
+    <label class="fld">Передоплата на матеріали, %<input class="inp" type="number" id="e-pre" min="0" max="100" value="${E.prepay}"></label>
+    <label class="fld">Примітка для клієнта<textarea id="e-note" rows="3">${esc(E.note)}</textarea></label>
+    <p class="hint">Ціни робіт беруться з профілю майстра.</p>
+    <div style="border-top:1px solid var(--line);padding-top:10px;display:flex;flex-direction:column;gap:8px">
+      <div class="lbl">Ваш заробіток з об'єкта</div><div style="font:500 22px var(--f-display)" class="num">${money(wk+mat-mat/mk)}</div>
+      <div class="hint">роботи ${money(wk)} + націнка ${money(mat-mat/mk)}</div></div>
+    ${IN_FRAME?`<p class="hint">Збереження в PDF і Excel працює у файловій версії додатку.</p>`:`<button class="btn primary lg" id="e-pdf">Зберегти PDF / друк</button><button class="btn lg" id="e-xls">Матеріали в Excel</button>`}
+    <button class="btn lg" id="e-txt">Текст для Viber / Telegram</button>
+    <button class="btn lg" id="e-sent">${P.status==='draft'?'Позначити: надіслано клієнту':'Статус: '+PSTATUS[P.status][0]}</button>
+  </div>
+  <article class="doc" id="doc">
+    <div class="dh"><div><h2>Кошторис № ${no}</h2><div class="muted">на сантехнічні роботи та матеріали · ${fmtDate(Date.now())}</div></div>
+      <div class="who"><b>${esc(pr.company||pr.name)}</b><br>${esc(pr.name)}<br>${esc(pr.phone)}</div></div>
+    <div class="meta"><div><span>Замовник</span>${esc(P.client.name||'—')}</div><div><span>Телефон</span>${esc(P.client.phone||'—')}</div><div><span>Об'єкт</span>${esc(P.name)}</div><div><span>Адреса</span>${esc(P.client.addr||'—')}</div></div>
+    <div class="plans">${P.floors.map((F,i)=>`<figure><figcaption>${P.floors.length>1?esc(F.name)+' · ':''}план розводки</figcaption><svg id="ep${i}" class="plan"></svg></figure>`).join('')}</div>
+    <h3>Роботи</h3><table><thead><tr><th>Найменування</th><th class="r">К-сть</th><th class="r">Ціна</th><th class="r">Сума</th></tr></thead><tbody>
+      ${W.map(x=>`<tr><td>${esc(x.n)}</td><td class="r">${f1(x.q)} ${x.u}</td><td class="r">${money(x.p)}</td><td class="r">${money(x.q*x.p)}</td></tr>`).join('')}
+      <tr class="gh"><td colspan="3">Разом роботи</td><td class="r">${money(wk)}</td></tr></tbody></table>
+    <h3>Матеріали</h3><table><thead><tr><th>Найменування</th><th class="r">К-сть</th>${E.detail?'<th class="r">Ціна</th>':''}<th class="r">Сума</th></tr></thead><tbody>
+      ${E.detail?Object.keys(G).map(g=>{const it=R.items.filter(x=>x.g===g);if(!it.length)return'';return `<tr class="gh"><td colspan="4">${G[g]}</td></tr>`+it.map(x=>`<tr><td>${esc(x.name)}</td><td class="r">${x.qty} ${x.unit}</td><td class="r">${money(x.price*mk)}</td><td class="r">${money(x.qty*x.price*mk)}</td></tr>`).join('');}).join('')
+      :Object.keys(G).map(g=>{const it=R.items.filter(x=>x.g===g);if(!it.length)return'';return `<tr><td>${G[g]}: ${it.length} поз.</td><td class="r">компл.</td><td class="r">${money(it.reduce((s,x)=>s+x.qty*x.price,0)*mk)}</td></tr>`;}).join('')}
+      <tr class="gh"><td colspan="${E.detail?3:2}">Разом матеріали</td><td class="r">${money(mat)}</td></tr></tbody></table>
+    <div class="tot"><span>Роботи</span><span class="r">${money(wk)}</span><span>Матеріали</span><span class="r">${money(mat)}</span><span><b>Разом</b></span><span class="r big">${money(tot)}</span>
+      ${E.prepay?`<span class="muted">Передоплата на матеріали ${E.prepay} %</span><span class="r muted">${money(mat*E.prepay/100)}</span>`:''}</div>
+    <div class="fine">${E.note?`<div>${esc(E.note)}</div>`:''}
+      <div>Монтаж виконується відповідно до ДБН В.2.5-64:2012 «Внутрішній водопровід та каналізація»${R.st.ufh?' та ДСТУ EN 1264 (тепла підлога)':''}. Перед закриттям стін системи опресовуються.</div>
+      <div>Кошторис дійсний ${E.valid} днів. Кількість матеріалів може уточнюватися після огляду об'єкта.</div>
+      ${R.errs?`<div style="color:var(--err)">Увага: у проєкті є ${R.errs} невирішених зауважень за нормами.</div>`:''}</div>
+    <div class="sign"><div>Виконавець</div><div>Замовник</div></div>
+    <div class="powered">Розраховано в «Розводці». Матеріали: ${esc(DB.brand.name)}</div>
+  </article></div>`;
+  P.floors.forEach((F,i)=>renderPlan($('ep'+i),P,F,R,false,'pe'+i));
+  $('back').onclick=()=>{DB.view='editor';render();};
+  const upd=(k,v)=>{E[k]=v;touch(P);viewEstimate(root);};
+  $('e-mk').onchange=e=>upd('markup',Math.max(0,+e.target.value||0));
+  $('e-det').onchange=e=>upd('detail',e.target.checked);
+  $('e-val').onchange=e=>upd('valid',Math.max(1,+e.target.value||14));
+  $('e-pre').onchange=e=>upd('prepay',clamp(+e.target.value||0,0,100));
+  $('e-note').onchange=e=>upd('note',e.target.value);
+  if($('e-pdf'))$('e-pdf').onclick=()=>window.print();
+  if($('e-xls'))$('e-xls').onclick=()=>exportRows(`Кошторис ${no}`,[['Артикул','Найменування','К-сть','Од.','Ціна','Сума'],...R.items.map(x=>[x.art,x.name,x.qty,x.unit,Math.round(x.price*mk),Math.round(x.qty*x.price*mk)]),[],['','Роботи','','','',Math.round(wk)],['','Разом','','','',Math.round(tot)]],`koshtorys-${no}`);
+  $('e-txt').onclick=()=>{const txt=`Кошторис № ${no}\n${P.name}\n\nРоботи: ${money(wk)}\nМатеріали: ${money(mat)}\nРазом: ${money(tot)}\n\n${W.map(x=>`• ${x.n}: ${f1(x.q)} ${x.u}`).join('\n')}\n\n${pr.name}, ${pr.phone}`;
+    openModal(`<h2>Текст для клієнта</h2><pre class="msg" id="ttxt">${esc(txt)}</pre><div class="mfoot"><a class="btn" target="_blank" rel="noopener" href="https://t.me/share/url?url=${encodeURIComponent(P.name)}&text=${encodeURIComponent(txt)}">Відкрити в Telegram</a><button class="btn" id="tcopy">Скопіювати</button><button class="btn primary" id="tok">Готово</button></div>`);
+    $('tcopy').onclick=()=>copyText(txt,$('tcopy'),$('ttxt'));$('tok').onclick=closeModal;};
+  $('e-sent').onclick=()=>{if(P.status==='draft'){P.status='sent';touch(P);toast('Позначено: кошторис надіслано');viewEstimate(root);}};
+}
+function exportRows(title,rows,fname){
+  try{if(window.XLSX){const ws=XLSX.utils.aoa_to_sheet(rows);ws['!cols']=rows[0].map((_,i)=>({wch:i===1?60:14}));const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,title.slice(0,30));XLSX.writeFile(wb,fname+'.xlsx');return;}}catch(e){}
+  const csv='﻿'+rows.map(r=>r.map(c=>`"${String(c==null?'':c).replace(/"/g,'""')}"`).join(';')).join('\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download=fname+'.csv';document.body.appendChild(a);a.click();a.remove();
+}
+
+/* ================= orders ================= */
+function avail(key,store){let h=0;const s=key+store;for(let i=0;i<s.length;i++)h=(h*31+s.charCodeAt(i))|0;return Math.abs(h)%9!==0;}
+function myStats(){const own=DB.orders.filter(o=>o.status!=='cancel');const turn=62000+own.reduce((s,o)=>s+o.total,0);
+  const lvl=turn>=150000?{n:'Золотий',d:10}:turn>=50000?{n:'Срібний',d:7}:{n:'Базовий',d:5};
+  const next=turn>=150000?null:turn>=50000?{n:'Золотий',at:150000}:{n:'Срібний',at:50000};
+  return {turn,lvl,next,bonus:1240+own.reduce((s,o)=>s+o.bonus,0)};}
+function openOrder(P){const R=calc(P);const items=R.items.filter(x=>x.qty>0);if(!items.length)return;
+  const ms=myStats();const S={store:DB.stores[1]?DB.stores[1].id:DB.stores[0].id,mode:'pickup',date:(()=>{const d=new Date();d.setDate(d.getDate()+1);return d.toISOString().slice(0,10)})(),note:''};
+  const draw=()=>{const st=DB.stores.find(s=>s.id===S.store)||DB.stores[0];const sub=items.reduce((s,x)=>s+x.qty*x.price,0),disc=sub*ms.lvl.d/100,tot=sub-disc;const miss=items.filter(x=>!avail(x.key,st.id)).length;
+    openModal(`<h2>Замовлення в «${esc(DB.brand.name)}»</h2><p class="hint">${esc(P.name)} · ${items.length} позицій · рівень «${ms.lvl.n}», знижка ${ms.lvl.d} %</p>
+    <div class="mrow"><label class="fld">Магазин<select id="o-store">${DB.stores.map(s=>`<option value="${s.id}" ${s.id===st.id?'selected':''}>${esc(s.name)}</option>`).join('')}</select></label>
+      <label class="fld">Отримання<select id="o-mode"><option value="pickup" ${S.mode==='pickup'?'selected':''}>Самовивіз</option><option value="obj" ${S.mode==='obj'?'selected':''}>Доставка на об'єкт</option></select></label>
+      <label class="fld">Дата<input class="inp" type="date" id="o-date" value="${S.date}" min="${today()}"></label></div>
+    <div class="ol">${items.map(x=>{const a=avail(x.key,st.id);return `<div><span>${esc(x.name)} · ${x.qty} ${x.unit}</span><span class="av ${a?'y':'n'}">${a?'є':'1–2 дні'}</span><span class="s">${money(x.qty*x.price)}</span></div>`}).join('')}</div>
+    <div class="sums"><span>За прайсом</span><span class="r">${money(sub)}</span><span>Знижка майстра ${ms.lvl.d} %</span><span class="r">−${money(disc)}</span><span>Бонуси на рахунок (2 %)</span><span class="r">+${money(tot*.02)}</span><span class="big">До сплати</span><span class="r big">${money(tot)}</span></div>
+    ${miss?`<p class="note">${miss} поз. немає в цій філії: менеджер довезе зі складу за 1–2 дні.</p>`:''}
+    <label class="fld" style="margin-top:10px">Коментар менеджеру<input class="inp" id="o-note" value="${esc(S.note)}" placeholder="Наприклад: зателефонувати перед доставкою"></label>
+    <p class="hint" id="o-msg" style="color:var(--err)"></p>
+    <div class="mfoot"><button class="btn" id="o-cancel">Скасувати</button><button class="btn primary" id="o-send">Надіслати замовлення</button></div>`);
+    $('o-store').onchange=e=>{S.store=e.target.value;draw();};$('o-mode').onchange=e=>{S.mode=e.target.value;};
+    $('o-date').onchange=e=>{S.date=e.target.value;};$('o-note').oninput=e=>{S.note=e.target.value;};$('o-cancel').onclick=closeModal;
+    $('o-send').onclick=()=>{if(!S.date||S.date<today()){$('o-msg').textContent='Виберіть дату не раніше сьогодні.';return;}
+      const id='СД-'+(++DB.seq);const o={id,pid:P.id,pname:P.name,master:DB.profile.name,store:st.id,mode:S.mode,date:S.date,note:S.note,created:Date.now(),
+        items:items.map(x=>({key:x.key,art:x.art,name:x.name,qty:x.qty,unit:x.unit,price:x.price})),sub,disc,total:tot,bonus:Math.round(tot*.02),status:'new',addr:P.client.addr};
+      DB.orders.unshift(o);P.status='ordered';touch(P);save(true);sentOrder(o);};
+  };draw();}
+function orderText(o){const st=DB.stores.find(s=>s.id===o.store)||{name:o.store};
+  return [`Замовлення ${o.id}`,`Майстер: ${o.master}, ${DB.profile.phone}`,`Об'єкт: ${o.pname}`,`Магазин: ${DB.brand.name}, ${st.name}`,`${o.mode==='pickup'?'Самовивіз':'Доставка: '+(o.addr||'адреса в майстра')}, ${fmtDate(o.date)}`,o.note?`Коментар: ${o.note}`:'','',
+    ...o.items.map((x,i)=>`${i+1}. ${x.art} ${x.name} — ${x.qty} ${x.unit}`),'',`До сплати зі знижкою: ${money(o.total)}`].filter((l,i)=>l!==''||i>5).join('\n');}
+function sentOrder(o){const txt=orderText(o);const mgr=(DB.brand.manager||'').replace(/^@/,'');
+  openModal(`<h2>Замовлення ${o.id} прийнято</h2><p><span style="color:var(--ok);font-weight:600">✓</span> Воно з'явилося в кабінеті мережі зі статусом «Нове». Статус змінюється в розділі «Мої замовлення». Щоб менеджер побачив його одразу, надішліть текст у Telegram.</p>
+  <pre class="msg" id="otxt">${esc(txt)}</pre>
+  <div class="mfoot"><a class="btn" target="_blank" rel="noopener" href="https://t.me/share/url?url=${encodeURIComponent(o.id)}&text=${encodeURIComponent(txt)}">Надіслати в Telegram</a>${mgr?`<span class="hint" style="align-self:center">менеджер: @${esc(mgr)}</span>`:''}<button class="btn" id="ocopy">Скопіювати</button><button class="btn primary" id="ook">До замовлень</button></div>`);
+  $('ocopy').onclick=()=>copyText(txt,$('ocopy'),$('otxt'));$('ook').onclick=()=>{closeModal();DB.view='orders';render();};}
+function viewOrders(root){const ms=myStats();
+  root.innerHTML=`<div class="vh"><h1 class="vt">Мої замовлення</h1></div>
+  <div class="kpis"><div class="panel kpi"><div class="lbl">Рівень майстра</div><div class="v">${ms.lvl.n}</div><div class="d">знижка ${ms.lvl.d} % на все</div></div>
+    <div class="panel kpi"><div class="lbl">Бонусний рахунок</div><div class="v">${money(ms.bonus)}</div><div class="d">2 % з кожного замовлення</div></div>
+    <div class="panel kpi"><div class="lbl">Покупки за 90 днів</div><div class="v">${money(ms.turn)}</div><div class="d">${ms.next?`до рівня «${ms.next.n}» ще ${money(ms.next.at-ms.turn)}`:'максимальний рівень'}</div></div></div>
+  <div class="panel"><div class="tbl-wrap"><table class="t"><thead><tr><th>№</th><th>Дата</th><th>Об'єкт</th><th>Магазин</th><th class="r">Сума</th><th>Статус</th><th></th></tr></thead><tbody>
+  ${DB.orders.length?DB.orders.map(o=>{const s=STATUS[o.status];return `<tr><td class="num">${o.id}</td><td>${fmtDate(o.created)}</td><td>${esc(o.pname)}</td><td>${esc((DB.stores.find(x=>x.id===o.store)||{}).name||'')}</td><td class="r num">${money(o.total)}</td><td><span class="pill ${s[1]}">${s[0]}</span></td><td><button class="btn sm" data-o="${o.id}">Текст</button></td></tr>`}).join(''):`<tr><td colspan="7" class="muted">Замовлень ще немає. Відкрийте об'єкт і натисніть «Замовити».</td></tr>`}
+  </tbody></table></div></div>
+  <p class="hint">Статуси змінює менеджер магазину в кабінеті мережі. Перемкніть режим «Мережа» вгорі, щоб побачити, як це виглядає з боку магазину.</p>`;
+  root.querySelectorAll('[data-o]').forEach(b=>b.onclick=()=>sentOrder(DB.orders.find(o=>o.id===b.dataset.o)));}
+
+/* ================= catalog ================= */
+let catQ='';
+function viewCatalog(root){
+  root.innerHTML=`<div class="vh"><h1 class="vt">${DB.role==='admin'?'Каталог і прайс мережі':'Каталог'}</h1><div class="acts">
+    ${DB.role==='admin'?`<button class="btn" id="cImp">Завантажити прайс (Excel, CSV)</button><input type="file" id="cFile" accept=".xlsx,.xls,.csv" hidden>${IN_FRAME?'':'<button class="btn" id="cExp">Шаблон прайсу в Excel</button>'}<button class="btn danger" id="cReset">Скинути ціни</button>`:''}</div></div>
+  ${DB.role==='admin'?`<p class="hint">Розрахунок підставляє товари з цього каталогу. Завантажте свій прайс: колонки «Артикул» і «Ціна» обов'язкові, «Назва» за бажанням. Позиції зіставляються за артикулом.</p>`:'<p class="hint">Ціни мережі без знижки. Вашу знижку видно під час замовлення.</p>'}
+  <p class="hint" id="cMsg"></p>
+  <input class="inp" id="cQ" type="search" placeholder="Пошук за назвою або артикулом" value="${esc(catQ)}" style="max-width:420px">
+  <div class="panel"><div class="tbl-wrap"><table class="t"><thead><tr><th>Артикул</th><th>Найменування</th><th>Група</th><th>Од.</th><th class="r">Ціна, ₴</th></tr></thead><tbody id="cBody"></tbody></table></div></div>`;
+  const body=()=>{const q=catQ.toLowerCase();$('cBody').innerHTML=ORDER.map(cat).filter(c=>!q||c.name.toLowerCase().includes(q)||c.art.toLowerCase().includes(q)).map(c=>`<tr><td class="num">${esc(c.art)}</td><td>${esc(c.name)}${DB.catOv[c.key]?' <span class="pill acc">прайс мережі</span>':''}</td><td class="muted">${G[c.g]}</td><td>${c.unit}</td><td class="r">${DB.role==='admin'?`<input class="inp num" type="number" min="0" step="1" data-ck="${c.key}" value="${c.price}" style="width:100px;text-align:right">`:`<span class="num">${money(c.price)}</span>`}</td></tr>`).join('');
+    $('cBody').querySelectorAll('[data-ck]').forEach(i=>i.onchange=()=>{const v=parseFloat(i.value);if(v>=0){DB.catOv[i.dataset.ck]={...(DB.catOv[i.dataset.ck]||{}),price:v};resetTotals();save();}});};
+  body();$('cQ').oninput=e=>{catQ=e.target.value;body();};
+  if(DB.role!=='admin')return;
+  $('cImp').onclick=()=>$('cFile').click();
+  $('cFile').onchange=e=>{const f=e.target.files[0];e.target.value='';if(f)importPrice(f);};
+  if($('cExp'))$('cExp').onclick=()=>exportRows('Прайс',[['Артикул','Назва','Од.','Ціна'],...ORDER.map(cat).map(c=>[c.art,c.name,c.unit,c.price])],'pryis-rozvodka');
+  $('cReset').onclick=()=>{$('cReset').outerHTML=`<span class="confirm">Повернути демо-ціни? <button class="btn danger" id="cy">Так</button></span>`;$('cy').onclick=()=>{DB.catOv={};resetTotals();render();};};
+}
+function resetTotals(){DB.projects.forEach(p=>p._total=null);}
+function importPrice(file){const msg=t=>{const m=$('cMsg');if(m){m.textContent=t;m.style.color='';}};
+  const handle=rows=>{if(!rows.length){msg('Файл порожній.');return;}
+    let hi=rows.findIndex(r=>r.some(c=>/арт|код|sku/i.test(String(c))));if(hi<0){msg('Не знайшов колонку «Артикул». Перший рядок має містити назви колонок.');return;}
+    const H=rows[hi].map(c=>String(c).toLowerCase());const ia=H.findIndex(c=>/арт|код|sku/.test(c)),ip=H.findIndex(c=>/ціна|цена|price/.test(c)),inn=H.findIndex(c=>/назв|наймен|name/.test(c));
+    if(ip<0){msg('Не знайшов колонку «Ціна».');return;}
+    const byArt={};ORDER.forEach(k=>{byArt[cat(k).art.toLowerCase()]=k;});let up=0,miss=0;
+    rows.slice(hi+1).forEach(r=>{const a=String(r[ia]||'').trim().toLowerCase();if(!a)return;const k=byArt[a];const p=parseFloat(String(r[ip]).replace(/\s/g,'').replace(',','.'));
+      if(k&&p>=0){DB.catOv[k]={...(DB.catOv[k]||{}),price:p,...(inn>=0&&r[inn]?{name:String(r[inn]).trim()}:{})};up++;}else miss++;});
+    resetTotals();save(true);render();const m=$('cMsg');if(m){m.textContent=`Оновлено ${up} позицій.${miss?` ${miss} рядків не знайдено в каталозі за артикулом.`:''}`;m.style.color='var(--ok)';}};
+  const rd=new FileReader();
+  if(/\.csv$/i.test(file.name)){rd.onload=()=>{const t=String(rd.result);const sep=(t.split('\n')[0].match(/;/g)||[]).length>=(t.split('\n')[0].match(/,/g)||[]).length?';':',';
+    handle(t.split(/\r?\n/).filter(Boolean).map(l=>l.split(sep).map(c=>c.replace(/^"|"$/g,'').replace(/""/g,'"'))));};rd.readAsText(file,'utf-8');}
+  else{if(!window.XLSX){msg('Для Excel потрібен інтернет (бібліотека не завантажилась). Збережіть прайс як CSV і спробуйте ще раз.');return;}
+    rd.onload=()=>{try{const wb=XLSX.read(new Uint8Array(rd.result),{type:'array'});handle(XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{header:1,defval:''}));}catch(e){msg('Не вдалося прочитати файл. Перевірте, що це .xlsx або .csv.');}};rd.readAsArrayBuffer(file);}
+}
+
+/* ================= profile ================= */
+function viewProfile(root){const p=DB.profile,w=p.w;
+  const WN={point:'Точка води/каналізації, ₴',col:'Колекторний вузол, ₴',input:'Вузол вводу, ₴',src:'Котел або бойлер, ₴',rad:'Радіатор, ₴',rail:'Рушникосушка, ₴',ufh:'Тепла підлога, ₴/м²',riser:'Стояк, ₴/поверх'};
+  root.innerHTML=`<div class="vh"><h1 class="vt">Профіль майстра</h1></div>
+  <div class="dgrid"><div class="panel" style="padding:16px"><div class="sec-h" style="margin-top:0">Дані для кошторису</div><div class="setgrid">
+    <label class="fld">Ім'я<input class="inp" data-p="name" value="${esc(p.name)}"></label><label class="fld">Телефон<input class="inp" data-p="phone" value="${esc(p.phone)}"></label>
+    <label class="fld">Назва (ФОП, бригада)<input class="inp" data-p="company" value="${esc(p.company)}"></label><label class="fld">Місто<input class="inp" data-p="city" value="${esc(p.city)}"></label></div>
+    <div class="sec-h">Мої ціни на роботи</div><div class="setgrid">${Object.keys(WN).map(k=>`<label class="fld">${WN[k]}<input class="inp" type="number" min="0" step="10" data-w="${k}" value="${w[k]}"></label>`).join('')}</div>
+    <div class="sec-h">Типові налаштування нових об'єктів</div><div class="setgrid">
+    <label class="fld">Труби води<select data-d="sys"><option value="ppr" ${p.sys==='ppr'?'selected':''}>PPR</option><option value="mp" ${p.sys==='mp'?'selected':''}>Металопластик</option></select></label>
+    <label class="fld">Труби опалення<select data-d="heat"><option value="mp" ${p.heat==='mp'?'selected':''}>PEX-AL-PEX 16</option><option value="ppr" ${p.heat==='ppr'?'selected':''}>PPR 20</option></select></label>
+    <label class="fld">Запас на трубу<select data-d="reserve">${[5,10,15].map(v=>`<option value="${v}" ${p.reserve==v?'selected':''}>${v} %</option>`).join('')}</select></label>
+    <label class="fld">Контур ТП<select data-d="maxLoop"><option value="80" ${p.maxLoop==80?'selected':''}>80 м</option><option value="100" ${p.maxLoop==100?'selected':''}>100 м</option></select></label></div></div>
+  <div class="panel" style="padding:16px"><div class="sec-h" style="margin-top:0">Мої шаблони кімнат</div>
+    ${DB.templates.length?DB.templates.map(t=>`<div class="it" style="grid-template-columns:minmax(0,1fr) auto"><div class="n">${esc(t.name)}<small>${f1(t.w)}×${f1(t.h)} м · ${t.fix.length} прил.${t.ufh?' · ТП':''}</small></div><button class="btn sm danger" data-td="${t.id}">Видалити</button></div>`).join(''):'<p class="hint">Виділіть кімнату в редакторі й натисніть «Зберегти як шаблон», щоб потім вставляти її в один дотик.</p>'}
+    <div class="sec-h">Дані в цьому браузері</div><p class="hint">Об'єкти й замовлення зберігаються на цьому пристрої. У робочій версії вони синхронізуються з акаунтом.</p>
+    <button class="btn danger" id="wipe" style="margin-top:8px">Стерти всі дані</button></div></div>`;
+  root.querySelectorAll('[data-p]').forEach(i=>i.oninput=()=>{p[i.dataset.p]=i.value;save();});
+  root.querySelectorAll('[data-w]').forEach(i=>i.onchange=()=>{w[i.dataset.w]=Math.max(0,+i.value||0);save();});
+  root.querySelectorAll('[data-d]').forEach(i=>i.onchange=()=>{p[i.dataset.d]=i.dataset.d==='reserve'||i.dataset.d==='maxLoop'?+i.value:i.value;save();});
+  root.querySelectorAll('[data-td]').forEach(b=>b.onclick=()=>{DB.templates=DB.templates.filter(t=>t.id!==b.dataset.td);render();});
+  $('wipe').onclick=()=>{$('wipe').outerHTML=`<span class="confirm">Стерти об'єкти, замовлення й налаштування? <button class="btn danger" id="wy">Так, стерти</button></span>`;
+    $('wy').onclick=()=>{try{localStorage.removeItem(LS_KEY)}catch(e){}DB=loadDB();render();};};
+}
+
+/* ================= network side ================= */
+const MASTERS=['Андрій Коваль','Богдан Мельник','Василь Гнатюк','Олег Лисий','Тарас Бойко','Ігор Савчук','Микола Ткач','Юрій Дячук','Степан Возняк','Роман Пелех','Віктор Гуменюк','Петро Остапчук'];
+const CITIES=['Львів','Пустомити','Стрий','Львів','Городок','Львів','Пустомити','Жидачів','Стрий','Львів','Миколаїв','Пустомити'];
+let DEMO=null;
+function demoOrders(){if(DEMO)return DEMO;const rnd=rng(20261023);const now=Date.now(),day=864e5;const out=[];const keys=ORDER.filter(k=>!/^b_tank|^b_boiler|^h_p22|^d_h/.test(k));
+  for(let i=0;i<86;i++){const mi=Math.floor(Math.pow(rnd(),1.6)*MASTERS.length);const ago=Math.floor(rnd()*56);const n=4+Math.floor(rnd()*10);const items=[];
+    for(let j=0;j<n;j++){const k=keys[Math.floor(rnd()*keys.length)];const c=cat(k);items.push({key:k,name:c.name,art:c.art,qty:1+Math.floor(rnd()*(c.price<100?40:c.price<600?8:2)),unit:c.unit,price:c.price});}
+    const sub=items.reduce((s,x)=>s+x.qty*x.price,0);const st=ago<1?'new':ago<2?'pick':ago<4?'ready':rnd()<.05?'cancel':'done';
+    out.push({id:'СД-'+(4100+i),demo:1,master:MASTERS[mi],store:DEF_STORES[Math.floor(rnd()*3)].id,created:now-ago*day-Math.floor(rnd()*day),items,sub,total:Math.round(sub*.93),status:st,pname:['Квартира','Будинок','Санвузол','Котельня'][Math.floor(rnd()*4)]+', '+CITIES[mi]});}
+  DEMO=out.sort((a,b)=>b.created-a.created);return DEMO;}
+function allOrders(){const d=demoOrders().map(o=>({...o,status:DB.aStatus[o.id]||o.status}));return [...DB.orders,...d].sort((a,b)=>b.created-a.created);}
+function viewDash(root){const os=allOrders().filter(o=>o.status!=='cancel');const now=Date.now(),day=864e5;
+  const last30=os.filter(o=>now-o.created<30*day),prev30=os.filter(o=>now-o.created>=30*day&&now-o.created<60*day);
+  const sum=a=>a.reduce((s,o)=>s+o.total,0);const t30=sum(last30),tp=sum(prev30);const avg=last30.length?t30/last30.length:0;
+  const act=new Set(last30.map(o=>o.master)).size;const calcs=DB.projects.length+214;const conv=Math.round(last30.length/(calcs*.35)*100);
+  const weeks=[];for(let w=7;w>=0;w--){const a=now-(w+1)*7*day,b=now-w*7*day;weeks.push({l:new Date(b).toLocaleDateString('uk-UA',{day:'numeric',month:'short'}),v:sum(os.filter(o=>o.created>=a&&o.created<b)),n:os.filter(o=>o.created>=a&&o.created<b).length});}
+  const byG={};last30.forEach(o=>o.items.forEach(x=>{const g=(CAT_BASE[x.key]||[])[4]||'w';byG[g]=(byG[g]||0)+x.qty*x.price;}));const gl=Object.entries(byG).sort((a,b)=>b[1]-a[1]);const gmax=gl.length?gl[0][1]:1;
+  const delta=tp?Math.round((t30-tp)/tp*100):0;
+  root.innerHTML=`<div class="vh"><h1 class="vt">Огляд мережі</h1><span class="demo">Демо-дані + ваші реальні замовлення з цього пристрою</span></div>
+  <div class="kpis"><div class="panel kpi"><div class="lbl">Оборот через додаток, 30 днів</div><div class="v">${money(t30)}</div><div class="d">${delta>=0?'+':''}${delta} % до попередніх 30 днів</div></div>
+    <div class="panel kpi"><div class="lbl">Замовлень</div><div class="v num">${last30.length}</div><div class="d">середній чек ${money(avg)}</div></div>
+    <div class="panel kpi"><div class="lbl">Активних майстрів</div><div class="v num">${act}</div><div class="d">з ${new Set([DB.profile.name,...MASTERS]).size} підключених</div></div>
+    <div class="panel kpi"><div class="lbl">Розрахунок → замовлення</div><div class="v num">${Math.min(99,conv)} %</div><div class="d">${calcs} розрахунків за весь час</div></div></div>
+  <div class="dgrid"><div class="panel"><div class="card-h"><h3>Оборот по тижнях</h3><span class="muted">₴, без скасованих</span></div><div class="chart" id="wk"></div></div>
+    <div class="panel"><div class="card-h"><h3>Що купують, 30 днів</h3></div><div class="chart">${gl.map(([g,v])=>`<div class="hb"><span>${G[g]}</span><span class="num" style="text-align:right">${money(v)}</span><div class="tr"><span style="width:${Math.max(2,v/gmax*100)}%"></span></div></div>`).join('')}</div></div></div>
+  <div class="panel"><div class="card-h"><h3>Останні замовлення</h3><button class="btn sm" id="toAO">Усі замовлення</button></div>${ordersTable(allOrders().slice(0,8),true)}</div>`;
+  // weekly bar chart, single series
+  const W=640,H=220,pl=56,pb=26,pt=14;const mx=Math.max(...weeks.map(w=>w.v))||1;const nice=Math.pow(10,Math.floor(Math.log10(mx)));const top=Math.ceil(mx/nice)*nice;
+  const bw=(W-pl-10)/weeks.length;let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Оборот по тижнях">`;
+  for(let i=0;i<=4;i++){const v=top*i/4,y=H-pb-(H-pb-pt)*i/4;s+=`<line class="gl" x1="${pl}" x2="${W-10}" y1="${y}" y2="${y}"/><text class="ax" x="${pl-6}" y="${y+4}" text-anchor="end">${v>=1000?Math.round(v/1000)+'k':Math.round(v)}</text>`;}
+  weeks.forEach((w,i)=>{const h=(H-pb-pt)*w.v/top;const x=pl+i*bw+bw*.2,y=H-pb-h;
+    s+=`<path class="bar" d="M${x},${H-pb} V${y+Math.min(4,h)} Q${x},${y} ${x+Math.min(4,h)},${y} H${x+bw*.6-Math.min(4,h)} Q${x+bw*.6},${y} ${x+bw*.6},${y+Math.min(4,h)} V${H-pb} Z"><title>Тиждень до ${w.l}: ${money(w.v)}, ${w.n} замовлень</title></path>`;
+    s+=`<text class="ax" x="${x+bw*.3}" y="${H-8}" text-anchor="middle">${w.l}</text>`;
+    if(i===weeks.length-1)s+=`<text class="vl" x="${x+bw*.3}" y="${y-6}" text-anchor="middle">${Math.round(w.v/1000)}k</text>`;});
+  $('wk').innerHTML=s+'</svg>';
+  bindStatusSel(root);$('toAO').onclick=()=>{DB.view='aorders';render();};
+}
+function ordersTable(list,short){return `<div class="tbl-wrap"><table class="t"><thead><tr><th>№</th><th>Дата</th><th>Майстер</th>${short?'':'<th>Об\'єкт</th>'}<th>Магазин</th><th class="r">Сума</th><th>Статус</th>${short?'':'<th></th>'}</tr></thead><tbody>
+  ${list.map(o=>`<tr><td class="num">${o.id}${o.demo?'':' <span class="pill acc">нове з додатку</span>'}</td><td>${fmtDate(o.created)}</td><td>${esc(o.master)}</td>${short?'':`<td>${esc(o.pname)}</td>`}<td>${esc((DB.stores.find(s=>s.id===o.store)||{}).name||'')}</td><td class="r num">${money(o.total)}</td>
+  <td><select class="st-sel" data-sid="${o.id}" aria-label="Статус замовлення ${o.id}">${Object.entries(STATUS).map(([k,v])=>`<option value="${k}" ${o.status===k?'selected':''}>${v[0]}</option>`).join('')}</select></td>${short?'':`<td><button class="btn sm" data-ov="${o.id}">Склад</button></td>`}</tr>`).join('')}</tbody></table></div>`;}
+function bindStatusSel(root){root.querySelectorAll('[data-sid]').forEach(s=>s.onchange=()=>{const id=s.dataset.sid;const own=DB.orders.find(o=>o.id===id);if(own)own.status=s.value;else DB.aStatus[id]=s.value;save();renderBar();toast(`${id}: ${STATUS[s.value][0]}`);});
+  root.querySelectorAll('[data-ov]').forEach(b=>b.onclick=()=>{const o=allOrders().find(x=>x.id===b.dataset.ov);
+    openModal(`<h2>${o.id} · ${esc(o.master)}</h2><p class="hint">${esc(o.pname)} · ${fmtDate(o.created)}${o.note?' · '+esc(o.note):''}</p><div class="ol">${o.items.map(x=>`<div><span>${esc(x.art)} ${esc(x.name)}</span><span class="num">${x.qty} ${x.unit}</span><span class="s">${money(x.qty*x.price)}</span></div>`).join('')}</div><div class="sums"><span class="big">Сума зі знижкою</span><span class="r big">${money(o.total)}</span></div><div class="mfoot"><button class="btn primary" id="mok">Закрити</button></div>`);$('mok').onclick=closeModal;});}
+let aoFilter='all';
+function viewAOrders(root){const list=allOrders().filter(o=>aoFilter==='all'||o.status===aoFilter);
+  root.innerHTML=`<div class="vh"><h1 class="vt">Замовлення від майстрів</h1><select id="aof" aria-label="Фільтр за статусом"><option value="all">Усі статуси</option>${Object.entries(STATUS).map(([k,v])=>`<option value="${k}" ${aoFilter===k?'selected':''}>${v[0]}</option>`).join('')}</select></div>
+  <div class="panel">${ordersTable(list,false)}</div><p class="hint">У робочій версії нове замовлення приходить менеджеру в Telegram і в 1С/BAS із залишками, а майстер бачить зміну статусу.</p>`;
+  $('aof').onchange=e=>{aoFilter=e.target.value;render();};bindStatusSel(root);}
+function viewMasters(root){const os=allOrders().filter(o=>o.status!=='cancel');const now=Date.now(),day=864e5;
+  const names=[...new Set([DB.profile.name,...MASTERS])];
+  const rows=names.map((n,i)=>{const mo=os.filter(o=>o.master===n);const t=mo.filter(o=>now-o.created<90*day).reduce((s,o)=>s+o.total,0)+(n===DB.profile.name?62000:0);
+    const lvl=t>=150000?'Золотий':t>=50000?'Срібний':'Базовий';const last=mo.length?Math.max(...mo.map(o=>o.created)):null;
+    return {n,city:n===DB.profile.name?DB.profile.city:CITIES[MASTERS.indexOf(n)]||'',cnt:mo.length,t,lvl,last};}).sort((a,b)=>b.t-a.t);
+  root.innerHTML=`<div class="vh"><h1 class="vt">Майстри</h1><span class="demo">Рівні: Базовий 5 %, Срібний 7 % від 50 тис., Золотий 10 % від 150 тис. ₴ за 90 днів</span></div>
+  <div class="panel"><div class="tbl-wrap"><table class="t"><thead><tr><th>Майстер</th><th>Місто</th><th class="r">Замовлень</th><th class="r">Оборот 90 днів</th><th>Рівень</th><th>Остання покупка</th></tr></thead><tbody>
+  ${rows.map(r=>`<tr><td>${esc(r.n)}${r.n===DB.profile.name?' <span class="pill acc">ви</span>':''}</td><td>${esc(r.city)}</td><td class="r num">${r.cnt}</td><td class="r num">${money(r.t)}</td><td><span class="pill ${r.lvl==='Золотий'?'acc':r.lvl==='Срібний'?'ok':''}">${r.lvl}</span></td><td>${r.last?fmtDate(r.last):'—'}${r.last&&now-r.last>21*day?' <span class="pill warn">давно не купував</span>':''}</td></tr>`).join('')}</tbody></table></div></div>
+  <p class="hint">«Давно не купував» підказує менеджеру, кому зателефонувати, поки майстер не пішов до конкурента.</p>`;}
+function viewBrand(root){const b=DB.brand;
+  root.innerHTML=`<div class="vh"><h1 class="vt">Бренд і магазини</h1></div><div class="dgrid"><div class="panel" style="padding:16px">
+  <div class="sec-h" style="margin-top:0">Як додаток бачать майстри</div><div class="setgrid">
+    <label class="fld">Назва мережі<input class="inp" id="b-name" value="${esc(b.name)}"></label><label class="fld">Скорочення для логотипу<input class="inp" id="b-short" maxlength="3" value="${esc(b.short)}"></label>
+    <label class="fld">Фірмовий колір<input type="color" id="b-color" value="${b.color||'#9C6514'}" style="height:34px;width:100%"></label>
+    <label class="fld">Telegram менеджера<input class="inp" id="b-mgr" value="${esc(b.manager)}" placeholder="без @"></label>
+    <div class="fld wide">Логотип<span style="display:flex;gap:8px;align-items:center">${logoHtml()}<button class="btn sm" id="b-logo">Завантажити</button>${b.logo?'<button class="btn sm danger" id="b-nologo">Прибрати</button>':''}<button class="btn sm" id="b-def">Скинути колір</button></span><input type="file" id="b-file" accept="image/*" hidden></div></div></div>
+  <div class="panel" style="padding:16px"><div class="sec-h" style="margin-top:0">Магазини для самовивозу</div>
+  ${DB.stores.map((s,i)=>`<div style="display:flex;gap:6px;margin-bottom:6px"><input class="inp" data-st="${i}" value="${esc(s.name)}" style="flex:1" aria-label="Адреса магазину">${DB.stores.length>1?`<button class="btn sm danger" data-sd="${i}">×</button>`:''}</div>`).join('')}
+  <button class="btn sm" id="b-add">+ Магазин</button></div></div>`;
+  $('b-name').oninput=e=>{b.name=e.target.value||'Мережа';renderBar();applyBrand();save();};
+  $('b-short').oninput=e=>{b.short=e.target.value;renderBar();save();};
+  $('b-color').oninput=e=>{b.color=e.target.value;applyBrand();save();};
+  $('b-def').onclick=()=>{b.color='';applyBrand();save();render();};
+  $('b-mgr').oninput=e=>{b.manager=e.target.value.replace(/^@/,'');save();};
+  $('b-logo').onclick=()=>$('b-file').click();
+  $('b-file').onchange=e=>{const f=e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{const img=new Image();img.onload=()=>{const c=document.createElement('canvas');const k=Math.min(1,160/Math.max(img.width,img.height));c.width=img.width*k;c.height=img.height*k;c.getContext('2d').drawImage(img,0,0,c.width,c.height);b.logo=c.toDataURL('image/png');render();};img.src=rd.result;};rd.readAsDataURL(f);};
+  if($('b-nologo'))$('b-nologo').onclick=()=>{b.logo=null;render();};
+  root.querySelectorAll('[data-st]').forEach(i=>i.onchange=()=>{DB.stores[+i.dataset.st].name=i.value;save();});
+  root.querySelectorAll('[data-sd]').forEach(x=>x.onclick=()=>{DB.stores.splice(+x.dataset.sd,1);render();});
+  $('b-add').onclick=()=>{DB.stores.push({id:'s'+uid(),name:'Новий магазин'});render();};
+}
+
+/* ================= boot ================= */
+DB=loadDB();
+$('ov').addEventListener('click',e=>{if(e.target.id==='ov')closeModal();});
+window.addEventListener('beforeunload',()=>save(true));
+render();
+window.addEventListener('load',()=>{try{const T=window.Telegram&&window.Telegram.WebApp;if(T&&T.initData){T.ready();T.expand();}}catch(e){}});
+
+})();
+</script>
+</body>
+</html>

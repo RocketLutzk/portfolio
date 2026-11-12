@@ -1,0 +1,1823 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Будкошторис</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: workbench on the left (план, конструкція, 3D, проєкти, ціни, партнери, адмінка), live estimate column on the right; phone stacks with a sticky total bar */
+:root{
+  --bg:#E9ECEA; --surface:#F7F8F6; --ink:#1B2220; --muted:#5B6662; --line:#CDD3D0;
+  --accent:#1F5A87; --on-accent:#FFFFFF; --accent-soft:rgba(31,90,135,.12); --tape:#D9A21B; --tape-soft:rgba(217,162,27,.18);
+  --grid:#D6DCD9; --grid-strong:#B5BEBA; --danger:#B4452F; --ok:#2E7D4F;
+  --el:#C26A00; --pl:#0F7C8C; --ht:#C0392B; --on-dev:#FFFFFF;
+  --f-display:"Unbounded","Manrope",system-ui,sans-serif;
+  --f-body:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#121615; --surface:#1A201E; --ink:#E5EAE7; --muted:#97A39E; --line:#2D3532;
+  --accent:#73AEDB; --on-accent:#0E1B25; --accent-soft:rgba(115,174,219,.14); --tape:#E3B33F; --tape-soft:rgba(227,179,63,.16);
+  --grid:#232A28; --grid-strong:#34403C; --danger:#E07A63; --ok:#6CC28F;
+  --el:#F0A04B; --pl:#4FC3D1; --ht:#EF6F5E; --on-dev:#10151A; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#121615; --surface:#1A201E; --ink:#E5EAE7; --muted:#97A39E; --line:#2D3532;
+  --accent:#73AEDB; --on-accent:#0E1B25; --accent-soft:rgba(115,174,219,.14); --tape:#E3B33F; --tape-soft:rgba(227,179,63,.16);
+  --grid:#232A28; --grid-strong:#34403C; --danger:#E07A63; --ok:#6CC28F;
+  --el:#F0A04B; --pl:#4FC3D1; --ht:#EF6F5E; --on-dev:#10151A; color-scheme:dark}
+*{box-sizing:border-box}
+.engbar{display:flex;flex-direction:column;gap:10px;padding:12px;border-radius:8px;background:var(--bg)}
+.devchip{display:inline-flex;align-items:center;gap:6px}
+.devchip i{display:inline-grid;place-items:center;min-width:20px;height:20px;padding:0 4px;border-radius:999px;font:700 10px var(--f-body);font-style:normal;color:var(--on-dev)}
+.layers{gap:6px 14px}
+.layers .check{font-size:13px}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 96px}
+.wrap{max-width:1280px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+header{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap}
+h1{font-family:var(--f-display);font-weight:700;font-size:clamp(22px,4vw,30px);letter-spacing:-.01em;margin:0;line-height:1.1}
+h1 span{color:var(--accent)}
+.sub{color:var(--muted);margin:4px 0 0;font-size:14px;max-width:62ch}
+.acct{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);flex-wrap:wrap}
+.acct img{width:26px;height:26px;border-radius:50%}
+.pill{font-family:var(--f-mono);font-size:11px;letter-spacing:.04em;padding:3px 9px;border-radius:999px;background:var(--accent-soft);color:var(--accent);white-space:nowrap}
+.pill.warn{background:var(--tape-soft);color:var(--ink)}
+.pill.ok{color:var(--ok);background:transparent;border:1px solid var(--line)}
+
+.main{display:grid;gap:16px;grid-template-columns:1fr}
+@media (min-width:1020px){.main{grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);align-items:start}
+  #panel-est{position:sticky;top:12px;max-height:calc(100vh - 24px);overflow:auto}}
+.col{display:flex;flex-direction:column;gap:12px;min-width:0}
+
+.tabs{display:flex;gap:4px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:4px;overflow-x:auto;scrollbar-width:thin}
+.tab{flex:1 0 auto;border:0;background:transparent;color:var(--muted);font:600 14px var(--f-body);padding:9px 12px;border-radius:7px;cursor:pointer;white-space:nowrap}
+.tab[aria-selected="true"]{background:var(--ink);color:var(--surface)}
+.tab:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media (min-width:1020px){.tab-est{display:none}}
+
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.off{display:none}
+@media (min-width:1020px){#panel-est.off{display:flex}}
+
+.label{font-family:var(--f-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+h2{font-family:var(--f-display);font-weight:500;font-size:17px;margin:0;text-wrap:balance}
+h3{font-size:15px;margin:0;font-weight:700}
+p{margin:0}
+.muted{color:var(--muted);font-size:13px}
+
+/* buttons */
+.btn{border:1px solid var(--line);background:transparent;color:var(--ink);font:600 13px var(--f-body);padding:8px 11px;border-radius:8px;cursor:pointer;white-space:nowrap}
+.btn:hover{border-color:var(--muted)}
+.btn:disabled{opacity:.45;cursor:default}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.btn.danger{color:var(--danger)}
+.btn.sm{padding:5px 9px;font-size:12px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.between{display:flex;justify-content:space-between;align-items:flex-end;gap:10px;flex-wrap:wrap}
+
+/* plan editor */
+.floors{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.chip{border:1px solid var(--line);background:transparent;color:var(--ink);font:600 13px var(--f-body);padding:6px 12px;border-radius:999px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.chip.add{border-style:dashed;color:var(--muted)}
+.floorset{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;padding:10px 12px;border:1px dashed var(--line);border-radius:8px}
+.floorset .field{width:auto;min-width:120px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;flex-wrap:wrap}
+.seg button{border:0;background:transparent;color:var(--ink);font:600 13px var(--f-body);padding:8px 10px;cursor:pointer}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--on-accent)}
+.canvas{position:relative;border:1px solid var(--line);border-radius:8px;background:var(--surface);overflow:hidden}
+#plan{display:block;width:100%;height:auto;aspect-ratio:4/3;touch-action:none;user-select:none;-webkit-user-select:none;cursor:crosshair}
+#plan.sel-mode{cursor:default}
+.zoombar{position:absolute;right:8px;bottom:8px;display:flex;flex-direction:column;gap:4px}
+.zoombar button{width:34px;height:34px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:600 16px var(--f-mono);cursor:pointer}
+.hint{font-size:13px;color:var(--muted);min-height:20px}
+.hint b{color:var(--ink)}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+@media (max-width:560px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.stat{border-top:2px solid var(--ink);padding-top:6px;min-width:0}
+.stat .v{font-family:var(--f-mono);font-size:16px;font-weight:600;font-variant-numeric:tabular-nums}
+.stat .v small{font-size:12px;color:var(--muted);font-weight:400}
+.selbox{border:1px solid var(--accent);border-radius:8px;padding:12px;display:flex;flex-direction:column;gap:10px;background:var(--accent-soft)}
+.selbox .fields{grid-template-columns:repeat(auto-fit,minmax(120px,1fr))}
+
+/* forms */
+.group{display:flex;flex-direction:column;gap:10px;padding-bottom:14px;border-bottom:1px solid var(--line)}
+.group:last-child{border-bottom:0;padding-bottom:0}
+.fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}
+.field{display:flex;flex-direction:column;gap:4px;min-width:0}
+.field label{font-size:13px;color:var(--muted);font-weight:500}
+.field select,.field input,.field textarea{font:500 14px var(--f-body);color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:7px;padding:8px 9px;width:100%;min-width:0}
+.field textarea{min-height:70px;resize:vertical}
+.field input[type=number]{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.field input:disabled,.field select:disabled{opacity:.6}
+.checks{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px}
+.check{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:500;cursor:pointer}
+.check input{width:18px;height:18px;accent-color:var(--accent);flex:none}
+.info{font-size:13px;color:var(--muted);background:var(--bg);border-radius:8px;padding:9px 11px}
+.info b{color:var(--ink);font-family:var(--f-mono);font-weight:600}
+
+/* estimate */
+.total{display:flex;flex-direction:column;gap:2px}
+.total .big{font-family:var(--f-display);font-weight:700;font-size:clamp(26px,5vw,36px);font-variant-numeric:tabular-nums;letter-spacing:-.02em;line-height:1.1}
+.total .per{font-family:var(--f-mono);font-size:13px;color:var(--muted)}
+.split{display:flex;gap:16px;flex-wrap:wrap;font-size:13px;color:var(--muted)}
+.dot{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+.bars{display:flex;flex-direction:column;gap:9px}
+.bar-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 10px;font-size:13px}
+.bar-row .n{font-weight:600}
+.bar-row .s{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.track{grid-column:1/-1;height:8px;background:var(--bg);border-radius:2px;display:flex;overflow:hidden}
+.track .m{background:var(--accent)} .track .w{background:var(--tape)}
+.warns{display:flex;flex-direction:column;gap:6px;margin:0;padding:0;list-style:none}
+.warns li{font-size:13px;background:var(--tape-soft);border-radius:7px;padding:8px 10px}
+details.stage{border-top:1px solid var(--line)}
+details.stage summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;gap:10px;padding:11px 0;font-weight:600}
+details.stage summary::-webkit-details-marker{display:none}
+details.stage summary::before{content:"+";font-family:var(--f-mono);color:var(--muted);width:14px;flex:none}
+details.stage[open] summary::before{content:"−"}
+details.stage summary .t{flex:1}
+details.stage summary .s{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.items{display:flex;flex-direction:column;padding-bottom:10px}
+.item{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:0 10px;padding:7px 0 7px 14px;border-left:3px solid var(--accent);margin-left:2px}
+.item.work{border-left-color:var(--tape)}
+.item+.item{margin-top:2px}
+.item .nm{font-size:14px;font-weight:500;min-width:0}
+.item .sm{font-family:var(--f-mono);font-size:13px;font-variant-numeric:tabular-nums;text-align:right}
+.item .q{grid-column:1/-1;font-family:var(--f-mono);font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.empty{color:var(--muted);font-size:14px;padding:20px 0}
+
+/* lists, tables */
+.plist{display:flex;flex-direction:column}
+.prow{display:grid;grid-template-columns:minmax(0,1fr) 108px 64px;gap:8px;align-items:center;padding:6px 0;border-bottom:1px solid var(--line)}
+.prow .pn{font-size:14px;min-width:0}
+.prow input{font:500 14px var(--f-mono);font-variant-numeric:tabular-nums;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:6px 8px;width:100%;text-align:right}
+.prow .pu{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.prow.local input{border-color:var(--tape)}
+.prow.partner input{border-color:var(--accent)}
+.pgroup{margin-top:8px}
+.pgroup>.label{padding:8px 0 2px}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:8px}
+table{border-collapse:collapse;width:100%;font-size:13px;font-variant-numeric:tabular-nums}
+th,td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+th:first-child,td:first-child{text-align:left;white-space:normal}
+th{font-weight:700;background:var(--bg)}
+td.best{color:var(--ok);font-weight:700}
+.prj{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+.prj .nm{font-weight:700;cursor:pointer;background:none;border:0;padding:0;color:var(--ink);font:700 15px var(--f-body);text-align:left}
+.prj.cur .nm{color:var(--accent)}
+.prj .meta{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.lead{border:1px solid var(--line);border-radius:8px;padding:12px;display:flex;flex-direction:column;gap:6px}
+.lead.done{opacity:.6}
+.lead .ph{font-family:var(--f-mono);user-select:all}
+
+#view3d{border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--surface);min-height:300px;position:relative;touch-action:none}
+#view3d canvas{display:block}
+
+/* modal + toast */
+.modal{position:fixed;inset:0;z-index:50;background:rgba(10,14,13,.55);display:flex;align-items:flex-start;justify-content:center;overflow:auto;
+  padding:calc(24px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) 24px max(16px,env(safe-area-inset-left,0px))}
+.modal .panel{max-width:520px;width:100%}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(84px + env(safe-area-inset-bottom,0px));z-index:60;background:var(--ink);color:var(--surface);padding:10px 16px;border-radius:8px;font-size:14px;max-width:calc(100% - 32px)}
+@media (min-width:1020px){.toast{bottom:24px}}
+
+/* sticky bar on phone */
+.bottombar{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--ink);color:var(--surface);
+  padding:10px max(16px,env(safe-area-inset-right,0px)) calc(10px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));
+  display:flex;justify-content:space-between;align-items:center;gap:10px;border:0;width:100%;font:inherit;cursor:pointer;text-align:left}
+.bottombar .bt{font-family:var(--f-display);font-weight:700;font-size:19px;font-variant-numeric:tabular-nums}
+.bottombar .bl{font-size:12px;opacity:.75}
+@media (min-width:1020px){.bottombar{display:none} body{padding-bottom:24px}}
+@media (prefers-reduced-motion:no-preference){.track div{transition:width .25s ease}}
+
+/* offscreen PDF report */
+.report{position:fixed;left:-12000px;top:0;width:794px;background:#fff;color:#16201d;font-family:var(--f-body);padding:40px 44px;font-size:12px;line-height:1.45}
+.report h1{color:#16201d;font-size:24px}
+.report h1 span{color:#1F5A87}
+.report table{font-size:11px}
+.report th{background:#eef1ef}
+.report th,.report td{border-bottom:1px solid #d5dbd8;padding:5px 7px}
+</style>
+
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Буд<span>кошторис</span></h1>
+      <p class="sub">Намалюйте план кожного поверху точками, поставте вікна й двері, позначте кімнати, і кошторис перерахується від котловану до даху.</p>
+    </div>
+    <div class="acct" id="acct"><span class="pill warn">Лише в цьому браузері</span></div>
+  </header>
+
+  <div class="main">
+    <div class="col">
+      <div class="tabs" role="tablist">
+        <button class="tab" role="tab" data-tab="plan" aria-selected="true">План</button>
+        <button class="tab" role="tab" data-tab="build" aria-selected="false">Конструкція</button>
+        <button class="tab tab-est" role="tab" data-tab="est" aria-selected="false">Кошторис</button>
+        <button class="tab" role="tab" data-tab="d3" aria-selected="false">3D</button>
+        <button class="tab" role="tab" data-tab="projects" aria-selected="false">Проєкти</button>
+        <button class="tab" role="tab" data-tab="prices" aria-selected="false">Ціни</button>
+        <button class="tab" role="tab" data-tab="partners" aria-selected="false">Партнерам</button>
+        <button class="tab" role="tab" data-tab="admin" aria-selected="false" hidden id="tabAdmin">Адмінка</button>
+      </div>
+
+      <!-- PLAN -->
+      <section class="panel" id="panel-plan">
+        <div class="floors" id="floors"></div>
+        <div class="floorset" id="floorset"></div>
+        <div class="row">
+          <div class="seg" id="modes">
+            <button data-mode="contour" aria-pressed="true">Контур</button>
+            <button data-mode="part" aria-pressed="false">Перегородки</button>
+            <button data-mode="win" aria-pressed="false">Вікно</button>
+            <button data-mode="door" aria-pressed="false">Двері</button>
+            <button data-mode="room" aria-pressed="false">Кімната</button>
+            <button data-mode="eng" aria-pressed="false">Інженерія</button>
+            <button data-mode="select" aria-pressed="false">Вибір</button>
+          </div>
+        </div>
+        <div class="engbar" id="engbar" hidden>
+          <div class="seg" id="engSys">
+            <button data-sys="el" aria-pressed="true">Електрика</button>
+            <button data-sys="pl" aria-pressed="false">Вода і каналізація</button>
+            <button data-sys="ht" aria-pressed="false">Опалення</button>
+          </div>
+          <div class="floors" id="engDev"></div>
+          <div class="row"><button class="btn sm primary" id="engAuto">Розставити автоматично</button><button class="btn sm danger" id="engClear">Прибрати систему з поверху</button></div>
+        </div>
+        <div class="row">
+          <div class="field" style="width:auto"><select id="gridStep" aria-label="Крок сітки"><option value="0.5">Сітка 0,5 м</option><option value="0.1">Сітка 0,1 м</option></select></div>
+          <label class="check"><input type="checkbox" id="angleSnap" checked> Кути 90° / 45°</label>
+          <button class="btn" id="undo">Відмінити</button>
+          <button class="btn" id="sample">Приклад</button>
+          <button class="btn danger" id="clear">Очистити поверх</button>
+        </div>
+        <div class="row layers">
+          <span class="muted">Показати на плані:</span>
+          <label class="check"><input type="checkbox" data-lp="el"><i class="dot" style="background:var(--el)"></i>Електрика</label>
+          <label class="check"><input type="checkbox" data-lp="pl"><i class="dot" style="background:var(--pl)"></i>Вода і каналізація</label>
+          <label class="check"><input type="checkbox" data-lp="ht"><i class="dot" style="background:var(--ht)"></i>Опалення</label>
+        </div>
+        <div class="canvas">
+          <svg id="plan" aria-label="План поверху"></svg>
+          <div class="zoombar"><button id="zin" aria-label="Наблизити">+</button><button id="zout" aria-label="Віддалити">−</button><button id="zfit" aria-label="Вмістити план">⤢</button></div>
+        </div>
+        <div class="hint" id="hint"></div>
+        <div id="selbox"></div>
+        <div class="stats">
+          <div class="stat"><div class="label">Площа поверху</div><div class="v" id="sA">–</div></div>
+          <div class="stat"><div class="label">Периметр</div><div class="v" id="sP">–</div></div>
+          <div class="stat"><div class="label">Перегородки</div><div class="v" id="sL">–</div></div>
+          <div class="stat"><div class="label">Усього площа</div><div class="v" id="sT">–</div></div>
+        </div>
+      </section>
+
+      <!-- CONSTRUCTION -->
+      <section class="panel off" id="panel-build">
+        <div class="group"><h2>Ділянка</h2>
+          <div class="fields">
+            <div class="field"><label for="p_region">Область</label><select id="p_region" data-p="region"></select></div>
+            <div class="field"><label for="p_soil">Ґрунт</label><select id="p_soil" data-p="soil"></select></div>
+            <div class="field"><label for="p_coef">Коеф. ціни робіт</label><input id="p_coef" data-p="coef" type="number" step="0.05" min="0.5" max="2" placeholder="авто"></div>
+          </div>
+          <div class="info" id="siteInfo"></div>
+        </div>
+        <div class="group"><h2>Фундамент</h2>
+          <div class="fields">
+            <div class="field"><label for="p_found">Тип</label><select id="p_found" data-p="found"><option value="strip">Стрічковий</option><option value="slab">Монолітна плита</option><option value="piles">Палі з ростверком</option></select></div>
+            <div class="field" data-show="strip"><label for="p_fw">Ширина стрічки, м</label><input id="p_fw" data-p="fw" type="number" step="0.05" min="0.2" max="1"></div>
+            <div class="field" data-show="strip"><label for="p_fd">Висота стрічки, м</label><input id="p_fd" data-p="fd" type="number" step="0.1" min="0.5" max="3"></div>
+            <div class="field" data-show="slab"><label for="p_st">Товщина плити, м</label><input id="p_st" data-p="st" type="number" step="0.05" min="0.2" max="0.5"></div>
+          </div>
+          <div class="checks">
+            <label class="check" data-show="strip"><input type="checkbox" data-p="autoDepth" id="p_autoDepth"> Глибина за областю і ґрунтом</label>
+            <label class="check"><input type="checkbox" data-on="blind"> Вимощення</label>
+            <label class="check"><input type="checkbox" data-on="drain"> Дренаж</label>
+          </div>
+        </div>
+        <div class="group" data-show="basement"><h2>Цокольний поверх</h2>
+          <div class="fields">
+            <div class="field"><label for="p_bwall">Стіни цоколю</label><select id="p_bwall" data-p="bwall"><option value="fbs">Блоки ФБС</option><option value="mono">Монолітний бетон 300 мм</option></select></div>
+          </div>
+        </div>
+        <div class="group"><h2>Стіни</h2>
+          <div class="fields">
+            <div class="field"><label for="p_wall">Зовнішні стіни</label><select id="p_wall" data-p="wall">
+              <option value="gas">Газоблок D500, 300 мм</option><option value="cer">Керамоблок, 380 мм</option>
+              <option value="brick">Цегла, 380 мм</option><option value="frame">Каркас 150 мм + OSB</option></select></div>
+            <div class="field" data-show="mansard"><label for="p_knee">Колінна стінка мансарди, м</label><input id="p_knee" data-p="knee" type="number" step="0.1" min="0.6" max="2"></div>
+          </div>
+        </div>
+        <div class="group"><h2>Перекриття і сходи</h2>
+          <div class="fields">
+            <div class="field"><label for="p_slab">Перекриття</label><select id="p_slab" data-p="slab"><option value="mono">Монолітне з/б, 200 мм</option><option value="wood">Дерев'яні балки + OSB</option></select></div>
+            <div class="field" data-show="stairs"><label for="p_stairs">Сходи</label><select id="p_stairs" data-p="stairs"><option value="wood">Дерев'яні</option><option value="mono">Монолітні</option><option value="metal">Металокаркас + дерево</option></select></div>
+          </div>
+          <label class="check"><input type="checkbox" data-on="stairs"> Враховувати сходи</label>
+        </div>
+        <div class="group"><h2>Дах</h2>
+          <div class="fields">
+            <div class="field"><label for="p_roof">Форма</label><select id="p_roof" data-p="roof"><option value="gable">Двосхилий</option><option value="hip">Чотирисхилий</option><option value="flat">Плоский</option></select></div>
+            <div class="field" data-show="gable"><label for="p_ridge">Гребінь</label><select id="p_ridge" data-p="ridge"><option value="long">Вздовж довшої сторони</option><option value="short">Вздовж коротшої сторони</option></select></div>
+            <div class="field" data-show="pitched"><label for="p_pitch">Кут нахилу, °</label><input id="p_pitch" data-p="pitch" type="number" step="1" min="10" max="55"></div>
+            <div class="field" data-show="pitched"><label for="p_roofing">Покрівля</label><select id="p_roofing" data-p="roofing"><option value="metal">Металочерепиця</option><option value="bitum">Бітумна черепиця + OSB</option><option value="prof">Профнастил</option></select></div>
+            <div class="field" data-show="pitched"><label for="p_overhang">Звис, м</label><input id="p_overhang" data-p="overhang" type="number" step="0.1" min="0" max="1.2"></div>
+            <div class="field" data-show="mansard"><label for="p_roofWin">Мансардних вікон, шт</label><input id="p_roofWin" data-p="roofWin" type="number" step="1" min="0" max="30"></div>
+          </div>
+          <div class="info" id="roofInfo"></div>
+        </div>
+        <div class="group"><h2>Утеплення і фасад</h2>
+          <div class="fields">
+            <div class="field"><label for="p_ins">Утеплення</label><select id="p_ins" data-p="ins"><option value="mw100">Мінвата 100 мм</option><option value="mw150">Мінвата 150 мм</option><option value="eps100">Пінопласт 100 мм</option><option value="none">Без утеплення</option></select></div>
+            <div class="field"><label for="p_facade">Оздоблення</label><select id="p_facade" data-p="facade"><option value="plaster">Декоративна штукатурка</option><option value="clinker">Клінкерна плитка</option></select></div>
+          </div>
+        </div>
+        <div class="group"><h2>Інженерні мережі</h2>
+          <div class="checks">
+            <label class="check"><input type="checkbox" data-on="elec"> Електрика</label>
+            <label class="check"><input type="checkbox" data-on="plumb"> Водопровід і каналізація</label>
+            <label class="check"><input type="checkbox" data-on="heat"> Опалення</label>
+          </div>
+          <div class="fields" data-show="heat">
+            <div class="field"><label for="p_heat">Джерело тепла</label><select id="p_heat" data-p="heat"><option value="gas">Газовий котел</option><option value="hp">Тепловий насос</option><option value="el">Електрокотел</option></select></div>
+          </div>
+        </div>
+        <div class="group"><h2>Що ще врахувати</h2>
+          <div class="checks">
+            <label class="check"><input type="checkbox" data-on="earth"> Земляні роботи</label>
+            <label class="check"><input type="checkbox" data-on="interior"> Внутрішнє оздоблення</label>
+            <label class="check"><input type="checkbox" data-on="logistics"> Доставка і вивезення сміття</label>
+            <label class="check"><input type="checkbox" data-p="works" id="p_works"> Вартість робіт</label>
+          </div>
+          <div class="fields">
+            <div class="field"><label for="p_waste">Запас на відходи, %</label><input id="p_waste" data-p="waste" type="number" step="1" min="0" max="30"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3D -->
+      <section class="panel off" id="panel-d3">
+        <div class="between"><h2>3D-модель</h2><button class="btn" id="reset3d">Скинути вигляд</button></div>
+        <div class="row layers">
+          <label class="check"><input type="checkbox" id="showRoof" checked> Дах</label>
+          <label class="check"><input type="checkbox" data-l3="glass"> Прозорі стіни</label>
+          <label class="check"><input type="checkbox" data-l3="el"><i class="dot" style="background:var(--el)"></i>Електрика</label>
+          <label class="check"><input type="checkbox" data-l3="pl"><i class="dot" style="background:var(--pl)"></i>Вода і каналізація</label>
+          <label class="check"><input type="checkbox" data-l3="ht"><i class="dot" style="background:var(--ht)"></i>Опалення</label>
+        </div>
+        <div id="view3d"></div>
+        <p class="muted">Тягніть, щоб обертати. Колесо миші або два пальці змінюють масштаб.</p>
+      </section>
+
+      <!-- PROJECTS -->
+      <section class="panel off" id="panel-projects">
+        <div class="between">
+          <div class="field" style="flex:1;min-width:200px"><label for="prjName">Назва поточного проєкту</label><input id="prjName" type="text" maxlength="80"></div>
+          <div class="row"><button class="btn" id="prjNew">Новий проєкт</button><button class="btn" id="prjDup">Дублювати як варіант</button></div>
+        </div>
+        <p class="muted" id="prjSync"></p>
+        <div id="prjList"></div>
+        <div id="compare"></div>
+      </section>
+
+      <!-- PRICES -->
+      <section class="panel off" id="panel-prices">
+        <div class="between">
+          <div class="field" style="flex:1;min-width:220px"><label for="priceSource">Джерело цін для цього проєкту</label><select id="priceSource"></select></div>
+          <div class="row"><button class="btn" id="resetPrices">Скинути мої зміни</button><button class="btn primary" id="saveBase" hidden>Зберегти як базові для всіх</button></div>
+        </div>
+        <p class="info" id="priceInfo"></p>
+        <div id="priceList"></div>
+      </section>
+
+      <!-- PARTNERS -->
+      <section class="panel off" id="panel-partners">
+        <h2>Для магазинів і бригад</h2>
+        <p class="muted">Заповніть профіль і свої ціни. Користувачі зможуть рахувати кошторис за вашими цінами й надсилати вам заявки.</p>
+        <div id="partnerBody"></div>
+      </section>
+
+      <!-- ADMIN -->
+      <section class="panel off" id="panel-admin">
+        <h2>Заявки</h2>
+        <div id="leadList"></div>
+        <h2 style="margin-top:8px">Партнери</h2>
+        <div id="partnerAdmin"></div>
+      </section>
+    </div>
+
+    <!-- ESTIMATE -->
+    <section class="panel off" id="panel-est">
+      <div class="total">
+        <div class="label" id="tName">Орієнтовна вартість</div>
+        <div class="big" id="tTotal">–</div>
+        <div class="per" id="tPer"></div>
+      </div>
+      <div class="split"><span><i class="dot" style="background:var(--accent)"></i>Матеріали <b id="tMat">–</b></span><span><i class="dot" style="background:var(--tape)"></i>Роботи <b id="tWork">–</b></span></div>
+      <div class="row">
+        <button class="btn primary" id="leadBtn">Отримати пропозицію</button>
+        <button class="btn" id="pdfBtn" hidden>PDF</button>
+        <button class="btn" id="xlsBtn" hidden>Excel</button>
+      </div>
+      <ul class="warns" id="warns"></ul>
+      <div class="bars" id="bars"></div>
+      <div id="stages"></div>
+    </section>
+  </div>
+</div>
+
+<div class="modal" id="leadModal" hidden>
+  <form class="panel" id="leadForm">
+    <div class="between"><h2>Заявка на будівництво</h2><button type="button" class="btn sm" id="leadClose">Закрити</button></div>
+    <p class="muted" id="leadSummary"></p>
+    <div class="fields">
+      <div class="field"><label for="lName">Ваше ім'я</label><input id="lName" required maxlength="80"></div>
+      <div class="field"><label for="lPhone">Телефон</label><input id="lPhone" required maxlength="30" inputmode="tel" placeholder="+380"></div>
+      <div class="field"><label for="lNeed">Що потрібно</label><select id="lNeed"><option>Бригада під ключ</option><option>Лише матеріали</option><option>Бригада і матеріали окремо</option></select></div>
+      <div class="field"><label for="lPartner">Кому надіслати</label><select id="lPartner"></select></div>
+    </div>
+    <div class="field"><label for="lComment">Коментар</label><textarea id="lComment" maxlength="600" placeholder="Терміни, адреса ділянки, питання"></textarea></div>
+    <p class="info" id="leadNote" hidden></p>
+    <div class="row"><button class="btn primary" type="submit" id="leadSend">Надіслати заявку</button></div>
+  </form>
+</div>
+
+<div class="toast" id="toast" hidden></div>
+<button class="bottombar" id="bottombar"><span><span class="bl">Разом за кошторисом</span><br><span class="bt" id="bbTotal">–</span></span><span class="bl" id="bbPer"></span></button>
+
+<script>
+/* ───────────── constants ───────────── */
+const URLS={
+  three:"https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js",
+  h2c:"https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js",
+  jspdf:"https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js",
+  xlsx:"https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"
+};
+const REGIONS=[["lviv","Львівська",0.8,1.05],["kyiv-city","м. Київ",1.0,1.25],["kyiv","Київська",1.0,1.15],["vin","Вінницька",0.9,0.95],["vol","Волинська",0.9,0.95],["dnipro","Дніпропетровська",0.9,1.0],["zhyt","Житомирська",1.0,0.95],["zak","Закарпатська",0.6,0.95],["zap","Запорізька",0.8,0.95],["if","Івано-Франківська",0.8,1.0],["kir","Кіровоградська",0.9,0.9],["myk","Миколаївська",0.6,0.95],["od","Одеська",0.6,1.1],["pol","Полтавська",1.0,0.95],["riv","Рівненська",0.9,0.95],["sum","Сумська",1.2,0.9],["ter","Тернопільська",0.9,0.95],["khar","Харківська",1.2,1.0],["kher","Херсонська",0.6,0.9],["khm","Хмельницька",0.9,0.95],["cherk","Черкаська",1.0,0.95],["chv","Чернівецька",0.8,0.95],["chn","Чернігівська",1.1,0.9]].map(([id,name,frost,coef])=>({id,name,frost,coef}));
+const SOILS={sand:{name:"Пісок, супісок",k:0.7,add:0},loam:{name:"Суглинок",k:1,add:0},clay:{name:"Глина (пучинистий)",k:1,add:0.2},peat:{name:"Торф, насипний ґрунт",k:1,add:0.3}};
+const ROOM_TYPES=["Вітальня","Кухня","Кухня-вітальня","Спальня","Дитяча","Кабінет","Санвузол","Коридор","Гардероб","Котельня","Комора"];
+const TILE_FLOOR=new Set(["Кухня","Санвузол","Котельня","Коридор"]);
+const WET=new Set(["Санвузол"]);
+const PLUMB={"Санвузол":4,"Кухня":2,"Кухня-вітальня":2,"Котельня":2};
+const THICK={gas:.3,cer:.38,brick:.38,frame:.2};
+const OP_DEF={win:{w:1.5,h:1.5,sill:0.85},door:{w:1.0,h:2.1,sill:0},idoor:{w:0.9,h:2.05,sill:0}};
+const OP_NAME={win:"Вікно",door:"Вхідні двері",idoor:"Міжкімнатні двері"};
+/* engineering devices: h = mounting height (null = ceiling), d3 = [width, depth, height, base] for 3D */
+const SYS={el:"Електрика",pl:"Вода і каналізація",ht:"Опалення"};
+const SYS3D={el:0xE08A1E,pl:0x1593A6,ht:0xD2453A};
+const SYSHEX={el:"#C26A00",pl:"#0F7C8C",ht:"#C0392B"};
+const DEV={
+  el:{socket:{n:"Розетка",l:"Р",h:0.3,d3:[0.1,0.05,0.1,0.25]},switch:{n:"Вимикач",l:"В",h:0.9,d3:[0.1,0.05,0.1,0.85]},light:{n:"Світильник",l:"С",h:null,d3:[0.35,0.35,0.06,"ceil"]},panel:{n:"Електрощит",l:"Щ",h:1.6,hub:1,d3:[0.4,0.12,0.5,1.4]}},
+  pl:{toilet:{n:"Унітаз",l:"У",pts:2,k:"pl_toilet",d3:[0.4,0.65,0.75,0]},sink:{n:"Умивальник",l:"Ум",pts:3,k:"pl_sink",d3:[0.55,0.45,0.18,0.75]},shower:{n:"Душ",l:"Д",pts:3,k:"pl_shower",d3:[0.9,0.9,0.12,0]},
+      bath:{n:"Ванна",l:"Вн",pts:3,k:"pl_bath",d3:[1.7,0.75,0.55,0]},ksink:{n:"Кухонна мийка",l:"М",pts:3,k:"pl_ksink",d3:[0.6,0.55,0.9,0]},washer:{n:"Пральна машина",l:"П",pts:2,d3:[0.6,0.6,0.85,0]},riser:{n:"Стояк / ввід",l:"Ст",hub:1,d3:"pipe"}},
+  ht:{rad:{n:"Радіатор",l:"",bar:1,d3:[1.0,0.1,0.5,0.15]},towel:{n:"Рушникосушка",l:"Рш",d3:[0.5,0.08,0.8,0.6]},uf:{n:"Тепла підлога в кімнаті",l:"≋",tool:1},
+      manifold:{n:"Колектор теплої підлоги",l:"Кл",d3:[0.6,0.12,0.5,0.4]},boiler:{n:"Котел",l:"К",hub:1,d3:[0.45,0.35,0.75,1.0]}}
+};
+const DEV_DEFAULT={el:"socket",pl:"toilet",ht:"rad"};
+const SOCKETS={"Кухня":6,"Кухня-вітальня":8,"Вітальня":5,"Спальня":4,"Дитяча":4,"Кабінет":5,"Санвузол":2,"Коридор":2,"Гардероб":1,"Котельня":3,"Комора":1};
+const LIVING=new Set(["Вітальня","Спальня","Дитяча","Кабінет","Кухня","Кухня-вітальня"]);
+
+const PRICE_DEFAULTS={};
+function P(g,k,name,unit,price,work){PRICE_DEFAULTS[k]={g,name,unit,price,work:!!work}}
+let G="Земляні роботи і фундамент";
+P(G,"sand","Пісок","м³",600);P(G,"gravel","Щебінь 20–40","м³",950);P(G,"concrete","Бетон М300 з доставкою","м³",3400);P(G,"rebar","Арматура А500С","кг",33);
+P(G,"waterproof","Гідроізоляція обмазувальна","м²",130);P(G,"xps100","XPS 100 мм під плиту","м²",380);P(G,"xps50","XPS 50 мм (стіни цоколю)","м²",210);
+P(G,"b_fbs","Блоки ФБС + розчин (стіни цоколю)","м²",1700);P(G,"blind","Вимощення: бетон, щебінь, сітка","м²",450);P(G,"drain","Дренаж: труба, щебінь, геотекстиль","м.п.",520);
+P(G,"wk_dig","Розробка ґрунту екскаватором","м³",260,1);P(G,"wk_haul","Вивезення ґрунту","м³",230,1);P(G,"wk_plan","Планування ділянки","м²",45,1);
+P(G,"wk_found","Стрічковий фундамент під ключ","м³",1800,1);P(G,"wk_slabf","Монолітна плита під ключ","м³",1500,1);P(G,"wk_pile","Буріння і бетонування паль","м.п.",650,1);
+P(G,"wk_grill","Ростверк під ключ","м³",2000,1);P(G,"wk_fbs","Монтаж блоків ФБС","м²",480,1);P(G,"wk_blind","Влаштування вимощення","м²",380,1);P(G,"wk_drain","Монтаж дренажу","м.п.",400,1);P(G,"wk_mono","Монолітні роботи","м³",2500,1);
+G="Стіни";
+P(G,"w_gas","Газоблок D500 300 мм + клей","м²",920);P(G,"w_cer","Керамоблок 380 мм + розчин","м²",1880);P(G,"w_brick","Цегла рядова 380 мм + розчин","м²",1650);P(G,"w_frame","Каркас 150 мм, OSB, утеплення","м²",1180);
+P(G,"part_gas","Газоблок 100 мм (перегородки)","м²",340);P(G,"lintel","Перемички з/б","м.п.",360);
+P(G,"wk_gas","Кладка газоблоку","м²",390,1);P(G,"wk_cer","Кладка керамоблоку","м²",490,1);P(G,"wk_brick","Кладка цегли","м²",640,1);P(G,"wk_frame","Монтаж каркаса","м²",540,1);
+P(G,"wk_part","Кладка перегородок","м²",270,1);P(G,"wk_lintel","Монтаж перемичок","м.п.",160,1);
+G="Перекриття і сходи";
+P(G,"wood_slab","Дерев'яне перекриття: балки, OSB 22","м²",780);P(G,"att_ceil","Горищне перекриття: балки, пароізоляція","м²",540);
+P(G,"stair_wood","Сходи дерев'яні, марш","шт",85000);P(G,"stair_mono","Сходи монолітні, марш","шт",60000);P(G,"stair_metal","Сходи на металокаркасі, марш","шт",95000);
+P(G,"wk_wood","Монтаж дерев'яного перекриття","м²",390,1);P(G,"wk_att","Монтаж горищного перекриття","м²",260,1);P(G,"wk_stair","Монтаж сходів","шт",25000,1);
+G="Дах";
+P(G,"timber","Брус сосна, сушений","м³",9200);P(G,"membrane","Супердифузійна мембрана","м²",46);P(G,"metal","Металочерепиця 0,45 мм","м²",390);P(G,"bitum","Бітумна черепиця + OSB","м²",740);
+P(G,"prof","Профнастил ПК-20","м²",285);P(G,"pvc_flat","ПВХ-мембрана для плоскої покрівлі","м²",530);P(G,"ridge","Гребінь, ребра, ендови (планки)","м.п.",270);P(G,"gutter","Водостічна система","м.п.",390);
+P(G,"mw200","Мінвата 200 мм","м²",430);P(G,"vapor","Пароізоляційна плівка","м²",28);P(G,"roofwin","Мансардне вікно 78×118","шт",17000);
+P(G,"wk_roof","Монтаж скатного даху","м²",490,1);P(G,"wk_flat","Монтаж плоскої покрівлі","м²",530,1);P(G,"wk_roofins","Утеплення скатів мансарди","м²",190,1);P(G,"wk_roofwin","Монтаж мансардного вікна","шт",3500,1);
+G="Утеплення і фасад";
+P(G,"mw100","Мінвата фасадна 100 мм","м²",265);P(G,"mw150","Мінвата фасадна 150 мм","м²",385);P(G,"eps100","Пінопласт ПСБ-С-25 100 мм","м²",185);P(G,"ins_sys","Клей, сітка, дюбелі","м²",155);
+P(G,"f_plaster","Декоративна штукатурка + ґрунт","м²",225);P(G,"f_clinker","Клінкерна плитка + клей","м²",960);
+P(G,"wk_facade","Утеплення + оздоблення фасаду","м²",660,1);P(G,"wk_finish","Оздоблення фасаду","м²",390,1);
+G="Вікна і двері";
+P(G,"window","Вікна металопластик, 2-камерний","м²",4600);P(G,"door","Вхідні двері металеві, утеплені","шт",19000);P(G,"idoor","Міжкімнатні двері з коробкою","шт",6800);
+P(G,"wk_win","Монтаж вікон","м²",720,1);P(G,"wk_door","Монтаж вхідних дверей","шт",2600,1);P(G,"wk_idoor","Монтаж міжкімнатних дверей","шт",1600,1);
+G="Інженерні мережі";
+P(G,"el_mat","Електрика: кабель, щит, автомати, розетки","м²",430);P(G,"pl_point","Водопровід і каналізація, точка","точка",3300);P(G,"septic","Септик або підключення до мережі","шт",48000);
+P(G,"heat_gas","Газовий котел + бойлер","шт",68000);P(G,"heat_hp","Тепловий насос повітря-вода","шт",290000);P(G,"heat_el","Електрокотел + бойлер","шт",29000);P(G,"rad","Радіатори, труби, колектор","м²",660);
+P(G,"el_panel","Електрощит з автоматами і ПЗВ","шт",14000);P(G,"el_cable","Кабель ВВГнг 3×2,5 / 3×1,5","м.п.",42);P(G,"el_point","Розетка або вимикач з підрозетником","шт",260);P(G,"el_light","Світильник","шт",950);
+P(G,"pl_pipe","Труби водопостачання і каналізації","м.п.",180);P(G,"pl_toilet","Унітаз з інсталяцією","шт",11000);P(G,"pl_sink","Умивальник зі змішувачем","шт",5200);P(G,"pl_shower","Душ: піддон або трап, змішувач","шт",14000);
+P(G,"pl_bath","Ванна зі змішувачем","шт",12000);P(G,"pl_ksink","Кухонна мийка зі змішувачем","шт",4800);
+P(G,"rad_unit","Радіатор сталевий з кріпленням і краном","шт",4300);P(G,"towel","Рушникосушка","шт",3800);P(G,"ht_pipe","Труба PEX для опалення з ізоляцією","м.п.",75);
+P(G,"wk_el_point","Монтаж точки: штроба, підрозетник, підключення","шт",380,1);P(G,"wk_cable","Прокладання кабелю","м.п.",40,1);P(G,"wk_fix","Встановлення сантехприладу","шт",1300,1);
+P(G,"uf_set","Тепла підлога водяна: труба PEX 16, утеплювач, демпфер, кріплення","м²",680);P(G,"uf_man","Колектор теплої підлоги з насосно-змішувальним вузлом","шт",14500);
+P(G,"uf_el","Тепла підлога електрична: нагрівальний мат","м²",950);P(G,"uf_thermo","Терморегулятор з датчиком","шт",2600);
+P(G,"wk_uf","Монтаж водяної теплої підлоги","м²",290,1);P(G,"wk_uf_el","Монтаж електричної теплої підлоги","м²",220,1);
+P(G,"wk_rad","Монтаж радіатора","шт",1100,1);P(G,"wk_ht_pipe","Прокладання труб опалення","м.п.",55,1);
+P(G,"wk_el","Електромонтаж","м²",390,1);P(G,"wk_pl","Монтаж сантехніки, точка","точка",2300,1);P(G,"wk_septic","Монтаж септика","шт",13000,1);P(G,"wk_heat","Монтаж опалення","м²",430,1);
+G="Внутрішнє оздоблення";
+P(G,"screed","Стяжка: суміш, сітка, демпфер","м²",290);P(G,"tile_floor","Плитка підлогова + клей","м²",760);P(G,"tile_wall","Плитка настінна + клей","м²",710);P(G,"lam","Ламінат 33 кл. + підкладка","м²",530);
+P(G,"plaster_in","Штукатурка гіпсова + шпаклівка","м²",215);P(G,"paint","Фарба + ґрунт","м²",95);P(G,"ceil","Стеля: гіпсокартон, профіль, фарба","м²",390);
+P(G,"wk_screed","Влаштування стяжки","м²",230,1);P(G,"wk_tile","Укладання плитки","м²",620,1);P(G,"wk_lam","Укладання ламінату","м²",190,1);P(G,"wk_plaster","Штукатурення стін","м²",290,1);P(G,"wk_paint","Фарбування стін","м²",155,1);P(G,"wk_ceil","Монтаж стелі","м²",430,1);
+G="Логістика";
+P(G,"delivery","Доставка матеріалів, % від матеріалів","%",3);P(G,"trash","Вивезення сміття, контейнер","шт",3600);
+
+const PARAM_DEFAULTS={region:"lviv",soil:"loam",coef:"",autoDepth:true,found:"strip",fw:0.4,fd:1.2,st:0.3,bwall:"fbs",wall:"gas",knee:1.2,slab:"mono",stairs:"wood",
+  roof:"gable",ridge:"long",pitch:35,roofing:"metal",overhang:0.5,roofWin:4,ins:"mw100",facade:"plaster",heat:"gas",works:true,waste:7,priceSource:"base",
+  on:{earth:true,blind:true,drain:false,stairs:true,elec:true,plumb:true,heat:true,interior:true,logistics:true}};
+
+function op(on,i,s,kind,extra){return {on,i,s,kind,...OP_DEF[kind],...(extra||{})}}
+function makeSample(){
+  const pr=makeSampleBase();
+  pr.floors.forEach((f,i)=>["el","pl","ht"].forEach(s=>autoPlace(pr,i,s)));
+  return pr;
+}
+function makeSampleBase(){
+  const pts=[[0,0],[12,0],[12,8],[7,8],[7,11],[0,11]];
+  return normalize({id:newId("p"),name:"Будинок з мансардою (приклад)",updated:Date.now(),p:clone(PARAM_DEFAULTS),floors:[
+    {id:newId("f"),type:"floor",h:2.8,closed:true,pts:clone(pts),
+     parts:[[[5,0],[5,6]],[[0,6],[12,6]],[[3.5,6],[3.5,11]],[[9,6],[9,8]],[[0,8.5],[3.5,8.5]]],
+     ops:[op("c",0,2.5,"win"),op("c",0,8.5,"win",{w:2.4,h:1.6,sill:0.6}),op("c",1,3,"win"),op("c",3,1.5,"win",{w:1.2,h:1.4,sill:0.9}),
+          op("c",4,1.75,"door"),op("c",5,1.25,"win",{w:0.8,h:0.8,sill:1.4}),op("c",5,3.75,"win",{w:0.6,h:0.6,sill:1.5}),op("c",5,8,"win"),
+          op("p",0,4.4,"idoor"),op("p",1,4.2,"idoor"),op("p",1,6.2,"idoor"),op("p",2,1.25,"idoor"),op("p",2,3.75,"idoor"),op("p",3,1,"idoor")],
+     rooms:[{x:2.5,y:3,type:"Кухня",uf:"water"},{x:8.5,y:3,type:"Вітальня"},{x:1.75,y:7.25,type:"Санвузол",uf:"water"},{x:1.75,y:9.75,type:"Котельня"},{x:5.25,y:9.4,type:"Коридор",uf:"water"},{x:10.5,y:7,type:"Гардероб"}]},
+    {id:newId("f"),type:"mansard",h:2.5,closed:true,pts:clone(pts),
+     parts:[[[6,0],[6,6]],[[0,6],[12,6]],[[3.5,6],[3.5,11]]],
+     ops:[op("p",1,4.2,"idoor"),op("p",1,7.5,"idoor"),op("p",2,2.5,"idoor")],
+     rooms:[{x:3,y:3,type:"Спальня"},{x:9,y:3,type:"Спальня"},{x:1.75,y:8.5,type:"Санвузол",uf:"el"},{x:6,y:7.5,type:"Коридор"}]}
+  ]});
+}
+
+/* ───────────── utils ───────────── */
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const NS="http://www.w3.org/2000/svg";
+const fmt=n=>Math.round(n).toLocaleString("uk-UA");
+const fmt1=n=>(Math.round(n*10)/10).toLocaleString("uk-UA",{minimumFractionDigits:1,maximumFractionDigits:1});
+const fmt2=n=>(Math.round(n*100)/100).toLocaleString("uk-UA",{maximumFractionDigits:2});
+const r2=v=>Math.round(v*100)/100;
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const clone=o=>JSON.parse(JSON.stringify(o));
+const dist=(a,b)=>Math.hypot(a[0]-b[0],a[1]-b[1]);
+function newId(p){return p+"_"+Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
+function lsGet(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}}
+function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+const loaded={};
+function loadScript(src){return loaded[src]||(loaded[src]=new Promise((res,rej)=>{const s=document.createElement("script");s.src=src;s.onload=res;s.onerror=()=>{delete loaded[src];rej(new Error("load"))};document.head.appendChild(s)}))}
+let toastT;function toast(msg){const t=$("#toast");t.textContent=msg;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>t.hidden=true,3200)}
+function el(t,a){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);return e}
+
+function normalize(pr){
+  pr.p={...clone(PARAM_DEFAULTS),...(pr.p||{})};pr.p.on={...PARAM_DEFAULTS.on,...((pr.p&&pr.p.on)||{})};
+  pr.floors=(pr.floors&&pr.floors.length?pr.floors:[{type:"floor",h:2.8}]).map(f=>({id:f.id||newId("f"),type:f.type||"floor",h:+f.h||2.8,closed:!!f.closed,pts:f.pts||[],parts:f.parts||[],ops:f.ops||[],rooms:f.rooms||[],eng:f.eng||[]}));
+  pr.name=pr.name||"Мій будинок";pr.id=pr.id||newId("p");pr.updated=pr.updated||Date.now();
+  return pr;
+}
+
+/* ───────────── geometry ───────────── */
+function sArea(p){let s=0;for(let i=0;i<p.length;i++){const a=p[i],b=p[(i+1)%p.length];s+=a[0]*b[1]-b[0]*a[1]}return s/2}
+function pPerim(p){let s=0;for(let i=0;i<p.length;i++)s+=dist(p[i],p[(i+1)%p.length]);return s}
+function inPoly(x,y,p){let c=false;for(let i=0,j=p.length-1;i<p.length;j=i++){const a=p[i],b=p[j];if((a[1]>y)!==(b[1]>y)&&x<(b[0]-a[0])*(y-a[1])/(b[1]-a[1])+a[0])c=!c}return c}
+function segProj(pt,a,b){const dx=b[0]-a[0],dy=b[1]-a[1],l2=dx*dx+dy*dy;let t=l2?((pt[0]-a[0])*dx+(pt[1]-a[1])*dy)/l2:0;t=Math.max(0,Math.min(1,t));const q=[a[0]+t*dx,a[1]+t*dy];return {t,q,d:dist(pt,q),len:Math.sqrt(l2)}}
+function edgesOf(f){const p=f.pts,n=p.length,out=[];if(n<2)return out;const m=f.closed?n:n-1;for(let i=0;i<m;i++)out.push([p[i],p[(i+1)%n]]);return out}
+function geomOf(f){const A=f.closed&&f.pts.length>2?Math.abs(sArea(f.pts)):0;return {A,P:A?pPerim(f.pts):0,L:f.parts.reduce((s,l)=>s+dist(l[0],l[1]),0)}}
+function reflexCount(p){const s=Math.sign(sArea(p));let c=0;for(let i=0;i<p.length;i++){const a=p[(i-1+p.length)%p.length],b=p[i],d=p[(i+1)%p.length];const cr=(b[0]-a[0])*(d[1]-b[1])-(b[1]-a[1])*(d[0]-b[0]);if(Math.abs(cr)>1e-9&&Math.sign(cr)!==s)c++}return c}
+function onBoundary(pt,p){for(let i=0;i<p.length;i++)if(segProj(pt,p[i],p[(i+1)%p.length]).d<0.02)return true;return false}
+function opsGeom(f){
+  const res=[],E=edgesOf(f);
+  f.ops.forEach((o,k)=>{const seg=o.on==="c"?(f.closed?E[o.i]:null):f.parts[o.i];if(!seg)return;const len=dist(seg[0],seg[1]);if(len<0.4)return;
+    const w=Math.min(o.w,len-0.1),s=Math.max(w/2,Math.min(len-w/2,o.s)),ux=(seg[1][0]-seg[0][0])/len,uy=(seg[1][1]-seg[0][1])/len;
+    res.push({o,k,seg,len,w,s,ux,uy,cx:seg[0][0]+ux*s,cy:seg[0][1]+uy*s})});
+  return res;
+}
+/* cover the footprint with roof rectangles (overlap allowed, like cross-gables) */
+function roofRects(p){
+  const xs=[...new Set(p.map(q=>q[0]))].sort((a,b)=>a-b),ys=[...new Set(p.map(q=>q[1]))].sort((a,b)=>a-b);
+  const nx=xs.length-1,ny=ys.length-1;
+  const bb={x0:xs[0],x1:xs[nx],y0:ys[0],y1:ys[ny]};
+  if(nx<1||ny<1)return [];
+  if(nx>16||ny>16)return [bb];
+  const ins=new Uint8Array(nx*ny);for(let j=0;j<ny;j++)for(let i=0;i<nx;i++)ins[j*nx+i]=inPoly((xs[i]+xs[i+1])/2,(ys[j]+ys[j+1])/2,p)?1:0;
+  const S=new Int32Array((nx+1)*(ny+1));for(let j=0;j<ny;j++)for(let i=0;i<nx;i++)S[(j+1)*(nx+1)+i+1]=ins[j*nx+i]+S[j*(nx+1)+i+1]+S[(j+1)*(nx+1)+i]-S[j*(nx+1)+i];
+  const sum=(i0,i1,j0,j1)=>S[(j1+1)*(nx+1)+i1+1]-S[j0*(nx+1)+i1+1]-S[(j1+1)*(nx+1)+i0]+S[j0*(nx+1)+i0];
+  const cands=[];
+  for(let i0=0;i0<nx;i0++)for(let i1=i0;i1<nx;i1++)for(let j0=0;j0<ny;j0++)for(let j1=j0;j1<ny;j1++)
+    if(sum(i0,i1,j0,j1)===(i1-i0+1)*(j1-j0+1))cands.push({i0,i1,j0,j1,a:(xs[i1+1]-xs[i0])*(ys[j1+1]-ys[j0])});
+  cands.sort((a,b)=>b.a-a.a);
+  const cov=new Uint8Array(nx*ny),out=[];
+  for(let guard=0;guard<40;guard++){
+    let left=false;for(let c=0;c<ins.length;c++)if(ins[c]&&!cov[c]){left=true;break}
+    if(!left)break;
+    const c=cands.find(c=>{for(let j=c.j0;j<=c.j1;j++)for(let i=c.i0;i<=c.i1;i++)if(!cov[j*nx+i])return true;return false});
+    if(!c)break;
+    for(let j=c.j0;j<=c.j1;j++)for(let i=c.i0;i<=c.i1;i++)cov[j*nx+i]=1;
+    out.push({x0:xs[c.i0],x1:xs[c.i1+1],y0:ys[c.j0],y1:ys[c.j1+1]});
+  }
+  return out.length?out:[bb];
+}
+/* room area by flood fill on a 10 cm raster */
+const roomCache=new Map();
+function roomMeasure(f,x,y){
+  if(!f.closed||f.pts.length<3)return null;
+  const key=JSON.stringify([f.pts,f.parts,Math.round(x*10),Math.round(y*10)]);
+  if(roomCache.has(key))return roomCache.get(key);
+  const r=0.1,xs=f.pts.map(q=>q[0]),ys=f.pts.map(q=>q[1]),x0=Math.min(...xs),y0=Math.min(...ys);
+  const nx=Math.ceil((Math.max(...xs)-x0)/r),ny=Math.ceil((Math.max(...ys)-y0)/r);
+  if(!nx||!ny||nx*ny>500000)return null;
+  const g=new Uint8Array(nx*ny);
+  for(let j=0;j<ny;j++)for(let i=0;i<nx;i++)if(inPoly(x0+(i+.5)*r,y0+(j+.5)*r,f.pts))g[j*nx+i]=1;
+  for(const [a,b] of [...edgesOf(f),...f.parts]){
+    const i0=Math.max(0,Math.floor((Math.min(a[0],b[0])-x0)/r)-1),i1=Math.min(nx-1,Math.ceil((Math.max(a[0],b[0])-x0)/r)+1);
+    const j0=Math.max(0,Math.floor((Math.min(a[1],b[1])-y0)/r)-1),j1=Math.min(ny-1,Math.ceil((Math.max(a[1],b[1])-y0)/r)+1);
+    for(let j=j0;j<=j1;j++)for(let i=i0;i<=i1;i++){const k=j*nx+i;if(g[k]===1&&segProj([x0+(i+.5)*r,y0+(j+.5)*r],a,b).d<0.075)g[k]=2}
+  }
+  let si=Math.floor((x-x0)/r),sj=Math.floor((y-y0)/r),start=-1;
+  for(let d=0;d<=4&&start<0;d++)for(let dj=-d;dj<=d&&start<0;dj++)for(let di=-d;di<=d;di++){const i=si+di,j=sj+dj;if(i>=0&&j>=0&&i<nx&&j<ny&&g[j*nx+i]===1){start=j*nx+i;break}}
+  let res=null;
+  if(start>=0){
+    const q=new Int32Array(nx*ny);let h=0,t=0,cnt=0;q[t++]=start;g[start]=3;
+    while(h<t){const k=q[h++];cnt++;const i=k%nx,j=(k/nx)|0;
+      if(i>0&&g[k-1]===1){g[k-1]=3;q[t++]=k-1}if(i<nx-1&&g[k+1]===1){g[k+1]=3;q[t++]=k+1}
+      if(j>0&&g[k-nx]===1){g[k-nx]=3;q[t++]=k-nx}if(j<ny-1&&g[k+nx]===1){g[k+nx]=3;q[t++]=k+nx}}
+    let e=0,sx=0,sy=0;const bnd=[];
+    for(let n=0;n<t;n++){const k=q[n],i=k%nx,j=(k/nx)|0;let b=0;if(i===0||g[k-1]!==3)b++;if(i===nx-1||g[k+1]!==3)b++;if(j===0||g[k-nx]!==3)b++;if(j===ny-1||g[k+nx]!==3)b++;
+      e+=b;sx+=i;sy+=j;if(b)bnd.push([r2(x0+(i+.5)*r),r2(y0+(j+.5)*r)])}
+    res={area:cnt*r*r,perim:e*r,cx:x0+(sx/t+.5)*r,cy:y0+(sy/t+.5)*r,bnd,g,x0,y0,nx,ny,r};
+  }
+  if(roomCache.size>800)roomCache.clear();
+  roomCache.set(key,res);return res;
+}
+
+/* ───────────── engineering ───────────── */
+function mcontains(m,x,y){const i=Math.floor((x-m.x0)/m.r),j=Math.floor((y-m.y0)/m.r);return i>=0&&j>=0&&i<m.nx&&j<m.ny&&m.g[j*m.nx+i]===3}
+function spreadPts(m,n,avoid){
+  if(n<=0)return [];
+  const pts=m.bnd.filter(p=>!avoid.some(a=>dist(p,a)<0.6)).map(p=>({p,a:Math.atan2(p[1]-m.cy,p[0]-m.cx)})).sort((a,b)=>a.a-b.a);
+  if(!pts.length)return [];
+  const out=[];for(let i=0;i<n;i++)out.push(pts[Math.floor((i+0.5)*pts.length/n)%pts.length].p);return out;
+}
+function wallInfo(f,x,y,maxD,th){
+  let best=null;
+  edgesOf(f).forEach(([a,b])=>{const pr=segProj([x,y],a,b);if(pr.d<maxD&&(!best||pr.d<best.d))best={...pr,a,b,t:th}});
+  f.parts.forEach(([a,b])=>{const pr=segProj([x,y],a,b);if(pr.d<maxD&&(!best||pr.d<best.d))best={...pr,a,b,t:0.1}});
+  if(!best||!best.len)return null;
+  const ux=(best.b[0]-best.a[0])/best.len,uy=(best.b[1]-best.a[1])/best.len;let nx=-uy,ny=ux;
+  if((x-best.q[0])*nx+(y-best.q[1])*ny<0){nx=-nx;ny=-ny}
+  return {q:best.q,d:best.d,ux,uy,nx,ny,t:best.t,ang:Math.atan2(uy,ux)};
+}
+const isHub=d=>!!(DEV[d.sys]&&DEV[d.sys][d.t]&&DEV[d.sys][d.t].hub);
+/* hub for a floor: its own, else the nearest floor's (reached by a vertical riser) */
+function hubFor(pr,i,sys){
+  const own=pr.floors[i].eng.find(d=>d.sys===sys&&isHub(d));if(own)return {x:own.x,y:own.y,own:true,j:i};
+  let bj=-1,h=null;pr.floors.forEach((f,j)=>{const x=f.eng.find(d=>d.sys===sys&&isHub(d));if(x&&(bj<0||Math.abs(j-i)<Math.abs(bj-i))){bj=j;h=x}});
+  return h?{x:h.x,y:h.y,own:false,j:bj}:null;
+}
+function engData(pr){
+  const p=fullP(pr);let z=0;
+  const lv=pr.floors.map(f=>{const isM=f.type==="mansard",H=isM?(+p.knee||1.2):(+f.h||2.8);const o={f,z0:z,H,ceil:isM?(+f.h||2.5):H,ok:f.closed&&f.pts.length>2};z+=H+0.2;return o});
+  const out={};
+  ["el","pl","ht"].forEach(sys=>{
+    const r={count:0,by:{},len:0,hubMissing:false};
+    lv.forEach((l,i)=>{if(!l.ok)return;const ds=l.f.eng.filter(d=>d.sys===sys&&DEV[sys][d.t]);if(!ds.length)return;
+      const hub=hubFor(pr,i,sys);if(!hub)r.hubMissing=true;else if(!hub.own)r.len+=Math.abs(lv[hub.j].z0-l.z0);
+      const hx=hub?hub.x:ds[0].x,hy=hub?hub.y:ds[0].y;
+      ds.forEach(d=>{const def=DEV[sys][d.t];r.by[d.t]=(r.by[d.t]||0)+1;if(def.hub)return;r.count++;
+        const drop=sys==="el"?(def.h==null?0:Math.max(0,l.ceil-def.h)):sys==="pl"?0.5:0.3;
+        r.len+=Math.abs(d.x-hx)+Math.abs(d.y-hy)+drop})});
+    out[sys]=r;
+  });
+  return out;
+}
+/* place devices by room purpose; returns an error text or null */
+function autoPlace(pr,i,sys){
+  const f=pr.floors[i];
+  if(!f.closed||f.pts.length<3)return "Спершу замкніть контур поверху";
+  const rooms=f.rooms.map(r=>({r,m:roomMeasure(f,r.x,r.y)})).filter(o=>o.m);
+  if(!rooms.length)return "Спершу позначте кімнати на цьому поверсі (режим «Кімната»)";
+  const th=THICK[fullP(pr).wall]||.3;
+  f.eng=f.eng.filter(d=>d.sys!==sys);
+  const og=opsGeom(f),used=[],avoid=og.map(o=>[o.cx,o.cy]);
+  const put=(t,x,y)=>{f.eng.push({sys,t,x:r2(x),y:r2(y)});used.push([x,y])};
+  const spread=(m,n)=>spreadPts(m,n,avoid.concat(used));
+  const center=o=>mcontains(o.m,o.m.cx,o.m.cy)?[o.m.cx,o.m.cy]:[o.r.x,o.r.y];
+  const byType=t=>rooms.filter(o=>o.r.type===t);
+  const nearDoor=(m,kind)=>{let best=null;og.filter(o=>kind?o.o.kind===kind:o.o.kind!=="win").forEach(o=>{
+      const c=[o.cx,o.cy];if(!m.bnd.some(p=>dist(p,c)<0.45))return;
+      m.bnd.forEach(p=>{const d=dist(p,c);if(d>=0.45&&d<=1.0&&!used.some(u=>dist(u,p)<0.3)&&(!best||Math.abs(d-0.6)<best.s))best={p,s:Math.abs(d-0.6)}})});
+    return best?best.p:null};
+  const otherHub=t=>{for(let j=0;j<pr.floors.length;j++){if(j===i)continue;const h=pr.floors[j].eng.find(d=>d.sys===sys&&d.t===t);if(h)return h}return null};
+  const firstAbove=pr.floors.findIndex(x=>x.type!=="basement");
+  if(sys==="el"){
+    rooms.forEach(o=>{const c=center(o);put("light",c[0],c[1]);const sw=nearDoor(o.m);if(sw)put("switch",sw[0],sw[1]);
+      spread(o.m,SOCKETS[o.r.type]??2).forEach(p=>put("socket",p[0],p[1]))});
+    if(!otherHub("panel")&&i===Math.max(0,firstAbove)){const host=byType("Коридор")[0]||byType("Котельня")[0]||rooms[0];const p=nearDoor(host.m,"door")||spread(host.m,1)[0];if(p)put("panel",p[0],p[1])}
+  }
+  if(sys==="pl"){
+    const boil=byType("Котельня"),baths=byType("Санвузол");
+    baths.forEach((o,k)=>{const fx=o.m.area>=5?["toilet","sink","bath"]:["toilet","sink","shower"];if(!boil.length&&k===0)fx.push("washer");spread(o.m,fx.length).forEach((p,n)=>put(fx[n],p[0],p[1]))});
+    rooms.filter(o=>o.r.type==="Кухня"||o.r.type==="Кухня-вітальня").forEach(o=>{let best=null;
+      og.filter(z=>z.o.kind==="win").forEach(z=>o.m.bnd.forEach(p=>{const d=dist(p,[z.cx,z.cy]);if(d<0.7&&(!best||d<best.d))best={p,d}}));
+      const p=best?best.p:spread(o.m,1)[0];if(p)put("ksink",p[0],p[1])});
+    boil.forEach(o=>spread(o.m,1).forEach(p=>put("washer",p[0],p[1])));
+    const ref=otherHub("riser");
+    if(ref&&inPoly(ref.x,ref.y,f.pts))put("riser",ref.x,ref.y);
+    else{const host=boil[0]||baths[0]||rooms[0];const p=spread(host.m,1)[0];if(p)put("riser",p[0],p[1])}
+  }
+  if(sys==="ht"){
+    og.filter(z=>z.o.on==="c"&&z.o.kind==="win"&&z.w>=0.7).forEach(z=>{let nx=-z.uy,ny=z.ux;if(!inPoly(z.cx+nx*0.3,z.cy+ny*0.3,f.pts)){nx=-nx;ny=-ny}
+      const x=z.cx+nx*(th/2+0.12),y=z.cy+ny*(th/2+0.12),room=rooms.find(o=>mcontains(o.m,x,y));if(room&&(room.r.type==="Санвузол"||room.r.uf))return;put("rad",x,y)});
+    rooms.forEach(o=>{if(o.r.type==="Санвузол"){spread(o.m,1).forEach(p=>put("towel",p[0],p[1]));return}
+      if(!LIVING.has(o.r.type)||o.r.uf)return;if(f.eng.some(d=>d.sys==="ht"&&d.t==="rad"&&mcontains(o.m,d.x,d.y)))return;const p=spread(o.m,1)[0];if(p)put("rad",p[0],p[1])});
+    const ufw=rooms.filter(o=>o.r.uf==="water");
+    if(ufw.length){const host=byType("Коридор")[0]||ufw[0];const p=spread(host.m,1)[0];if(p)put("manifold",p[0],p[1])}
+    if(!otherHub("boiler")){const host=byType("Котельня")[0]||(i===Math.max(0,firstAbove)?(byType("Кухня")[0]||byType("Кухня-вітальня")[0]||rooms[0]):null);
+      if(host){const p=spread(host.m,1)[0];if(p)put("boiler",p[0],p[1])}}
+  }
+  return null;
+}
+
+/* add a manifold when a floor gets water underfloor heating and has none */
+function ensureManifold(f,room){
+  if(f.eng.some(d=>d.sys==="ht"&&d.t==="manifold"))return;
+  const cor=f.rooms.find(r=>r.type==="Коридор");const src=cor||room;const m=roomMeasure(f,src.x,src.y);if(!m)return;
+  const p=spreadPts(m,1,f.eng.map(d=>[d.x,d.y]))[0]||[src.x,src.y];f.eng.push({sys:"ht",t:"manifold",x:r2(p[0]),y:r2(p[1])});
+}
+/* serpentine runs for drawing an underfloor heating zone */
+function ufRuns(m,step){const out=[];for(let j=1;j<m.ny;j+=step){let i=0;while(i<m.nx){if(m.g[j*m.nx+i]===3){let k=i;while(k+1<m.nx&&m.g[j*m.nx+k+1]===3)k++;
+  if(k-i>=2)out.push([m.x0+(i+1)*m.r,m.y0+(j+.5)*m.r,m.x0+k*m.r,m.y0+(j+.5)*m.r]);i=k+1}else i++}}return out}
+
+/* ───────────── calculation ───────────── */
+function fullP(pr){const p={...PARAM_DEFAULTS,...(pr.p||{})};p.on={...PARAM_DEFAULTS.on,...((pr.p&&pr.p.on)||{})};return p}
+function regionOf(id){return REGIONS.find(r=>r.id===id)||REGIONS[0]}
+function depthOf(p){const R=regionOf(p.region),s=SOILS[p.soil]||SOILS.loam;return Math.max(0.6,Math.ceil((R.frost*s.k+s.add)*10-1e-9)/10)}
+function stripH(p){return p.autoDepth?Math.round((depthOf(p)+0.4)*10)/10:(+p.fd||1.2)}
+function coefOf(p){return (p.coef!==""&&p.coef!=null&&+p.coef>0)?+p.coef:regionOf(p.region).coef}
+function roofGeom(top,p,extra){
+  const ov=+p.overhang||0,a=(+p.pitch||30)*Math.PI/180,tn=Math.tan(a);
+  const proj=top.A+extra+top.P*ov+4*ov*ov;
+  const out={proj,slope:proj,gableA:0,ridge:0,hips:0,valleys:0,rects:[],tn,ov,maxH:0};
+  if(p.roof==="flat")return out;
+  out.slope=proj/Math.cos(a);
+  const pts=top.f.pts;let minSpan=Infinity;
+  roofRects(pts).forEach(r=>{
+    const lx=r.x1-r.x0,ly=r.y1-r.y0;
+    const along=p.roof==="hip"?lx>=ly:(p.ridge==="short"?lx<ly:lx>=ly);
+    const L=along?lx:ly,span=along?ly:lx,h=span/2*tn;minSpan=Math.min(minSpan,span);out.maxH=Math.max(out.maxH,h);
+    const ends=along?[[r.x0,(r.y0+r.y1)/2],[r.x1,(r.y0+r.y1)/2]]:[[(r.x0+r.x1)/2,r.y0],[(r.x0+r.x1)/2,r.y1]];
+    const e0=onBoundary(ends[0],pts),e1=onBoundary(ends[1],pts);
+    if(p.roof==="gable"){out.ridge+=L+2*ov;out.gableA+=((e0?1:0)+(e1?1:0))*span*span*tn/4}
+    else{out.ridge+=Math.max(0,L-span);out.hips+=4*Math.sqrt(2*(span/2)**2+h*h)}
+    out.rects.push({...r,along,span,h,e0,e1});
+  });
+  const rc=reflexCount(pts);if(rc&&isFinite(minSpan)){const d=minSpan/2;out.valleys=rc*Math.sqrt(2*d*d+(d*tn)**2)}
+  return out;
+}
+function calc(pr,PR){
+  const p=fullP(pr),warn=[];
+  const fl=pr.floors.map(f=>({f,...geomOf(f),ops:opsGeom(f)}));
+  const valid=fl.filter(x=>x.A>0);
+  if(!valid.length)return null;
+  if(valid.length<fl.length)warn.push("Не на всіх поверхах замкнено контур. Такі поверхи не враховані.");
+  const above=valid.filter(x=>x.f.type!=="basement");
+  if(!above.length)return null;
+  const base=valid[0],hasB=base.f.type==="basement",top=above[above.length-1],isM=top.f.type==="mansard";
+  const W=1+(+p.waste||0)/100,K=coefOf(p);
+  const stages=[];let stg=null;
+  const stage=n=>{stg={name:n,items:[]};stages.push(stg)};
+  const add=(k,q,o={})=>{const d=PR[k];if(!d||!(q>0))return;if(d.work&&!p.works)return;
+    const qq=q*(o.w?W:1),up=o.price!=null?o.price:d.price*(d.work?K:1);
+    stg.items.push({k,name:o.name||d.name,unit:o.unit||d.unit,qty:qq,price:up,sum:qq*up,work:!!d.work})};
+  const A0=base.A,P0=base.P,Lf=base.P+base.L;
+  const depth=depthOf(p),sh=hasB?0.5:stripH(p);
+  if(p.soil==="peat"&&p.found!=="piles")warn.push("На торфі й насипному ґрунті краще палі або плита. Перевірте тип фундаменту.");
+
+  let extra=0;for(let j=0;j<above.length-1;j++)extra+=Math.max(0,above[j].A-above[j+1].A);
+  const rg=roofGeom(top,p,extra);
+
+  // per-floor wall data
+  const FD=valid.map(x=>{
+    const H=x.f.type==="mansard"?(+p.knee||1.2):(+x.f.h||2.8);
+    const ph=x.f.type==="mansard"?(+x.f.h||2.5):H;
+    const cops=x.ops.filter(o=>o.o.on==="c");
+    const opA=cops.reduce((s,o)=>s+o.w*Math.min(o.o.h,H-(o.o.sill||0)),0);
+    const idA=x.ops.filter(o=>o.o.kind==="idoor").reduce((s,o)=>s+o.w*o.o.h,0);
+    return {x,H,ph,cops,ext:Math.max(0,x.P*H-opA),part:Math.max(0,x.L*ph-idA)};
+  });
+
+  if(p.on.earth){
+    stage("Земляні роботи");
+    let dig=0;
+    if(hasB)dig+=(A0+P0+4)*((+base.f.h||2.5)+0.3);
+    else if(p.found==="strip")dig+=Lf*((+p.fw||0.4)+0.6)*(sh-0.4+0.2);
+    else if(p.found==="slab")dig+=(A0+P0*0.5)*0.5;
+    if(p.found==="piles"&&!hasB)dig+=Lf*0.6*0.5;
+    add("wk_dig",dig);add("wk_haul",dig*0.6);add("wk_plan",A0+P0*3+36);
+  }
+
+  stage("Фундамент");
+  if(p.found==="strip"){const fw=+p.fw||0.4,c=Lf*fw*sh;
+    add("sand",Lf*(fw+0.2)*0.2,{w:1,name:"Пісок (подушка 200 мм)"});add("concrete",c,{w:1,name:`Бетон М300 (стрічка ${fmt1(sh)} м)`});add("rebar",c*80,{w:1});add("waterproof",Lf*sh,{w:1});add("wk_found",c);}
+  else if(p.found==="slab"){const sA=A0+P0*0.1,c=sA*(+p.st||0.3);
+    add("gravel",sA*0.3,{w:1,name:"Щебінь (основа 300 мм)"});add("xps100",sA,{w:1});add("concrete",c,{w:1});add("rebar",c*90,{w:1});add("wk_slabf",c);}
+  else{const n=Math.ceil(Lf/2)+4,len=Math.max(2,depth+1.2),pv=n*Math.PI*0.0225*len,gv=Lf*0.4*0.5;
+    add("concrete",pv+gv,{w:1,name:"Бетон М300 (палі й ростверк)"});add("rebar",pv*60+gv*100,{w:1});
+    add("wk_pile",n*len,{name:`Буріння і бетонування паль (${n} шт × ${fmt1(len)} м)`});add("wk_grill",gv);}
+  if(p.on.blind){const a=(P0+3.2)*0.8;add("blind",a,{w:1});add("wk_blind",a)}
+  if(p.on.drain){const l=P0+8;add("drain",l,{w:1});add("wk_drain",l)}
+
+  if(hasB){
+    stage("Цокольний поверх");
+    const Hb=+base.f.h||2.5,wa=P0*Hb;
+    if(p.bwall==="mono"){const c=wa*0.3;add("concrete",c,{w:1,name:"Бетон М300 (стіни цоколю)"});add("rebar",c*90,{w:1,name:"Арматура (стіни цоколю)"});add("wk_mono",c,{name:"Монолітні стіни цоколю"})}
+    else{add("b_fbs",wa,{w:1});add("wk_fbs",wa)}
+    add("waterproof",P0*(Hb+0.3),{w:1,name:"Гідроізоляція стін цоколю"});add("xps50",P0*Hb,{w:1});
+    if(p.found!=="slab"){add("gravel",A0*0.15,{w:1,name:"Щебінь (підлога цоколю)"});add("concrete",A0*0.1,{w:1,name:"Бетон (підлога цоколю 100 мм)"});add("wk_mono",A0*0.1,{name:"Бетонування підлоги цоколю"})}
+  }
+
+  stage("Стіни");
+  const masonry=p.wall!=="frame";let ext=0,partA=0,lint=0,armo=0;
+  FD.forEach(d=>{
+    if(d.x.f.type!=="basement"){ext+=d.ext;if(masonry){lint+=d.cops.reduce((s,o)=>s+o.w+0.5,0);armo+=d.x.P*THICK[p.wall]*0.25}}
+    partA+=d.part;lint+=d.x.ops.filter(o=>o.o.kind==="idoor").reduce((s,o)=>s+o.w+0.4,0);
+  });
+  const facadeA=ext+rg.gableA;
+  add("w_"+p.wall,facadeA,{w:1,name:PR["w_"+p.wall].name+(rg.gableA?" (з фронтонами)":"")});
+  add("part_gas",partA,{w:1});
+  if(armo){add("concrete",armo,{w:1,name:"Бетон М300 (армопояс)"});add("rebar",armo*100,{w:1,name:"Арматура (армопояс)"});add("wk_mono",armo,{name:"Армопояс"})}
+  add("lintel",lint,{w:1});add("wk_"+p.wall,facadeA);add("wk_part",partA);add("wk_lintel",lint);
+
+  stage("Перекриття і сходи");
+  let slabA=0;for(let j=0;j<valid.length-1;j++)slabA+=valid[j].A;
+  if(p.roof==="flat"&&!isM)slabA+=top.A;
+  if(p.slab==="mono"){const c=slabA*0.2;add("concrete",c,{w:1,name:"Бетон М300 (перекриття)"});add("rebar",c*100,{w:1,name:"Арматура (перекриття)"});add("wk_mono",c,{name:"Монолітне перекриття"})}
+  else{add("wood_slab",slabA,{w:1});add("wk_wood",slabA)}
+  if(!isM&&p.roof!=="flat"){add("att_ceil",top.A,{w:1});add("wk_att",top.A)}
+  if(p.on.stairs&&valid.length>1){const n=valid.length-1;add("stair_"+p.stairs,n);add("wk_stair",n)}
+
+  stage("Дах");
+  if(p.roof==="flat"){add("pvc_flat",rg.proj,{w:1});add("mw200",rg.proj,{w:1,name:"Мінвата 200 мм (плоска покрівля)"});add("vapor",rg.proj,{w:1});add("wk_flat",rg.proj)}
+  else{
+    add("timber",rg.slope*0.035,{w:1,name:"Брус на кроквяну систему"});add("membrane",rg.slope,{w:1});add(p.roofing,rg.slope,{w:1});
+    const lines=rg.ridge+rg.hips+rg.valleys;add("ridge",lines,{w:1});add("gutter",above[0].P+8*rg.ov);
+    if(isM){add("mw200",rg.slope,{w:1,name:"Мінвата 200 мм (утеплення скатів)"});add("vapor",rg.slope,{w:1});add("wk_roofins",rg.slope);add("roofwin",+p.roofWin||0);add("wk_roofwin",+p.roofWin||0)}
+    else add("mw200",top.A,{w:1,name:"Мінвата 200 мм (горище)"});
+    add("wk_roof",rg.slope);
+  }
+
+  stage("Утеплення і фасад");
+  if(p.ins!=="none"&&masonry){add(p.ins,facadeA,{w:1});add("ins_sys",facadeA,{w:1})}
+  add(p.facade==="clinker"?"f_clinker":"f_plaster",facadeA,{w:1});
+  add(p.ins!=="none"&&masonry?"wk_facade":"wk_finish",facadeA);
+
+  stage("Вікна і двері");
+  let winA=0,doors=0,idoors=0;
+  valid.forEach(x=>x.ops.forEach(o=>{if(o.o.kind==="win")winA+=o.w*o.o.h;else if(o.o.kind==="door")doors++;else idoors++}));
+  if(!winA&&!(isM&&+p.roofWin))warn.push("На плані немає вікон. Додайте їх інструментом «Вікно».");
+  if(!doors)warn.push("На плані немає вхідних дверей. Додайте їх інструментом «Двері» на зовнішній стіні.");
+  add("window",winA);add("door",doors);add("idoor",idoors);add("wk_win",winA);add("wk_door",doors);add("wk_idoor",idoors);
+
+  const gross=valid.reduce((s,x)=>s+x.A,0);
+  const rooms=[];valid.forEach(x=>x.f.rooms.forEach(r=>{const m=roomMeasure(x.f,r.x,r.y);if(m)rooms.push({...r,...m})}));
+  if(p.on.elec||p.on.plumb||p.on.heat){
+    stage("Інженерні мережі");
+    const E=engData(pr),HUBN={el:"електрощит",pl:"стояк або ввід води",ht:"котел"};
+    ["el","pl","ht"].forEach(s=>{if(E[s].count&&E[s].hubMissing)warn.push(`${SYS[s]}: додайте на план ${HUBN[s]}, щоб траси рахувалися до нього.`)});
+    if(p.on.elec){const L=E.el,c=L.by;
+      if(L.count){const pts=(c.socket||0)+(c.switch||0),cab=L.len*1.15+pts*0.5;
+        add("el_panel",Math.max(1,c.panel||0));add("el_cable",cab,{w:1,name:`Кабель ВВГнг (траси за планом)`});add("el_point",pts,{name:`Розетки і вимикачі (${c.socket||0} + ${c.switch||0})`});add("el_light",c.light||0);
+        add("wk_el_point",pts+(c.light||0));add("wk_cable",cab)}
+      else{add("el_mat",gross);add("wk_el",gross)}}
+    if(p.on.plumb){const L=E.pl,c=L.by;
+      if(L.count){const n=Object.entries(c).reduce((s,[t,k])=>s+(DEV.pl[t].pts||0)*k,0),fx=Object.entries(c).filter(([t])=>!DEV.pl[t].hub).reduce((s,[,k])=>s+k,0);
+        add("pl_point",n,{name:`Точки водопостачання і каналізації (${n})`});add("pl_pipe",L.len*1.2,{w:1,name:"Труби водопостачання і каналізації (траси за планом)"});
+        Object.entries(c).forEach(([t,k])=>{if(DEV.pl[t].k)add(DEV.pl[t].k,k)});
+        add("wk_pl",n);add("wk_fix",fx)}
+      else{let n=rooms.reduce((s,r)=>s+(PLUMB[r.type]||0),0);if(!n){n=8;warn.push("Позначте санвузли й кухню кімнатами або розставте сантехніку в режимі «Інженерія». Зараз узято 8 точок.")}
+        add("pl_point",n,{name:`Водопровід і каналізація (${n} точок)`});add("wk_pl",n)}
+      add("septic",1);add("wk_septic",1)}
+    if(p.on.heat){const L=E.ht,c=L.by;add("heat_"+p.heat,1);
+      if(L.count){const pipe=L.len*2.2;add("rad_unit",c.rad||0);add("towel",c.towel||0);add("ht_pipe",pipe,{w:1,name:"Труба PEX, подача і зворотка (траси за планом)"});
+        add("wk_rad",(c.rad||0)+(c.towel||0));add("wk_ht_pipe",pipe)}
+      const ufW=rooms.filter(r=>r.uf==="water").reduce((s,r)=>s+r.area,0),ufE=rooms.filter(r=>r.uf==="el");
+      const ufEA=ufE.reduce((s,r)=>s+r.area,0);
+      if(!L.count){const ra=Math.max(0,gross-ufW-ufEA);add("rad",ra);add("wk_heat",ra)}
+      if(ufW>0){add("uf_set",ufW,{w:1,name:`Тепла підлога водяна (${fmt1(ufW)} м², ≈${fmt(ufW*6.7)} м труби)`});
+        add("uf_man",Math.max(1,c.manifold||0));add("wk_uf",ufW)}
+      if(ufEA>0){add("uf_el",ufEA,{w:1});add("uf_thermo",ufE.length);add("wk_uf_el",ufEA)}}
+  }
+
+  if(p.on.interior){
+    stage("Внутрішнє оздоблення");
+    const net=gross*0.87;let tileF=0,tileW=0;
+    rooms.forEach(r=>{if(TILE_FLOOR.has(r.type))tileF+=r.area;if(WET.has(r.type))tileW+=r.perim*2.4});
+    tileF=Math.min(tileF,net);const lam=Math.max(0,net-tileF);
+    let wallIn=FD.reduce((s,d)=>s+d.ext+2*d.part,0);wallIn=Math.max(0,wallIn-tileW);
+    const ceilA=isM?net-top.A*0.87+rg.slope*0.75:net;
+    if(!rooms.length)warn.push("Позначте кімнати, щоб розділити плитку й ламінат. Зараз уся підлога рахується як ламінат.");
+    add("screed",net,{w:1});add("tile_floor",tileF,{w:1});add("tile_wall",tileW,{w:1});add("lam",lam,{w:1});
+    add("plaster_in",wallIn,{w:1});add("paint",wallIn+ceilA,{w:1,name:"Фарба + ґрунт (стіни і стелі)"});add("ceil",ceilA,{w:1});
+    add("wk_screed",net);add("wk_tile",tileF+tileW);add("wk_lam",lam);add("wk_plaster",wallIn);add("wk_paint",wallIn+ceilA);add("wk_ceil",ceilA);
+  }
+
+  const matSum=stages.reduce((s,g)=>s+g.items.filter(i=>!i.work).reduce((a,i)=>a+i.sum,0),0);
+  if(p.on.logistics){stage("Логістика");const pct=+PR.delivery.price||0;
+    add("delivery",pct,{price:matSum/100,name:`Доставка матеріалів (${fmt2(pct)}% від матеріалів)`});add("trash",Math.max(1,Math.ceil(gross/40)))}
+
+  const st=stages.filter(s=>s.items.length);
+  st.forEach(s=>{s.mat=s.items.filter(i=>!i.work).reduce((a,i)=>a+i.sum,0);s.wrk=s.items.filter(i=>i.work).reduce((a,i)=>a+i.sum,0);s.sum=s.mat+s.wrk});
+  const mat=st.reduce((a,s)=>a+s.mat,0),wrk=st.reduce((a,s)=>a+s.wrk,0);
+  return {stages:st,mat,wrk,total:mat+wrk,gross,warn,rg,depth,sh,coef:K,hasB,isM,floors:valid.length};
+}
+
+/* ───────────── state ───────────── */
+const LS_PROJ="budk_projects_v2",LS_CUR="budk_current_v2",LS_PR="budkoshtorys_prices_v1";
+let projects=(lsGet(LS_PROJ)||[]).map(normalize);
+(function migrate(){const old=lsGet("budkoshtorys_state_v1");if(!projects.length&&old&&old.pts&&old.pts.length){
+  const pr=normalize({name:"Мій будинок",p:{...old.p,floors:undefined},floors:[{type:"floor",h:+(old.p&&old.p.h)||2.8,pts:old.pts,closed:old.closed,parts:old.parts||[]}]});projects.push(pr)}})();
+if(!projects.length)projects=[makeSample()];
+let cur=projects.find(p=>p.id===lsGet(LS_CUR))||projects[0];
+let fi=0;
+let localPrices=lsGet(LS_PR)||{},cloudBase={},baseUpdated=null,partners=[],leads=[];
+const CAP={db:null,user:null,dl:null,uid:null,me:null,canEdit:false};
+let cloudStatus="off";
+
+function effPrices(pr){
+  const partner=partners.find(x=>x.id===(pr&&pr.p&&pr.p.priceSource));const out={};
+  for(const k in PRICE_DEFAULTS){const d=PRICE_DEFAULTS[k];let price=d.price,src="def";
+    if(cloudBase[k]!=null&&cloudBase[k]!==""){price=+cloudBase[k];src="base"}
+    if(partner&&partner.prices&&partner.prices[k]!=null&&partner.prices[k]!==""){price=+partner.prices[k];src="partner"}
+    if(localPrices[k]!=null){price=+localPrices[k];src="local"}
+    out[k]={...d,price,src}}
+  return out;
+}
+function calcPr(pr){return calc(pr,effPrices(pr))}
+const curFloor=()=>cur.floors[Math.min(fi,cur.floors.length-1)];
+function saveLocal(){lsSet(LS_PROJ,projects);lsSet(LS_CUR,cur.id)}
+
+let history=[];
+function pushHist(){history.push(JSON.stringify({floors:cur.floors,fi}));if(history.length>80)history.shift()}
+let estRaf=0;
+function commit(o={}){
+  cur.updated=Date.now();saveLocal();scheduleCloud(cur);
+  if(o.plan!==false)renderPlan();
+  if(!estRaf)estRaf=requestAnimationFrame(()=>{estRaf=0;renderEstimate();if(activeTab==="projects")renderProjects()});
+  dirty3D=true;if(activeTab==="d3"&&!o.light)show3D();
+}
+
+/* ───────────── plan editor ───────────── */
+const svg=$("#plan");
+let view={x:-1.5,y:-1.5,w:24,h:18};
+let mode="contour",pending=null,hover=null,sel=null;
+let engSys="el",engDev="socket";
+let layersPlan={el:true,pl:true,ht:true,...(lsGet("budk_lp")||{})};
+let layers3D={el:false,pl:false,ht:false,glass:false,...(lsGet("budk_l3")||{})},glassTouched=!!lsGet("budk_l3");
+function syncLayers(){$$("[data-lp]").forEach(n=>n.checked=!!layersPlan[n.dataset.lp]);$$("[data-l3]").forEach(n=>n.checked=!!layers3D[n.dataset.l3])}
+document.addEventListener("change",e=>{const t=e.target;
+  if(t.dataset&&t.dataset.lp){layersPlan[t.dataset.lp]=t.checked;lsSet("budk_lp",layersPlan);if(!t.checked&&sel&&sel.kind==="d"){sel=null;renderSel()}renderPlan()}
+  if(t.dataset&&t.dataset.l3){const k=t.dataset.l3;layers3D[k]=t.checked;if(k==="glass")glassTouched=true;else if(t.checked&&!glassTouched&&!layers3D.glass){layers3D.glass=true}
+    lsSet("budk_l3",layers3D);syncLayers();dirty3D=true;show3D()}});
+function renderEngBar(){
+  $("#engbar").hidden=mode!=="eng";
+  $$("#engSys button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.sys===engSys));
+  $("#engDev").innerHTML=Object.entries(DEV[engSys]).map(([t,d])=>`<button class="chip devchip" data-dev="${t}" aria-pressed="${t===engDev}"><i style="background:var(--${engSys})">${d.l||"▬"}</i>${d.n}</button>`).join("");
+}
+$("#engSys").addEventListener("click",e=>{const b=e.target.closest("[data-sys]");if(!b)return;engSys=b.dataset.sys;engDev=DEV_DEFAULT[engSys];
+  if(!layersPlan[engSys]){layersPlan[engSys]=true;lsSet("budk_lp",layersPlan);syncLayers()}renderEngBar();renderPlan()});
+$("#engDev").addEventListener("click",e=>{const b=e.target.closest("[data-dev]");if(!b)return;engDev=b.dataset.dev;renderEngBar()});
+$("#engAuto").onclick=()=>{pushHist();const msg=autoPlace(cur,fi,engSys);if(msg){history.pop();return toast(msg)}
+  layersPlan[engSys]=true;lsSet("budk_lp",layersPlan);syncLayers();sel=null;renderSel();commit();
+  const n=curFloor().eng.filter(d=>d.sys===engSys).length;toast(`${SYS[engSys]}: розставлено ${n} елементів. Перетягніть, якщо треба інакше.`)};
+$("#engClear").onclick=()=>{const f=curFloor();if(!f.eng.some(d=>d.sys===engSys))return toast("На цьому поверсі немає елементів цієї системи");pushHist();f.eng=f.eng.filter(d=>d.sys!==engSys);sel=null;renderSel();commit()};
+function drawEng(g,k,f){
+  const OFF={el:0,pl:0.12,ht:-0.12},fIdx=cur.floors.indexOf(f),th=THICK[fullP(cur).wall]||.3;
+  ["el","pl","ht"].forEach(sys=>{
+    if(!layersPlan[sys])return;
+    const ds=f.eng.map((d,i)=>({d,i})).filter(o=>o.d.sys===sys&&DEV[sys][o.d.t]);if(!ds.length)return;
+    const hub=hubFor(cur,fIdx,sys),col=`var(--${sys})`;
+    if(hub){
+      const o=OFF[sys];
+      ds.forEach(({d})=>{if(isHub(d))return;g.appendChild(el("polyline",{points:`${d.x},${d.y} ${hub.x+o},${d.y} ${hub.x+o},${hub.y}`,fill:"none",stroke:col,"stroke-width":1.4,"stroke-dasharray":sys==="el"?"5 3":sys==="ht"?"1 0":"8 2 2 2","vector-effect":"non-scaling-stroke",opacity:.8}))});
+      if(!hub.own){const gg=el("g",{});gg.appendChild(el("circle",{cx:hub.x,cy:hub.y,r:8*k,fill:"var(--surface)",stroke:col,"stroke-width":2,"stroke-dasharray":"3 2","vector-effect":"non-scaling-stroke"}));
+        const t=el("text",{x:hub.x,y:hub.y+3.5*k,"font-size":9*k,"text-anchor":"middle",fill:col,"font-weight":700,"font-family":"Manrope, sans-serif"});t.textContent="↕";gg.appendChild(t);g.appendChild(gg)}
+    }
+    ds.forEach(({d,i})=>{const def=DEV[sys][d.t],isSel=sel&&sel.kind==="d"&&sel.i===i;
+      if(def.bar){const wi=wallInfo(f,d.x,d.y,0.6,th),ang=wi?wi.ang*180/Math.PI:0;const gg=el("g",{transform:`translate(${d.x} ${d.y}) rotate(${ang})`});
+        gg.appendChild(el("rect",{x:-0.45,y:-0.07,width:0.9,height:0.14,fill:col,stroke:isSel?"var(--ink)":"var(--surface)","stroke-width":isSel?2.5:1,"vector-effect":"non-scaling-stroke"}));
+        for(let x=-0.3;x<=0.31;x+=0.15)gg.appendChild(el("line",{x1:x,y1:-0.07,x2:x,y2:0.07,stroke:"var(--surface)","stroke-width":1,"vector-effect":"non-scaling-stroke"}));
+        g.appendChild(gg);return}
+      const r=(def.hub?9:7)*k;
+      g.appendChild(def.hub?el("rect",{x:d.x-r,y:d.y-r,width:2*r,height:2*r,rx:2*k,fill:col,stroke:isSel?"var(--ink)":"var(--surface)","stroke-width":isSel?2.5:1.2,"vector-effect":"non-scaling-stroke"})
+        :el("circle",{cx:d.x,cy:d.y,r,fill:col,stroke:isSel?"var(--ink)":"var(--surface)","stroke-width":isSel?2.5:1.2,"vector-effect":"non-scaling-stroke"}));
+      const t=el("text",{x:d.x,y:d.y+(def.l.length>1?2.6:3)*k,"font-size":(def.l.length>1?7:8.5)*k,"text-anchor":"middle",fill:"var(--on-dev)","font-weight":700,"font-family":"Manrope, sans-serif"});t.textContent=def.l;g.appendChild(t)});
+  });
+}
+const DESIGN={wall:"var(--ink)",acc:"var(--accent)"};
+function gridStep(){return +$("#gridStep").value||0.5}
+function pxPerM(){return (svg.clientWidth||600)/view.w}
+function snapR(){return 12/pxPerM()}
+function setVB(){svg.setAttribute("viewBox",`${view.x} ${view.y} ${view.w} ${view.h}`)}
+function fitView(){
+  const f=curFloor(),below=floorBelow();let pts=[...f.pts];if(below)pts=pts.concat(below.pts);
+  if(!pts.length){view={x:-1.5,y:-1.5,w:24,h:18};return}
+  const xs=pts.map(q=>q[0]),ys=pts.map(q=>q[1]);const x0=Math.min(...xs),x1=Math.max(...xs),y0=Math.min(...ys),y1=Math.max(...ys);
+  let w=Math.max(x1-x0+5,12),h=w*0.75;if(y1-y0+5>h){h=y1-y0+5;w=h/0.75}
+  view={x:(x0+x1)/2-w/2,y:(y0+y1)/2-h/2,w,h};
+}
+function floorBelow(){for(let i=fi-1;i>=0;i--){const f=cur.floors[i];if(f.pts.length>1)return f}return null}
+function toWorld(e){const pt=svg.createSVGPoint();pt.x=e.clientX;pt.y=e.clientY;const r=pt.matrixTransform(svg.getScreenCTM().inverse());return [r.x,r.y]}
+function gsnap(v){const s=gridStep();return r2(Math.round(v/s)*s)}
+
+function snapDraw(w,from){
+  const f=curFloor(),R=snapR();
+  if(f.pts.length>=3&&!f.closed&&dist(w,f.pts[0])<R)return f.pts[0].slice();
+  const below=floorBelow();if(below)for(const q of below.pts)if(dist(w,q)<R)return q.slice();
+  if(from&&$("#angleSnap").checked){
+    const vx=w[0]-from[0],vy=w[1]-from[1],l=Math.hypot(vx,vy);if(l<1e-6)return from.slice();
+    const a=Math.round(Math.atan2(vy,vx)/(Math.PI/4))*(Math.PI/4);
+    const proj=l*Math.cos(Math.atan2(vy,vx)-a),s=gridStep(),L=Math.max(s,Math.round(proj/s)*s);
+    const q=[r2(from[0]+Math.cos(a)*L),r2(from[1]+Math.sin(a)*L)];
+    if(f.pts.length>=3&&dist(q,f.pts[0])<R)return f.pts[0].slice();
+    return q;
+  }
+  return [gsnap(w[0]),gsnap(w[1])];
+}
+function snapPart(w,from){
+  const f=curFloor(),R=snapR();
+  const vs=[...f.pts,...f.parts.flat()];for(const q of vs)if(dist(w,q)<R)return q.slice();
+  let best=null;for(const [a,b] of [...edgesOf(f),...f.parts]){const pr=segProj(w,a,b);if(pr.d<R&&(!best||pr.d<best.d))best=pr}
+  if(best){
+    if(from&&$("#angleSnap").checked){const ax=Math.abs(best.q[0]-from[0])<R?from[0]:null,ay=Math.abs(best.q[1]-from[1])<R?from[1]:null;
+      if(ax!=null)return [r2(ax),r2(best.q[1])];if(ay!=null)return [r2(best.q[0]),r2(ay)]}
+    return [r2(best.q[0]),r2(best.q[1])];
+  }
+  if(from&&$("#angleSnap").checked){
+    const vx=w[0]-from[0],vy=w[1]-from[1],l=Math.hypot(vx,vy);if(l<1e-6)return from.slice();
+    const a=Math.round(Math.atan2(vy,vx)/(Math.PI/4))*(Math.PI/4),s=gridStep(),L=Math.max(s,Math.round(l*Math.cos(Math.atan2(vy,vx)-a)/s)*s);
+    return [r2(from[0]+Math.cos(a)*L),r2(from[1]+Math.sin(a)*L)];
+  }
+  return [gsnap(w[0]),gsnap(w[1])];
+}
+
+function drawGrid(g){
+  const ppm=pxPerM(),x0=view.x,x1=view.x+view.w,y0=view.y,y1=view.y+view.h;
+  const steps=[gridStep(),1,5].filter((s,i,a)=>a.indexOf(s)===i);
+  steps.forEach(s=>{if(s*ppm<6)return;const major=s>=5,mid=s===1;
+    const sw=major?1.2:mid?.7:.35,col=major?"var(--grid-strong)":"var(--grid)";
+    for(let x=Math.ceil(x0/s)*s;x<=x1;x+=s)g.appendChild(el("line",{x1:x,y1:y0,x2:x,y2:y1,stroke:col,"stroke-width":sw,"vector-effect":"non-scaling-stroke"}));
+    for(let y=Math.ceil(y0/s)*s;y<=y1;y+=s)g.appendChild(el("line",{x1:x0,y1:y,x2:x1,y2:y,stroke:col,"stroke-width":sw,"vector-effect":"non-scaling-stroke"}));
+  });
+  const k=1/ppm,ls=ppm*5<60?10:5;
+  for(let x=Math.ceil(x0/ls)*ls;x<=x1;x+=ls){const t=el("text",{x:x+3*k,y:y0+12*k,"font-size":10*k,fill:"var(--muted)","font-family":"JetBrains Mono, monospace"});t.textContent=x+" м";g.appendChild(t)}
+  for(let y=Math.ceil(y0/ls)*ls;y<=y1;y+=ls){if(Math.abs(y-y0)<1)continue;const t=el("text",{x:x0+3*k,y:y-3*k,"font-size":10*k,fill:"var(--muted)","font-family":"JetBrains Mono, monospace"});t.textContent=y;g.appendChild(t)}
+}
+function dimLabel(g,a,b,outSign,k){
+  const len=dist(a,b);if(len<0.5)return;const mx=(a[0]+b[0])/2,my=(a[1]+b[1])/2;
+  const nx=(b[1]-a[1])/len*outSign,ny=-(b[0]-a[0])/len*outSign;
+  const t=el("text",{x:mx+nx*16*k,y:my+ny*16*k+4*k,"font-size":11*k,"text-anchor":"middle",fill:"var(--accent)","font-family":"JetBrains Mono, monospace","font-weight":600,stroke:"var(--surface)","stroke-width":3*k,"paint-order":"stroke"});
+  t.textContent=fmt2(len);g.appendChild(t);
+}
+function renderPlan(){
+  setVB();svg.textContent="";svg.classList.toggle("sel-mode",mode==="select");
+  const k=1/pxPerM(),f=curFloor(),p=fullP(cur),th=THICK[p.wall]||.3;
+  const g=el("g",{});svg.appendChild(g);drawGrid(g);
+  const below=floorBelow();
+  if(below&&below.pts.length>1)g.appendChild(el(below.closed?"polygon":"polyline",{points:below.pts.map(q=>q.join(",")).join(" "),fill:"none",stroke:"var(--muted)","stroke-width":1.2,"stroke-dasharray":"6 5","vector-effect":"non-scaling-stroke",opacity:.7}));
+  const pts=f.pts;
+  if(f.closed&&pts.length>2)g.appendChild(el("polygon",{points:pts.map(q=>q.join(",")).join(" "),fill:"var(--accent-soft)"}));
+  f.parts.forEach((l,i)=>g.appendChild(el("line",{x1:l[0][0],y1:l[0][1],x2:l[1][0],y2:l[1][1],stroke:sel&&sel.kind==="p"&&sel.i===i?"var(--accent)":"var(--muted)","stroke-width":0.1,"stroke-linecap":"square"})));
+  if(pts.length>1)g.appendChild(el(f.closed?"polygon":"polyline",{points:pts.map(q=>q.join(",")).join(" "),fill:"none",stroke:"var(--ink)","stroke-width":th,"stroke-linejoin":"miter"}));
+  if(sel&&sel.kind==="e"){const e=edgesOf(f)[sel.i];if(e)g.appendChild(el("line",{x1:e[0][0],y1:e[0][1],x2:e[1][0],y2:e[1][1],stroke:"var(--accent)","stroke-width":th}))}
+  // openings
+  const sgnPoly=sArea(pts)>0?1:-1;
+  opsGeom(f).forEach(r=>{
+    const o=r.o,t=o.on==="c"?th:0.1,ang=Math.atan2(r.uy,r.ux)*180/Math.PI,isSel=sel&&sel.kind==="o"&&sel.i===r.k;
+    const gg=el("g",{transform:`translate(${r.cx} ${r.cy}) rotate(${ang})`});
+    gg.appendChild(el("rect",{x:-r.w/2,y:-t/2-0.01,width:r.w,height:t+0.02,fill:"var(--surface)",stroke:isSel?"var(--accent)":"var(--ink)","stroke-width":isSel?2.5:1,"vector-effect":"non-scaling-stroke"}));
+    if(o.kind==="win"){gg.appendChild(el("line",{x1:-r.w/2,y1:0,x2:r.w/2,y2:0,stroke:"var(--accent)","stroke-width":2,"vector-effect":"non-scaling-stroke"}))}
+    else{let sg=1;if(o.on==="c"){const tx=r.cx-r.uy*0.3,ty=r.cy+r.ux*0.3;sg=inPoly(tx,ty,pts)?1:-1}
+      const w=r.w;gg.appendChild(el("path",{d:`M ${-w/2} 0 L ${-w/2} ${sg*w} A ${w} ${w} 0 0 ${sg>0?0:1} ${w/2} 0`,fill:"none",stroke:o.kind==="door"?"var(--tape)":"var(--muted)","stroke-width":1.4,"vector-effect":"non-scaling-stroke"}))}
+    g.appendChild(gg);
+  });
+  // rubber bands
+  if(mode==="contour"&&!f.closed&&pts.length&&hover)g.appendChild(el("line",{x1:pts[pts.length-1][0],y1:pts[pts.length-1][1],x2:hover[0],y2:hover[1],stroke:"var(--accent)","stroke-width":2,"stroke-dasharray":"5 4","vector-effect":"non-scaling-stroke"}));
+  if(mode==="part"&&pending&&hover)g.appendChild(el("line",{x1:pending[0],y1:pending[1],x2:hover[0],y2:hover[1],stroke:"var(--tape)","stroke-width":2,"stroke-dasharray":"5 4","vector-effect":"non-scaling-stroke"}));
+  // dims
+  const n=f.closed?pts.length:pts.length-1;for(let i=0;i<n;i++)dimLabel(g,pts[i],pts[(i+1)%pts.length],sgnPoly>0?-1:1,k);
+  f.parts.forEach(l=>{const len=dist(l[0],l[1]);if(len*pxPerM()<50)return;const t=el("text",{x:(l[0][0]+l[1][0])/2,y:(l[0][1]+l[1][1])/2-6*k,"font-size":10*k,"text-anchor":"middle",fill:"var(--muted)","font-family":"JetBrains Mono, monospace",stroke:"var(--surface)","stroke-width":3*k,"paint-order":"stroke"});t.textContent=fmt2(len);g.appendChild(t)});
+  const anchor=mode==="part"?pending:(mode==="contour"&&!f.closed&&pts.length?pts[pts.length-1]:null);
+  if(anchor&&hover&&dist(anchor,hover)>0.05){const t=el("text",{x:hover[0]+10*k,y:hover[1]-10*k,"font-size":12*k,fill:"var(--ink)","font-family":"JetBrains Mono, monospace","font-weight":600,stroke:"var(--surface)","stroke-width":3*k,"paint-order":"stroke"});t.textContent=fmt2(dist(anchor,hover))+" м";g.appendChild(t)}
+  // rooms
+  f.rooms.forEach((r,i)=>{const m=roomMeasure(f,r.x,r.y),isSel=sel&&sel.kind==="r"&&sel.i===i;
+    const t=el("text",{x:r.x,y:r.y,"font-size":12*k,"text-anchor":"middle",fill:isSel?"var(--accent)":"var(--ink)","font-family":"Manrope, sans-serif","font-weight":700,stroke:"var(--surface)","stroke-width":3*k,"paint-order":"stroke"});
+    const a=el("tspan",{x:r.x,dy:0});a.textContent=r.type;const b=el("tspan",{x:r.x,dy:14*k,"font-family":"JetBrains Mono, monospace","font-weight":400,"font-size":11*k});b.textContent=m?("≈"+fmt1(m.area)+" м²"):"—";
+    t.append(a,b);g.appendChild(t)});
+  if(layersPlan.ht)f.rooms.forEach(r=>{if(!r.uf)return;const m=roomMeasure(f,r.x,r.y);if(!m)return;const col=r.uf==="el"?"var(--el)":"var(--ht)";
+    const runs=ufRuns(m,3);let d="";runs.forEach((s,n)=>{d+=`M ${s[0]} ${s[1]} L ${s[2]} ${s[3]} `});
+    g.appendChild(el("path",{d,fill:"none",stroke:col,"stroke-width":1.2,opacity:.45,"vector-effect":"non-scaling-stroke","pointer-events":"none"}))});
+  drawEng(g,k,f);
+  // handles
+  pts.forEach((q,i)=>{const first=i===0&&!f.closed,isSel=sel&&sel.kind==="v"&&sel.i===i;g.appendChild(el("circle",{cx:q[0],cy:q[1],r:(first?7:5)*k,fill:first?"var(--tape)":isSel?"var(--accent)":"var(--surface)",stroke:"var(--ink)","stroke-width":2,"vector-effect":"non-scaling-stroke"}))});
+  if(mode!=="contour")f.parts.forEach(l=>l.forEach(q=>g.appendChild(el("circle",{cx:q[0],cy:q[1],r:3.5*k,fill:"var(--tape)"}))));
+  if(pending)g.appendChild(el("circle",{cx:pending[0],cy:pending[1],r:5*k,fill:"var(--tape)"}));
+  if(hover&&(mode==="contour"||mode==="part"))g.appendChild(el("circle",{cx:hover[0],cy:hover[1],r:4*k,fill:"var(--accent)"}));
+  updateHint();renderStats();
+}
+function updateHint(){
+  const f=curFloor(),h=$("#hint");let s="";
+  if(mode==="contour")s=f.closed?"Контур замкнено. Додайте <b>перегородки</b>, <b>вікна</b>, <b>двері</b> і <b>кімнати</b>.":f.pts.length<3?"Ставте точки кутів по сітці. Перетягуйте поле, щоб рухати план.":"Щоб замкнути контур, торкніться <b>першої точки</b> (жовта).";
+  else if(mode==="part")s=pending?"Торкніться кінця перегородки.":"Торкніться початку перегородки. Точки прилипають до стін.";
+  else if(mode==="win")s=f.closed?"Торкніться зовнішньої стіни, щоб поставити вікно.":"Спершу замкніть контур.";
+  else if(mode==="door")s="Торкніться зовнішньої стіни для <b>вхідних дверей</b> або перегородки для <b>міжкімнатних</b>.";
+  else if(mode==="room")s="Торкніться всередині кімнати, щоб підписати її. Площа рахується між стінами й перегородками.";
+  else if(mode==="eng")s=`Оберіть пристрій і торкніться місця на плані. Траси до ${engSys==="el"?"<b>щитка</b>":engSys==="pl"?"<b>стояка</b>":"<b>котла</b>"} малюються самі. «Розставити автоматично» розставить усе за призначенням кімнат.`;
+  else s="Торкніться елемента, щоб змінити його розміри. Кути, кінці перегородок, вікна й підписи можна перетягувати.";
+  h.innerHTML=s;
+}
+function renderStats(){
+  const f=curFloor(),g=geomOf(f),tot=cur.floors.reduce((s,x)=>s+geomOf(x).A,0);
+  $("#sA").innerHTML=g.A?fmt1(g.A)+" <small>м²</small>":"–";$("#sP").innerHTML=g.P?fmt1(g.P)+" <small>м</small>":"–";
+  $("#sL").innerHTML=fmt1(g.L)+" <small>м</small>";$("#sT").innerHTML=tot?fmt1(tot)+" <small>м²</small>":"–";
+}
+
+/* hit testing */
+function hitTest(w,handlesOnly){
+  const f=curFloor(),R=snapR();
+  for(let i=f.eng.length-1;i>=0;i--){const d=f.eng[i];if(layersPlan[d.sys]&&dist(w,[d.x,d.y])<Math.max(R,DEV[d.sys][d.t]&&DEV[d.sys][d.t].bar?0.45:0.2))return {kind:"d",i}}
+  for(let i=0;i<f.pts.length;i++)if(dist(w,f.pts[i])<R)return {kind:"v",i};
+  for(let i=0;i<f.parts.length;i++)for(let e=0;e<2;e++)if(dist(w,f.parts[i][e])<R)return {kind:"pe",i,e};
+  for(const r of opsGeom(f))if(segProj(w,[r.cx-r.ux*r.w/2,r.cy-r.uy*r.w/2],[r.cx+r.ux*r.w/2,r.cy+r.uy*r.w/2]).d<Math.max(R,0.2))return {kind:"o",i:r.k};
+  for(let i=0;i<f.rooms.length;i++){const r=f.rooms[i];if(Math.abs(w[0]-r.x)<Math.max(0.9,R*3)&&w[1]>r.y-R*1.4&&w[1]<r.y+R*1.8)return {kind:"r",i}}
+  if(handlesOnly)return null;
+  const E=edgesOf(f);for(let i=0;i<E.length;i++)if(segProj(w,E[i][0],E[i][1]).d<R)return {kind:"e",i};
+  for(let i=0;i<f.parts.length;i++)if(segProj(w,f.parts[i][0],f.parts[i][1]).d<R)return {kind:"p",i};
+  return null;
+}
+function addOpAt(w,kind){
+  const f=curFloor(),R=Math.max(snapR(),0.35);let best=null;
+  if(f.closed)edgesOf(f).forEach((e,i)=>{const pr=segProj(w,e[0],e[1]);if(pr.d<R&&(!best||pr.d<best.d))best={on:"c",i,pr}});
+  if(kind==="door")f.parts.forEach((l,i)=>{const pr=segProj(w,l[0],l[1]);if(pr.d<R&&(!best||pr.d<best.d))best={on:"p",i,pr}});
+  if(!best){toast(kind==="win"?"Торкніться ближче до зовнішньої стіни":"Торкніться ближче до стіни або перегородки");return}
+  const k=best.on==="p"?"idoor":kind,d=OP_DEF[k],len=best.pr.len;
+  if(len<d.w+0.2){toast("Стіна закоротка для цього прорізу");return}
+  let s=Math.round(best.pr.t*len/0.05)*0.05;s=Math.max(d.w/2+0.1,Math.min(len-d.w/2-0.1,s));
+  pushHist();f.ops.push({on:best.on,i:best.i,s:r2(s),kind:k,...d});sel={kind:"o",i:f.ops.length-1};commit();renderSel();
+}
+function handleTap(w){
+  const f=curFloor();
+  if(mode==="contour"){
+    if(f.closed){const h=hitTest(w);if(h){setMode("select");sel=h;renderSel();renderPlan()}return}
+    const q=snapDraw(w,f.pts[f.pts.length-1]);
+    if(f.pts.length>=3&&q===f.pts[0]||f.pts.length>=3&&dist(q,f.pts[0])<1e-6){pushHist();f.closed=true;commit();return}
+    if(f.pts.length&&dist(q,f.pts[f.pts.length-1])<0.01)return;
+    pushHist();f.pts.push(q);commit();
+  }else if(mode==="part"){
+    if(!pending){pending=snapPart(w,null);renderPlan();return}
+    const q=snapPart(w,pending);if(dist(q,pending)>0.05){pushHist();f.parts.push([pending,q]);pending=null;commit()}else{pending=null;renderPlan()}
+  }else if(mode==="eng"){
+    const h=hitTest(w,true);if(h&&h.kind==="d"){sel=h;renderSel();renderPlan();return}
+    if(!f.closed)return toast("Спершу замкніть контур");
+    if(!inPoly(w[0],w[1],f.pts))return toast("Ставте пристрої всередині будинку");
+    const def=DEV[engSys][engDev];
+    if(def.tool){const r=f.rooms.find(r=>{const m=roomMeasure(f,r.x,r.y);return m&&mcontains(m,w[0],w[1])});
+      if(!r)return toast("Торкніться всередині підписаної кімнати. Спершу підпишіть її в режимі «Кімната».");
+      pushHist();r.uf=r.uf?null:"water";if(r.uf==="water")ensureManifold(f,r);
+      if(!layersPlan.ht){layersPlan.ht=true;lsSet("budk_lp",layersPlan);syncLayers()}
+      sel={kind:"r",i:f.rooms.indexOf(r)};commit();renderSel();toast(r.uf?`${r.type}: тепла підлога увімкнена`:`${r.type}: теплу підлогу вимкнено`);return}
+    if(def.hub&&f.eng.some(d=>d.sys===engSys&&d.t===engDev))return toast(`${def.n} на цьому поверсі вже є. Перетягніть його в режимі «Вибір».`);
+    let x=Math.round(w[0]*10)/10,y=Math.round(w[1]*10)/10;
+    if(def.bar){const wi=wallInfo(f,x,y,0.7,THICK[fullP(cur).wall]||.3);if(wi){x=wi.q[0]+wi.nx*(wi.t/2+0.12);y=wi.q[1]+wi.ny*(wi.t/2+0.12)}}
+    pushHist();f.eng.push({sys:engSys,t:engDev,x:r2(x),y:r2(y)});
+    if(!layersPlan[engSys]){layersPlan[engSys]=true;lsSet("budk_lp",layersPlan);syncLayers()}
+    sel={kind:"d",i:f.eng.length-1};commit();renderSel();
+  }else if(mode==="win"||mode==="door")addOpAt(w,mode);
+  else if(mode==="room"){
+    if(!f.closed){toast("Спершу замкніть контур");return}
+    if(!inPoly(w[0],w[1],f.pts)){toast("Торкніться всередині будинку");return}
+    const m=roomMeasure(f,w[0],w[1]);if(!m){toast("Торкніться подалі від стіни");return}
+    const used=new Set(f.rooms.map(r=>r.type));const type=["Вітальня","Кухня","Спальня","Санвузол","Коридор"].find(t=>!used.has(t))||"Спальня";
+    pushHist();f.rooms.push({x:r2(w[0]),y:r2(w[1]),type});sel={kind:"r",i:f.rooms.length-1};commit();renderSel();
+  }else{sel=hitTest(w);renderSel();renderPlan()}
+}
+
+/* pointer: tap, drag, pan, pinch, wheel */
+const ptrs=new Map();let gest=null;
+svg.addEventListener("pointerdown",e=>{
+  svg.setPointerCapture(e.pointerId);ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY});
+  if(ptrs.size===2){const [a,b]=[...ptrs.values()];const rect=svg.getBoundingClientRect();const mx=(a.x+b.x)/2,my=(a.y+b.y)/2;
+    gest={type:"pinch",d0:Math.hypot(a.x-b.x,a.y-b.y),v0:{...view},wx:view.x+(mx-rect.left)/rect.width*view.w,wy:view.y+(my-rect.top)/rect.height*view.h};return}
+  if(ptrs.size>2)return;
+  const w=toWorld(e);gest={type:"tap",sx:e.clientX,sy:e.clientY,w,moved:false,v0:{...view}};
+  if(mode==="select"&&e.button===0){const h=hitTest(w,true);if(h)gest.drag=h}
+});
+svg.addEventListener("pointermove",e=>{
+  if(ptrs.has(e.pointerId))ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY});
+  const rect=svg.getBoundingClientRect();
+  if(gest&&gest.type==="pinch"&&ptrs.size>=2){const [a,b]=[...ptrs.values()];const d=Math.hypot(a.x-b.x,a.y-b.y)||1;
+    const w=Math.max(3,Math.min(200,gest.v0.w*gest.d0/d)),h=w*0.75,mx=(a.x+b.x)/2,my=(a.y+b.y)/2;
+    view={x:gest.wx-(mx-rect.left)/rect.width*w,y:gest.wy-(my-rect.top)/rect.height*h,w,h};renderPlan();return}
+  if(gest&&gest.type==="tap"){
+    const dx=e.clientX-gest.sx,dy=e.clientY-gest.sy;
+    if(!gest.moved&&Math.hypot(dx,dy)>5){gest.moved=true;if(gest.drag)pushHist()}
+    if(!gest.moved)return;
+    if(gest.drag){dragTo(gest.drag,toWorld(e));scheduleLight();return}
+    view.x=gest.v0.x-dx/rect.width*view.w;view.y=gest.v0.y-dy/rect.height*view.h;renderPlan();return}
+  if(e.pointerType==="mouse"&&(mode==="contour"||mode==="part")){const f=curFloor(),w=toWorld(e);
+    const q=mode==="contour"?(f.closed?null:snapDraw(w,f.pts[f.pts.length-1])):snapPart(w,pending);
+    if(!q){if(hover){hover=null;renderPlan()}return}
+    if(!hover||hover[0]!==q[0]||hover[1]!==q[1]){hover=q;renderPlan()}}
+});
+function endPtr(e,cancel){
+  ptrs.delete(e.pointerId);
+  if(!gest)return;
+  if(gest.type==="pinch"){if(ptrs.size===0)gest=null;return}
+  const g=gest;gest=null;
+  if(!g.moved&&!cancel)handleTap(g.w);
+  else if(g.drag&&g.moved){commit();renderSel()}
+}
+svg.addEventListener("pointerup",e=>endPtr(e,false));
+svg.addEventListener("pointercancel",e=>endPtr(e,true));
+svg.addEventListener("pointerleave",e=>{if(e.pointerType==="mouse"&&hover&&!gest){hover=null;renderPlan()}});
+svg.addEventListener("wheel",e=>{e.preventDefault();const rect=svg.getBoundingClientRect();const fx=(e.clientX-rect.left)/rect.width,fy=(e.clientY-rect.top)/rect.height;
+  const wx=view.x+fx*view.w,wy=view.y+fy*view.h,w=Math.max(3,Math.min(200,view.w*Math.exp(e.deltaY*0.0015))),h=w*0.75;view={x:wx-fx*w,y:wy-fy*h,w,h};renderPlan()},{passive:false});
+function zoomBy(fac){const cx=view.x+view.w/2,cy=view.y+view.h/2,w=Math.max(3,Math.min(200,view.w*fac)),h=w*0.75;view={x:cx-w/2,y:cy-h/2,w,h};renderPlan()}
+$("#zin").onclick=()=>zoomBy(0.75);$("#zout").onclick=()=>zoomBy(1.33);$("#zfit").onclick=()=>{fitView();renderPlan()};
+let lightRaf=0;function scheduleLight(){if(lightRaf)return;lightRaf=requestAnimationFrame(()=>{lightRaf=0;renderPlan();renderEstimate()})}
+function dragTo(h,w){
+  const f=curFloor();
+  if(h.kind==="v"){const q=f.pts[h.i],n=[gsnap(w[0]),gsnap(w[1])];const old=q.slice();q[0]=n[0];q[1]=n[1];f.parts.forEach(l=>l.forEach(z=>{if(dist(z,old)<1e-6){z[0]=n[0];z[1]=n[1]}}))}
+  else if(h.kind==="pe"){const q=f.parts[h.i][h.e],other=f.parts[h.i][1-h.e],n=snapPart(w,other);const old=q.slice();q[0]=n[0];q[1]=n[1];f.parts.forEach((l,j)=>{if(j!==h.i)l.forEach(z=>{if(dist(z,old)<1e-6){z[0]=n[0];z[1]=n[1]}})})}
+  else if(h.kind==="r"){const r=f.rooms[h.i];r.x=r2(w[0]);r.y=r2(w[1])}
+  else if(h.kind==="d"){const d=f.eng[h.i];d.x=Math.round(w[0]*20)/20;d.y=Math.round(w[1]*20)/20}
+  else if(h.kind==="o"){const o=f.ops[h.i];const seg=o.on==="c"?edgesOf(f)[o.i]:f.parts[o.i];if(!seg)return;const pr=segProj(w,seg[0],seg[1]);o.s=r2(Math.round(pr.t*pr.len/0.05)*0.05)}
+  cur.updated=Date.now();
+}
+
+/* edits */
+function setEdgeLen(f,i,nl){
+  const E=edgesOf(f);if(!E[i])return;const [a,b]=E[i],l=dist(a,b);if(!(nl>0.2)||!l)return;
+  const d=nl-l,ux=(b[0]-a[0])/l,uy=(b[1]-a[1])/l,ax=Math.abs(ux)>0.999,ay=Math.abs(uy)>0.999;
+  const mv=q=>{q[0]=r2(q[0]+ux*d);q[1]=r2(q[1]+uy*d)};
+  if(ax||ay){const k=ax?0:1,s=ax?Math.sign(ux):Math.sign(uy),th=b[k],test=v=>s>0?v>=th-1e-6:v<=th+1e-6;
+    const set=new Set();f.pts.forEach(q=>{if(test(q[k]))set.add(q)});f.parts.forEach(l=>l.forEach(q=>{if(test(q[k]))set.add(q)}));set.forEach(mv);
+    f.rooms.forEach(r=>{if(test(k?r.y:r.x)){r.x=r2(r.x+ux*d);r.y=r2(r.y+uy*d)}})}
+  else{const old=b.slice();mv(b);f.parts.forEach(l=>l.forEach(q=>{if(dist(q,old)<1e-6){q[0]=b[0];q[1]=b[1]}}))}
+}
+function setPartLen(f,i,nl){const [a,b]=f.parts[i],l=dist(a,b);if(!(nl>0.1)||!l)return;const old=b.slice();b[0]=r2(a[0]+(b[0]-a[0])/l*nl);b[1]=r2(a[1]+(b[1]-a[1])/l*nl);f.parts.forEach((p2,j)=>{if(j!==i)p2.forEach(q=>{if(dist(q,old)<1e-6){q[0]=b[0];q[1]=b[1]}})})}
+function deleteVertex(f,k){const n=f.pts.length;if(f.closed&&n<=3)return toast("У контурі має лишитися щонайменше 3 кути");
+  const rm=new Set([(k-1+n)%n,k]);f.ops=f.ops.filter(o=>!(o.on==="c"&&rm.has(o.i))).map(o=>o.on==="c"&&o.i>k?{...o,i:o.i-1}:o);f.pts.splice(k,1)}
+function insertVertex(f,i){const E=edgesOf(f);const [a,b]=E[i],half=dist(a,b)/2;const m=[r2((a[0]+b[0])/2),r2((a[1]+b[1])/2)];
+  f.ops=f.ops.map(o=>{if(o.on!=="c")return o;if(o.i===i&&o.s>half)return {...o,i:i+1,s:r2(o.s-half)};if(o.i>i)return {...o,i:o.i+1};return o});f.pts.splice(i+1,0,m)}
+function deletePart(f,i){f.ops=f.ops.filter(o=>!(o.on==="p"&&o.i===i)).map(o=>o.on==="p"&&o.i>i?{...o,i:o.i-1}:o);f.parts.splice(i,1)}
+function deleteSel(){const f=curFloor();if(!sel)return;pushHist();
+  if(sel.kind==="d")f.eng.splice(sel.i,1);else if(sel.kind==="v")deleteVertex(f,sel.i);else if(sel.kind==="pe"||sel.kind==="p")deletePart(f,sel.i);else if(sel.kind==="o")f.ops.splice(sel.i,1);else if(sel.kind==="r")f.rooms.splice(sel.i,1);else if(sel.kind==="e")return;
+  sel=null;commit();renderSel()}
+
+/* selection panel */
+function numField(id,label,val,step,min,max){return `<div class="field"><label for="${id}">${label}</label><input id="${id}" type="number" step="${step}" min="${min}" max="${max}" value="${r2(val)}"></div>`}
+function renderSel(){
+  const box=$("#selbox"),f=curFloor();
+  if(!sel){box.innerHTML="";return}
+  if(sel.kind==="pe")sel={kind:"p",i:sel.i};
+  let h="";
+  if(sel.kind==="v"){const q=f.pts[sel.i];if(!q){sel=null;box.innerHTML="";return}
+    h=`<div class="between"><h3>Кут ${sel.i+1}</h3><button class="btn sm" data-a="close">Закрити</button></div><div class="fields">${numField("sv_x","X, м",q[0],0.05,-100,200)}${numField("sv_y","Y, м",q[1],0.05,-100,200)}</div><div class="row"><button class="btn danger sm" data-a="del">Видалити кут</button></div>`}
+  else if(sel.kind==="e"){const e=edgesOf(f)[sel.i];if(!e){sel=null;box.innerHTML="";return}
+    h=`<div class="between"><h3>Зовнішня стіна ${sel.i+1}</h3><button class="btn sm" data-a="close">Закрити</button></div><div class="fields">${numField("se_len","Довжина, м",dist(e[0],e[1]),0.05,0.3,100)}</div>
+    <p class="muted">Нова довжина зсуває всю частину плану за кінцем стіни, тож прямі кути зберігаються.</p>
+    <div class="row"><button class="btn sm" data-a="addwin">+ Вікно</button><button class="btn sm" data-a="adddoor">+ Двері</button><button class="btn sm" data-a="split">Додати кут посередині</button></div>`}
+  else if(sel.kind==="p"){const l=f.parts[sel.i];if(!l){sel=null;box.innerHTML="";return}
+    h=`<div class="between"><h3>Перегородка ${sel.i+1}</h3><button class="btn sm" data-a="close">Закрити</button></div><div class="fields">${numField("sp_len","Довжина, м",dist(l[0],l[1]),0.05,0.2,100)}</div>
+    <div class="row"><button class="btn sm" data-a="addidoor">+ Двері</button><button class="btn danger sm" data-a="del">Видалити перегородку</button></div>`}
+  else if(sel.kind==="o"){const o=f.ops[sel.i];if(!o){sel=null;box.innerHTML="";return}
+    const kinds=o.on==="c"?["win","door"]:["idoor"];
+    h=`<div class="between"><h3>${OP_NAME[o.kind]}</h3><button class="btn sm" data-a="close">Закрити</button></div><div class="fields">
+    ${kinds.length>1?`<div class="field"><label for="so_kind">Тип</label><select id="so_kind">${kinds.map(k=>`<option value="${k}" ${k===o.kind?"selected":""}>${OP_NAME[k]}</option>`).join("")}</select></div>`:""}
+    ${numField("so_w","Ширина, м",o.w,0.05,0.3,6)}${numField("so_h","Висота, м",o.h,0.05,0.3,3)}${o.kind==="win"?numField("so_sill","Підвіконня, м",o.sill||0,0.05,0,2):""}${numField("so_s","Від початку стіни до центру, м",o.s,0.05,0,100)}</div>
+    <div class="row"><button class="btn danger sm" data-a="del">Видалити</button></div>`}
+  else if(sel.kind==="d"){const d=f.eng[sel.i];if(!d||!DEV[d.sys][d.t]){sel=null;box.innerHTML="";return}
+    const hub=hubFor(cur,fi,d.sys),run=hub&&!isHub(d)?Math.abs(d.x-hub.x)+Math.abs(d.y-hub.y):null;
+    h=`<div class="between"><h3>${DEV[d.sys][d.t].n}</h3><button class="btn sm" data-a="close">Закрити</button></div>
+    <p class="muted">${SYS[d.sys]}${run!=null?` · траса до ${d.sys==="el"?"щитка":d.sys==="pl"?"стояка":"котла"} ≈ ${fmt1(run)} м${hub.own?"":" + підйом між поверхами"}`:""}</p>
+    <div class="fields"><div class="field"><label for="sd_t">Пристрій</label><select id="sd_t">${Object.entries(DEV[d.sys]).filter(([,x])=>!x.tool).map(([t,x])=>`<option value="${t}" ${t===d.t?"selected":""}>${x.n}</option>`).join("")}</select></div>
+    ${numField("sd_x","X, м",d.x,0.05,-100,200)}${numField("sd_y","Y, м",d.y,0.05,-100,200)}</div>
+    <div class="row"><button class="btn danger sm" data-a="del">Видалити</button></div>`}
+  else if(sel.kind==="r"){const r=f.rooms[sel.i];if(!r){sel=null;box.innerHTML="";return}const m=roomMeasure(f,r.x,r.y);
+    h=`<div class="between"><h3>Кімната ${m?"≈ "+fmt1(m.area)+" м²":""}</h3><button class="btn sm" data-a="close">Закрити</button></div><div class="fields"><div class="field"><label for="sr_type">Призначення</label><select id="sr_type">${ROOM_TYPES.map(t=>`<option ${t===r.type?"selected":""}>${t}</option>`).join("")}</select></div>
+    <div class="field"><label for="sr_uf">Тепла підлога</label><select id="sr_uf">${[["","Немає"],["water","Водяна"],["el","Електрична"]].map(([v,t])=>`<option value="${v}" ${(r.uf||"")===v?"selected":""}>${t}</option>`).join("")}</select></div></div>
+    <p class="muted">Санвузол, кухня, коридор і котельня отримують плитку на підлогу. Санвузол також плитку на стіни і 4 точки сантехніки.</p>
+    <div class="row"><button class="btn danger sm" data-a="del">Видалити підпис</button></div>`}
+  box.innerHTML=`<div class="selbox">${h}</div>`;
+}
+$("#selbox").addEventListener("click",e=>{const b=e.target.closest("[data-a]");if(!b)return;const a=b.dataset.a,f=curFloor();
+  if(a==="close"){sel=null;renderSel();renderPlan();return}
+  if(a==="del"){deleteSel();return}
+  if(a==="split"){pushHist();insertVertex(f,sel.i);sel={kind:"v",i:sel.i+1};commit();renderSel();return}
+  if(a==="addwin"||a==="adddoor"||a==="addidoor"){const kind=a==="addwin"?"win":a==="adddoor"?"door":"idoor";const seg=kind==="idoor"?f.parts[sel.i]:edgesOf(f)[sel.i];const len=dist(seg[0],seg[1]),d=OP_DEF[kind];
+    if(len<d.w+0.2)return toast("Стіна закоротка для цього прорізу");pushHist();f.ops.push({on:kind==="idoor"?"p":"c",i:sel.i,s:r2(len/2),kind,...d});sel={kind:"o",i:f.ops.length-1};commit();renderSel()}
+});
+$("#selbox").addEventListener("change",e=>{const t=e.target,f=curFloor(),v=parseFloat(t.value);if(!sel)return;pushHist();
+  if(t.id==="sv_x"&&!isNaN(v)){const q=f.pts[sel.i],old=q.slice();q[0]=r2(v);f.parts.forEach(l=>l.forEach(z=>{if(dist(z,old)<1e-6)z[0]=q[0]}))}
+  else if(t.id==="sv_y"&&!isNaN(v)){const q=f.pts[sel.i],old=q.slice();q[1]=r2(v);f.parts.forEach(l=>l.forEach(z=>{if(dist(z,old)<1e-6)z[1]=q[1]}))}
+  else if(t.id==="se_len")setEdgeLen(f,sel.i,v);
+  else if(t.id==="sp_len")setPartLen(f,sel.i,v);
+  else if(t.id==="so_kind"){const o=f.ops[sel.i];o.kind=t.value;Object.assign(o,OP_DEF[t.value])}
+  else if(/^so_/.test(t.id)&&!isNaN(v)){const o=f.ops[sel.i];o[t.id.slice(3)]=r2(v)}
+  else if(t.id==="sr_type")f.rooms[sel.i].type=t.value;
+  else if(t.id==="sr_uf"){const r=f.rooms[sel.i];r.uf=t.value||null;if(r.uf==="water")ensureManifold(f,r);if(r.uf&&!layersPlan.ht){layersPlan.ht=true;lsSet("budk_lp",layersPlan);syncLayers()}}
+  else if(t.id==="sd_t"){const d=f.eng[sel.i];if(isHub({sys:d.sys,t:t.value})&&f.eng.some((x,j)=>j!==sel.i&&x.sys===d.sys&&x.t===t.value)){history.pop();renderSel();return toast("Такий вузол на поверсі вже є")}d.t=t.value}
+  else if((t.id==="sd_x"||t.id==="sd_y")&&!isNaN(v))f.eng[sel.i][t.id==="sd_x"?"x":"y"]=r2(v);
+  commit();renderSel();
+});
+document.addEventListener("keydown",e=>{
+  if(/INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName))return;
+  if(activeTab!=="plan")return;
+  if((e.key==="Delete"||e.key==="Backspace")&&sel){e.preventDefault();deleteSel()}
+  else if(e.key==="Escape"){pending=null;sel=null;renderSel();renderPlan()}
+  else if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="z"){e.preventDefault();undo()}
+});
+function setMode(m){mode=m;pending=null;hover=null;$$("#modes button").forEach(x=>x.setAttribute("aria-pressed",x.dataset.mode===m));renderEngBar();renderPlan()}
+$("#modes").addEventListener("click",e=>{const b=e.target.closest("button");if(b)setMode(b.dataset.mode)});
+function undo(){const h=history.pop();if(!h)return toast("Немає дій для відміни");const s=JSON.parse(h);cur.floors=s.floors;fi=Math.min(s.fi,cur.floors.length-1);pending=null;sel=null;renderFloors();renderSel();commit()}
+$("#undo").onclick=undo;
+$("#clear").onclick=()=>{pushHist();const f=curFloor();f.pts=[];f.parts=[];f.ops=[];f.rooms=[];f.eng=[];f.closed=false;pending=null;sel=null;setMode("contour");renderSel();commit()};
+$("#sample").onclick=()=>{pushHist();const s=makeSample();cur.floors=s.floors;fi=0;sel=null;pending=null;renderFloors();fitView();renderSel();commit()};
+$("#gridStep").onchange=()=>renderPlan();
+
+/* floors */
+function floorLabel(i){const f=cur.floors[i];if(f.type==="basement")return "Цоколь";if(f.type==="mansard")return "Мансарда";let n=0;for(let j=0;j<=i;j++)if(cur.floors[j].type==="floor")n++;return n+" поверх"}
+function renderFloors(){
+  fi=Math.min(fi,cur.floors.length-1);
+  const hasB=cur.floors[0].type==="basement",hasM=cur.floors[cur.floors.length-1].type==="mansard";
+  $("#floors").innerHTML=cur.floors.map((f,i)=>`<button class="chip" data-fi="${i}" aria-pressed="${i===fi}">${floorLabel(i)}</button>`).join("")+
+    `<button class="chip add" data-fa="floor">+ Поверх</button>${hasM?"":`<button class="chip add" data-fa="mansard">+ Мансарда</button>`}${hasB?"":`<button class="chip add" data-fa="basement">+ Цоколь</button>`}`;
+  const f=curFloor(),last=fi===cur.floors.length-1,aboveCount=cur.floors.filter(x=>x.type!=="basement").length;
+  const opts=[["floor","Звичайний поверх"]];if(last&&fi>0&&!(cur.floors[fi-1].type==="basement"&&aboveCount<=1))opts.push(["mansard","Мансарда"]);if(fi===0&&cur.floors.length>1)opts.push(["basement","Цоколь / підвал"]);
+  $("#floorset").innerHTML=`<div class="field"><label for="fl_type">Тип</label><select id="fl_type">${opts.map(([v,t])=>`<option value="${v}" ${v===f.type?"selected":""}>${t}</option>`).join("")}</select></div>
+    <div class="field"><label for="fl_h">${f.type==="mansard"?"Висота стелі, м":"Висота поверху, м"}</label><input id="fl_h" type="number" step="0.1" min="2" max="5" value="${f.h}"></div>
+    ${fi>0?`<button class="btn sm" id="fl_copy">Скопіювати план з нижнього</button>`:""}
+    ${cur.floors.length>1?`<button class="btn danger sm" id="fl_del">Видалити поверх</button>`:""}`;
+}
+$("#floors").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;
+  if(b.dataset.fi!=null){fi=+b.dataset.fi;sel=null;pending=null;renderFloors();renderSel();fitView();renderPlan();return}
+  const t=b.dataset.fa;pushHist();
+  if(t==="basement"){const src=cur.floors[0];cur.floors.unshift({id:newId("f"),type:"basement",h:2.5,closed:src.closed,pts:clone(src.pts),parts:[],ops:[],rooms:[],eng:[]});fi=0}
+  else{const hasM=cur.floors[cur.floors.length-1].type==="mansard";const idx=t==="floor"&&hasM?cur.floors.length-1:cur.floors.length;const src=cur.floors[idx-1]||cur.floors[0];
+    cur.floors.splice(idx,0,{id:newId("f"),type:t,h:t==="mansard"?2.5:2.8,closed:src.closed,pts:clone(src.pts),parts:[],ops:[],rooms:[],eng:[]});fi=idx}
+  sel=null;renderFloors();renderSel();syncForm();commit();
+});
+$("#floorset").addEventListener("change",e=>{const f=curFloor();
+  if(e.target.id==="fl_type"){pushHist();f.type=e.target.value;if(f.type==="mansard"&&f.h>2.7)f.h=2.5;renderFloors();syncForm();commit()}
+  if(e.target.id==="fl_h"){const v=parseFloat(e.target.value);if(v>=2&&v<=5){f.h=v;commit({plan:false})}}
+});
+$("#floorset").addEventListener("click",e=>{const f=curFloor();
+  if(e.target.id==="fl_copy"){const src=cur.floors[fi-1];pushHist();f.pts=clone(src.pts);f.closed=src.closed;f.parts=clone(src.parts);f.ops=clone(src.ops.filter(o=>o.kind!=="door"));f.rooms=clone(src.rooms);sel=null;renderSel();commit();toast("План скопійовано з нижнього поверху")}
+  if(e.target.id==="fl_del"){pushHist();cur.floors.splice(fi,1);if(cur.floors[0].type==="mansard"&&cur.floors.length===1)cur.floors[0].type="floor";fi=Math.max(0,fi-1);sel=null;renderFloors();renderSel();syncForm();fitView();commit()}
+});
+
+/* ───────────── construction form ───────────── */
+$("#p_region").innerHTML=REGIONS.map(r=>`<option value="${r.id}">${r.name}</option>`).join("");
+$("#p_soil").innerHTML=Object.entries(SOILS).map(([k,s])=>`<option value="${k}">${s.name}</option>`).join("");
+function syncForm(){
+  const p=fullP(cur);cur.p=p;
+  $$("[data-p]").forEach(n=>{if(document.activeElement===n)return;const v=p[n.dataset.p];if(n.type==="checkbox")n.checked=!!v;else n.value=v??""});
+  $$("[data-on]").forEach(n=>n.checked=!!p.on[n.dataset.on]);
+  const hasB=cur.floors[0].type==="basement",hasM=cur.floors[cur.floors.length-1].type==="mansard";
+  const show={strip:p.found==="strip",slab:p.found==="slab",piles:p.found==="piles",basement:hasB,mansard:hasM,pitched:p.roof!=="flat",gable:p.roof==="gable",heat:p.on.heat,stairs:p.on.stairs};
+  $$("[data-show]").forEach(n=>n.hidden=!show[n.dataset.show]);
+  $("#p_fd").disabled=!!p.autoDepth;if(p.autoDepth&&document.activeElement!==$("#p_fd"))$("#p_fd").value=stripH(p);
+  $("#p_ins").disabled=p.wall==="frame";
+  const R=regionOf(p.region);$("#p_coef").placeholder="авто: "+fmt2(R.coef);
+  $("#siteInfo").innerHTML=`Глибина промерзання: <b>${fmt1(R.frost)} м</b> · закладання фундаменту: <b>${fmt1(depthOf(p))} м</b> · коефіцієнт робіт: <b>${fmt2(coefOf(p))}</b>${hasB?" · під цоколем стрічка-подушка 0,5 м":""}`;
+}
+document.addEventListener("input",e=>{const t=e.target;if(!t.dataset||!t.dataset.p||t.type==="checkbox")return;
+  let v=t.value;if(t.type==="number"){if(v===""){v=t.dataset.p==="coef"?"":null}else{v=parseFloat(v);if(isNaN(v))return}}if(v===null)return;
+  cur.p[t.dataset.p]=v;syncForm();commit({plan:t.dataset.p==="wall"})});
+document.addEventListener("change",e=>{const t=e.target;if(!t.dataset)return;
+  if(t.dataset.p&&t.type==="checkbox"){cur.p[t.dataset.p]=t.checked;syncForm();commit({plan:false})}
+  else if(t.dataset.on){cur.p.on={...cur.p.on,[t.dataset.on]:t.checked};syncForm();commit({plan:false})}});
+
+/* ───────────── estimate ───────────── */
+function qtyFmt(q,u){return (u==="кг"||u==="шт"||u==="точка")?fmt(q):fmt2(q)}
+let lastCalc=null;
+function renderEstimate(){
+  const r=calcPr(cur);lastCalc=r;
+  const open=new Set($$("details.stage[open]").map(d=>d.dataset.n));
+  $("#tName").textContent=cur.name;
+  const bars=$("#bars"),st=$("#stages"),w=$("#warns");
+  if(!r){["tTotal","bbTotal"].forEach(id=>$("#"+id).textContent="–");["tPer","bbPer","tMat","tWork"].forEach(id=>$("#"+id).textContent="");
+    bars.innerHTML="";w.innerHTML="";st.innerHTML='<p class="empty">Замкніть контур хоча б одного наземного поверху на вкладці «План», і тут з\'явиться кошторис.</p>';renderRoofInfo(null);return}
+  const per=r.total/r.gross;
+  $("#tTotal").textContent=fmt(r.total)+" грн";$("#bbTotal").textContent=fmt(r.total)+" грн";
+  $("#tPer").textContent=`${fmt(per)} грн/м² · загальна площа ${fmt1(r.gross)} м² · ${r.floors} ${r.floors===1?"рівень":r.floors<5?"рівні":"рівнів"}`;
+  $("#bbPer").textContent=fmt(per)+" грн/м² →";
+  $("#tMat").textContent=fmt(r.mat)+" грн";$("#tWork").textContent=fullP(cur).works?fmt(r.wrk)+" грн":"не враховано";
+  w.innerHTML=r.warn.map(x=>`<li>${esc(x)}</li>`).join("");
+  const max=Math.max(...r.stages.map(s=>s.sum))||1;
+  bars.innerHTML=r.stages.map(s=>`<div class="bar-row"><span class="n">${s.name}</span><span class="s">${fmt(s.sum)}</span><div class="track"><div class="m" style="width:${s.mat/max*100}%"></div><div class="w" style="width:${s.wrk/max*100}%"></div></div></div>`).join("");
+  st.innerHTML=r.stages.map(s=>`<details class="stage" data-n="${s.name}" ${open.has(s.name)?"open":""}><summary><span class="t">${s.name}</span><span class="s">${fmt(s.sum)} грн</span></summary>
+    <div class="items">${s.items.map(i=>`<div class="item${i.work?" work":""}"><span class="nm">${esc(i.name)}</span><span class="sm">${fmt(i.sum)}</span><span class="q">${qtyFmt(i.qty,i.unit)} ${i.unit} × ${fmt2(i.price)} грн</span></div>`).join("")}</div></details>`).join("");
+  renderRoofInfo(r);
+}
+function renderRoofInfo(r){const p=fullP(cur),box=$("#roofInfo");if(!r){box.innerHTML="Намалюйте план, щоб побачити геометрію даху.";return}
+  const g=r.rg;box.innerHTML=p.roof==="flat"?`Площа покрівлі зі звисами: <b>${fmt1(g.proj)} м²</b>`:
+  `Площа скатів: <b>${fmt1(g.slope)} м²</b> · висота гребеня над стінами: <b>${fmt2(g.maxH)} м</b> · гребені: <b>${fmt1(g.ridge)} м</b>${g.hips?` · ребра: <b>${fmt1(g.hips)} м</b>`:""}${g.valleys?` · ендови: <b>${fmt1(g.valleys)} м</b>`:""}${g.gableA?` · фронтони: <b>${fmt1(g.gableA)} м²</b>`:""}`}
+
+/* ───────────── 3D ───────────── */
+let T3=null,dirty3D=true;
+async function show3D(){
+  const box=$("#view3d");
+  if(!window.THREE){box.innerHTML='<p class="empty" style="padding:20px">Завантажую 3D…</p>';try{await loadScript(URLS.three)}catch(e){box.innerHTML='<p class="empty" style="padding:20px">Не вдалося завантажити 3D-бібліотеку. Перевірте з\'єднання й відкрийте вкладку ще раз.</p>';return}}
+  if(!T3)init3D(box);
+  if(dirty3D){build3D();dirty3D=false}
+  resize3D();
+}
+function init3D(box){
+  const T=window.THREE;box.innerHTML="";
+  const renderer=new T.WebGLRenderer({antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio||1,2));box.appendChild(renderer.domElement);
+  const scene=new T.Scene(),camera=new T.PerspectiveCamera(42,1.5,0.1,2000);
+  scene.add(new T.HemisphereLight(0xffffff,0x8a8f8c,0.75));const sun=new T.DirectionalLight(0xffffff,0.75);sun.position.set(30,50,20);scene.add(sun);
+  T3={T,renderer,scene,camera,group:null,orb:{th:0.9,ph:1.0,r:30,tx:0,ty:2,tz:0},box};
+  const el_=renderer.domElement,pts=new Map();let last=null,pd=0;
+  el_.addEventListener("pointerdown",e=>{el_.setPointerCapture(e.pointerId);pts.set(e.pointerId,[e.clientX,e.clientY]);if(pts.size===2){const [a,b]=[...pts.values()];pd=Math.hypot(a[0]-b[0],a[1]-b[1])}last=[e.clientX,e.clientY]});
+  el_.addEventListener("pointermove",e=>{if(!pts.has(e.pointerId))return;pts.set(e.pointerId,[e.clientX,e.clientY]);const o=T3.orb;
+    if(pts.size===2){const [a,b]=[...pts.values()];const d=Math.hypot(a[0]-b[0],a[1]-b[1]);if(pd){o.r=Math.max(5,Math.min(300,o.r*pd/d))}pd=d;render3D();return}
+    o.th+=(e.clientX-last[0])*0.008;o.ph=Math.max(0.15,Math.min(1.5,o.ph-(e.clientY-last[1])*0.008));last=[e.clientX,e.clientY];render3D()});
+  const up=e=>{pts.delete(e.pointerId);pd=0;const v=[...pts.values()][0];if(v)last=v};el_.addEventListener("pointerup",up);el_.addEventListener("pointercancel",up);
+  el_.addEventListener("wheel",e=>{e.preventDefault();T3.orb.r=Math.max(5,Math.min(300,T3.orb.r*Math.exp(e.deltaY*0.0012)));render3D()},{passive:false});
+  if(window.ResizeObserver)new ResizeObserver(()=>{if(activeTab==="d3")resize3D()}).observe(box);
+}
+function resize3D(){if(!T3)return;const w=T3.box.clientWidth||600,h=Math.max(300,Math.min(560,Math.round(w*0.68)));T3.renderer.setSize(w,h);T3.camera.aspect=w/h;T3.camera.updateProjectionMatrix();render3D()}
+function render3D(){if(!T3)return;const o=T3.orb,c=T3.camera;c.position.set(o.tx+o.r*Math.sin(o.ph)*Math.cos(o.th),o.ty+o.r*Math.cos(o.ph),o.tz+o.r*Math.sin(o.ph)*Math.sin(o.th));c.lookAt(o.tx,o.ty,o.tz);T3.renderer.render(T3.scene,c)}
+function cssColor(name,fb){const v=getComputedStyle(document.documentElement).getPropertyValue(name).trim();return v||fb}
+function build3D(){
+  const {T,scene}=T3;if(T3.group){scene.remove(T3.group);T3.group.traverse(o=>{if(o.geometry)o.geometry.dispose()})}
+  const G=new T.Group();T3.group=G;scene.add(G);
+  scene.background=new T.Color(cssColor("--surface","#F7F8F6"));
+  const p=fullP(cur);
+  const M=(c,o={})=>new T.MeshLambertMaterial({color:c,side:T.DoubleSide,...o});
+  const X=layers3D.glass?{transparent:true,opacity:0.16,depthWrite:false}:{};
+  const mats={wall:M(p.facade==="clinker"?0xa0583c:0xe7e2d7,X),base:M(0x8e9592,X),part:M(0xd9d4ca,X),slab:M(0xb9bfbc,X),glass:M(0x7fb2d9,{transparent:true,opacity:layers3D.glass?0.2:0.55,depthWrite:!layers3D.glass}),door:M(0x6b4a33,X),
+    roof:M(p.roofing==="metal"?0x7a3b2e:p.roofing==="bitum"?0x4d4440:0x4b5a63,X),gable:M(p.facade==="clinker"?0xa0583c:0xe7e2d7,X),ground:M(0x9fb39a,{transparent:true,opacity:0.55})};
+  const levels=[];
+  const floors=cur.floors.filter(f=>f.closed&&f.pts.length>2);
+  if(!floors.length){render3D();return}
+  const box=(len,h,t,cx,cy,cz,rot,mat)=>{if(len<=0.01||h<=0.01)return;const m=new T.Mesh(new T.BoxGeometry(len,h,t),mat);m.position.set(cx,cy,cz);m.rotation.y=rot;G.add(m)};
+  const slab=(pts,ytop,th,mat)=>{const sh=new T.Shape(pts.map(q=>new T.Vector2(q[0],q[1])));const g=new T.ExtrudeGeometry(sh,{depth:th,bevelEnabled:false});const m=new T.Mesh(g,mat);m.rotation.x=Math.PI/2;m.position.y=ytop;G.add(m)};
+  function wallsOf(f,seg,t,z0,H,mat,ops,ext){
+    const [a,b]=seg,len=dist(a,b);if(len<0.05)return;const ux=(b[0]-a[0])/len,uy=(b[1]-a[1])/len,rot=-Math.atan2(uy,ux);
+    const piece=(s0,s1,y0,y1,m)=>{const e0=ext&&s0<=0.001?t/2:0,e1=ext&&s1>=len-0.001?t/2:0;const a0=s0-e0,a1=s1+e1,mid=(a0+a1)/2;box(a1-a0,y1-y0,t,a[0]+ux*mid,z0+(y0+y1)/2,a[1]+uy*mid,rot,m||mat)};
+    const list=ops.slice().sort((x,y)=>x.s-y.s);let c=0;
+    list.forEach(o=>{const l=Math.max(c,o.s-o.w/2),r=Math.min(len,o.s+o.w/2);if(r<=l)return;piece(c,l,0,H);
+      const sill=o.o.kind==="win"?Math.min(o.o.sill||0,H-0.1):0,top=Math.min(H,sill+o.o.h);
+      if(sill>0)piece(l,r,0,sill);if(top<H)piece(l,r,top,H);
+      const mid=(l+r)/2,pane=new T.Mesh(new T.PlaneGeometry(r-l,top-sill),o.o.kind==="win"?mats.glass:mats.door);pane.position.set(a[0]+ux*mid,z0+(sill+top)/2,a[1]+uy*mid);pane.rotation.y=rot;G.add(pane);c=r});
+    piece(c,len,0,H);
+  }
+  const hasB=floors[0].type==="basement";let z=hasB?-floors[0].h:0;
+  if(!hasB)slab(floors[0].pts,0,0.4,mats.base);
+  const th=THICK[p.wall]||.3;let top=null,topZ=0;
+  // roof outline is taken at the outer face of the walls, so the roof covers the wall tops
+  const topF=[...floors].reverse().find(f=>f.type!=="basement");
+  const tg=topF?geomOf(topF):null,rg3=topF?roofGeom({f:topF,A:tg.A,P:tg.P},p,0):null;
+  const rects3=rg3?rg3.rects.map(r=>({...r,x0:r.x0-th/2,x1:r.x1+th/2,y0:r.y0-th/2,y1:r.y1+th/2,span:r.span+th})):[];
+  function roofH(x,y){
+    if(!rg3||p.roof==="flat")return Infinity;let best=0;
+    rects3.forEach(r=>{if(x<r.x0||x>r.x1||y<r.y0||y>r.y1)return;let d;
+      if(p.roof==="hip")d=Math.min(x-r.x0,r.x1-x,y-r.y0,r.y1-y);
+      else d=r.along?Math.min(y-r.y0,r.y1-y):Math.min(x-r.x0,r.x1-x);
+      best=Math.max(best,d*rg3.tn)});
+    return best;
+  }
+  function mansardPart(seg,z0,knee,ceilH,ops){
+    const [a,b]=seg,len=dist(a,b);if(len<0.05)return;const ux=(b[0]-a[0])/len,uy=(b[1]-a[1])/len,rot=-Math.atan2(uy,ux);
+    const n=Math.max(1,Math.ceil(len/0.2)),st=len/n;
+    for(let i=0;i<n;i++){const s=(i+0.5)*st,x=a[0]+ux*s,y=a[1]+uy*s;
+      const h=Math.max(0,Math.min(ceilH,knee+roofH(x,y)-0.08));if(h<0.05)continue;
+      const door=ops.find(o=>Math.abs(o.s-s)<o.w/2);const y0=door?Math.min(h,door.o.h):0;
+      if(h-y0>0.02)box(st+0.01,h-y0,0.1,x,z0+(y0+h)/2,y,rot,mats.part)}
+  }
+  floors.forEach((f,idx)=>{
+    const isM=f.type==="mansard",H=isM?(+p.knee||1.2):f.h,mat=f.type==="basement"?mats.base:mats.wall,og=opsGeom(f),E=edgesOf(f);
+    levels.push({f,z0:z,H,ceil:isM?f.h:H});
+    const slabAbove=idx<floors.length-1||!isM;
+    E.forEach((seg,i)=>wallsOf(f,seg,th,z,H+(slabAbove?0.2:0),mat,og.filter(o=>o.o.on==="c"&&o.o.i===i),true));
+    f.parts.forEach((seg,i)=>{const ops=og.filter(o=>o.o.on==="p"&&o.o.i===i);
+      if(isM)mansardPart(seg,z,H,f.h,ops);else wallsOf(f,seg,0.1,z,H,mats.part,ops,false)});
+    z+=H;const last=idx===floors.length-1;
+    if(f.type!=="basement"){top=f;topZ=z}
+    if(!last||!isM){slab(f.pts,z+0.2,0.2,mats.slab);z+=0.2;if(f.type!=="basement")topZ=z}
+  });
+  if(top&&$("#showRoof").checked){
+    const tn=rg3.tn,ov=rg3.ov;
+    if(p.roof==="flat"){slab(top.pts,topZ+0.3,0.3,mats.roof)}
+    else{
+      const pos=[],gpos=[];
+      const tri=(arr,a,b,c)=>arr.push(...a,...b,...c),quad=(arr,a,b,c,d)=>{tri(arr,a,b,c);tri(arr,a,c,d)};
+      rects3.forEach(r=>{
+        let a0,a1,b0,b1;if(r.along){a0=r.x0;a1=r.x1;b0=r.y0;b1=r.y1}else{a0=r.y0;a1=r.y1;b0=r.x0;b1=r.x1}
+        const span=b1-b0,h=span/2*tn,bm=(b0+b1)/2,ze=topZ-ov*tn,zt=topZ+h;
+        const Pp=(A,B,Z)=>r.along?[A,Z,B]:[B,Z,A];
+        const A0=a0-ov,A1=a1+ov,B0=b0-ov,B1=b1+ov;
+        if(p.roof==="gable"){
+          quad(pos,Pp(A0,B0,ze),Pp(A1,B0,ze),Pp(A1,bm,zt),Pp(A0,bm,zt));quad(pos,Pp(A0,B1,ze),Pp(A1,B1,ze),Pp(A1,bm,zt),Pp(A0,bm,zt));
+          if(r.e0)tri(gpos,Pp(a0,b0,topZ),Pp(a0,b1,topZ),Pp(a0,bm,zt));if(r.e1)tri(gpos,Pp(a1,b0,topZ),Pp(a1,b1,topZ),Pp(a1,bm,zt));
+        }else{
+          const midA=(a0+a1)/2,ra0=Math.min(a0+span/2,midA),ra1=Math.max(a1-span/2,midA);
+          quad(pos,Pp(A0,B0,ze),Pp(A1,B0,ze),Pp(ra1,bm,zt),Pp(ra0,bm,zt));quad(pos,Pp(A0,B1,ze),Pp(A1,B1,ze),Pp(ra1,bm,zt),Pp(ra0,bm,zt));
+          tri(pos,Pp(A0,B0,ze),Pp(A0,B1,ze),Pp(ra0,bm,zt));tri(pos,Pp(A1,B0,ze),Pp(A1,B1,ze),Pp(ra1,bm,zt));
+        }
+      });
+      const mk=(arr,mat)=>{if(!arr.length)return;const g=new T.BufferGeometry();g.setAttribute("position",new T.Float32BufferAttribute(arr,3));g.computeVertexNormals();G.add(new T.Mesh(g,mat))};
+      mk(pos,mats.roof);mk(gpos,mats.gable);
+    }
+  }
+  // engineering layers
+  ["el","pl","ht"].forEach(sys=>{
+    if(!layers3D[sys])return;
+    const dm=M(SYS3D[sys]),lm=new T.LineBasicMaterial({color:SYS3D[sys]});
+    const line=pts=>{const g=new T.BufferGeometry().setFromPoints(pts.map(q=>new T.Vector3(q[0],q[1],q[2])));G.add(new T.Line(g,lm))};
+    const runOf=l=>sys==="el"?l.z0+l.ceil-0.08:sys==="pl"?l.z0+0.06:l.z0+0.12;
+    const lvOf=f=>levels.find(l=>l.f===f);
+    levels.forEach(l=>{
+      const fIdx=cur.floors.indexOf(l.f),ds=l.f.eng.filter(d=>d.sys===sys&&DEV[sys][d.t]);if(!ds.length)return;
+      const hub=hubFor(cur,fIdx,sys),run=runOf(l);
+      ds.forEach(d=>{
+        const def=DEV[sys][d.t];
+        if(def.d3==="pipe"){const c=new T.Mesh(new T.CylinderGeometry(0.06,0.06,l.ceil,10),dm);c.position.set(d.x,l.z0+l.ceil/2,d.y);G.add(c);return}
+        const [w,dp,h,b]=def.d3,wi=wallInfo(l.f,d.x,d.y,0.8,th);
+        const base=b==="ceil"?l.z0+l.ceil-h:l.z0+b;let cx=d.x,cy=d.y,rot=0;
+        if(wi&&b!=="ceil"){rot=-wi.ang;const off=wi.t/2+dp/2+0.01;cx=wi.q[0]+wi.nx*off;cy=wi.q[1]+wi.ny*off}
+        box(w,h,dp,cx,base+h/2,cy,rot,dm);
+        if(hub&&!def.hub){const yDev=b==="ceil"?l.z0+l.ceil-0.04:base+h/2;line([[d.x,yDev,d.y],[d.x,run,d.y],[hub.x,run,d.y],[hub.x,run,hub.y]])}
+      });
+      if(hub&&!hub.own){const hl=lvOf(cur.floors[hub.j]);if(hl)line([[hub.x,run,hub.y],[hub.x,runOf(hl),hub.y]])}
+    });
+  });
+  if(layers3D.ht)levels.forEach(l=>l.f.rooms.forEach(r=>{if(!r.uf)return;const m=roomMeasure(l.f,r.x,r.y);if(!m)return;
+    const y=l.z0+0.03,arr=[];ufRuns(m,3).forEach(s=>arr.push(s[0],y,s[1],s[2],y,s[3]));if(!arr.length)return;
+    const g=new T.BufferGeometry();g.setAttribute("position",new T.Float32BufferAttribute(arr,3));
+    G.add(new T.LineSegments(g,new T.LineBasicMaterial({color:r.uf==="el"?SYS3D.el:SYS3D.ht})))}));
+  const all=floors.flatMap(f=>f.pts),xs=all.map(q=>q[0]),ys=all.map(q=>q[1]);
+  const cx=(Math.min(...xs)+Math.max(...xs))/2,cy=(Math.min(...ys)+Math.max(...ys))/2,size=Math.max(Math.max(...xs)-Math.min(...xs),Math.max(...ys)-Math.min(...ys),6);
+  const gr=new T.Mesh(new T.PlaneGeometry(size*4,size*4),mats.ground);gr.rotation.x=-Math.PI/2;gr.position.set(cx,-0.01,cy);G.add(gr);
+  if(!T3.fitted||T3.fitKey!==cur.id){Object.assign(T3.orb,{tx:cx,ty:Math.max(2,topZ/2),tz:cy,r:size*2.1,th:0.9,ph:1.05});T3.fitted=true;T3.fitKey=cur.id}
+  T3.size=size;T3.c=[cx,cy,topZ];render3D();
+}
+$("#reset3d").onclick=()=>{if(!T3||!T3.c)return;Object.assign(T3.orb,{tx:T3.c[0],ty:Math.max(2,T3.c[2]/2),tz:T3.c[1],r:T3.size*2.1,th:0.9,ph:1.05});render3D()};
+$("#showRoof").onchange=()=>{dirty3D=true;show3D()};
+
+/* ───────────── projects ───────────── */
+const compareSet=new Set();
+function switchProject(pr){cur=pr;fi=0;sel=null;pending=null;history=[];saveLocal();renderFloors();syncForm();fitView();renderSel();renderPlan();renderEstimate();renderProjects();renderPrices();dirty3D=true;if(activeTab==="d3")show3D()}
+function renderProjects(){
+  $("#prjName").value=document.activeElement===$("#prjName")?$("#prjName").value:cur.name;
+  $("#prjSync").textContent=CAP.uid&&CAP.db?(cloudStatus==="readonly"?"Хмарне збереження недоступне з вашим рівнем доступу. Проєкти лишаються в цьому браузері.":"Проєкти зберігаються у вашому акаунті claude.ai і доступні на інших пристроях."):"Проєкти зберігаються лише в цьому браузері. Хмарне збереження доступне в повній версії.";
+  const sorted=projects.slice().sort((a,b)=>b.updated-a.updated);
+  $("#prjList").innerHTML=sorted.map(pr=>{const r=calcPr(pr);return `<div class="prj ${pr.id===cur.id?"cur":""}" data-id="${pr.id}">
+    <label class="check" title="Порівняти"><input type="checkbox" data-cmp="${pr.id}" ${compareSet.has(pr.id)?"checked":""} aria-label="Порівняти ${esc(pr.name)}"></label>
+    <div style="min-width:0"><button class="nm" data-open="${pr.id}">${esc(pr.name)}</button><div class="meta">${r?fmt1(r.gross)+" м² · "+fmt(r.total)+" грн":"план не завершено"} · ${new Date(pr.updated).toLocaleDateString("uk-UA")}</div></div>
+    <div class="row">${projects.length>1?`<button class="btn sm danger" data-del="${pr.id}">${pendingDel===pr.id?"Точно видалити?":"Видалити"}</button>`:""}</div></div>`}).join("");
+  renderCompare();
+}
+let pendingDel=null;
+$("#prjList").addEventListener("click",e=>{const t=e.target;
+  if(t.dataset.open){const pr=projects.find(x=>x.id===t.dataset.open);if(pr)switchProject(pr)}
+  if(t.dataset.del){if(pendingDel!==t.dataset.del){pendingDel=t.dataset.del;renderProjects();return}
+    const id=t.dataset.del;projects=projects.filter(x=>x.id!==id);compareSet.delete(id);pendingDel=null;cloudDelete(id);if(cur.id===id)switchProject(projects[0]);else{saveLocal();renderProjects()}}});
+$("#prjList").addEventListener("change",e=>{const id=e.target.dataset.cmp;if(!id)return;if(e.target.checked)compareSet.add(id);else compareSet.delete(id);if(compareSet.size>4){compareSet.delete(id);e.target.checked=false;toast("Порівнювати можна до 4 проєктів")}renderCompare()});
+$("#prjName").addEventListener("input",e=>{cur.name=e.target.value.slice(0,80)||"Без назви";commit({plan:false,light:true})});
+$("#prjName").addEventListener("change",()=>renderProjects());
+$("#prjNew").onclick=()=>{const pr=normalize({name:"Новий проєкт "+(projects.length+1),p:clone(cur.p),floors:[{type:"floor",h:2.8}]});projects.push(pr);switchProject(pr);showTab("plan");setMode("contour");scheduleCloud(pr)};
+$("#prjDup").onclick=()=>{const pr=normalize({...clone(cur),id:newId("p"),name:cur.name+" (варіант)",updated:Date.now()});projects.push(pr);compareSet.add(cur.id);compareSet.add(pr.id);switchProject(pr);scheduleCloud(pr);toast("Створено варіант. Змініть матеріали й порівняйте нижче")};
+function renderCompare(){
+  const box=$("#compare"),list=projects.filter(p=>compareSet.has(p.id));
+  if(list.length<2){box.innerHTML=`<p class="muted">Позначте 2–4 проєкти галочками, щоб порівняти їх. Кнопка «Дублювати як варіант» створює копію для іншого набору матеріалів.</p>`;return}
+  const rs=list.map(calcPr);const names=new Set();rs.forEach(r=>r&&r.stages.forEach(s=>names.add(s.name)));
+  const WN={gas:"Газоблок",cer:"Керамоблок",brick:"Цегла",frame:"Каркас"},FN={strip:"Стрічковий",slab:"Плита",piles:"Палі"},RN={gable:"Двосхилий",hip:"Чотирисхилий",flat:"Плоский"};
+  const rowsNum=[["Загальна площа, м²",r=>r.gross,fmt1,false],["Матеріали, грн",r=>r.mat,fmt,true],["Роботи, грн",r=>r.wrk,fmt,true],["Разом, грн",r=>r.total,fmt,true],["грн за м²",r=>r.total/r.gross,fmt,true]];
+  const best=fn=>{const v=rs.map(r=>r?fn(r):Infinity);return Math.min(...v)};
+  let h=`<h2>Порівняння</h2><div class="tbl"><table><thead><tr><th></th>${list.map(p=>`<th>${esc(p.name)}</th>`).join("")}</tr></thead><tbody>`;
+  h+=`<tr><td>Стіни</td>${list.map(p=>`<td>${WN[fullP(p).wall]}</td>`).join("")}</tr><tr><td>Фундамент</td>${list.map(p=>`<td>${FN[fullP(p).found]}</td>`).join("")}</tr><tr><td>Дах</td>${list.map(p=>`<td>${RN[fullP(p).roof]}</td>`).join("")}</tr>`;
+  rowsNum.forEach(([n,fn,f,low])=>{const b=best(fn);h+=`<tr><td><b>${n}</b></td>${rs.map(r=>r?`<td class="${low&&Math.abs(fn(r)-b)<1?"best":""}">${f(fn(r))}</td>`:"<td>–</td>").join("")}</tr>`});
+  [...names].forEach(n=>{h+=`<tr><td>${n}</td>${rs.map(r=>{const s=r&&r.stages.find(x=>x.name===n);return `<td>${s?fmt(s.sum):"–"}</td>`}).join("")}</tr>`});
+  box.innerHTML=h+"</tbody></table></div>";
+}
+
+/* ───────────── prices ───────────── */
+function renderPrices(){
+  const p=fullP(cur);
+  $("#priceSource").innerHTML=`<option value="base">Базові ціни</option>`+partners.filter(x=>x.name).map(x=>`<option value="${esc(x.id)}">${esc(x.name)}${x.region?" · "+esc(regionOf(x.region).name):""}</option>`).join("");
+  $("#priceSource").value=partners.some(x=>x.id===p.priceSource)?p.priceSource:"base";
+  const partner=partners.find(x=>x.id===p.priceSource);
+  $("#priceInfo").innerHTML=`Ціни орієнтовні${baseUpdated?", базові оновлено "+new Date(baseUpdated).toLocaleDateString("uk-UA"):""}. ${partner?"Позиції партнера виділені синім. Решта береться з базових цін. ":""}Ваші власні зміни виділені жовтим і діють лише у вашому браузері. Ціни робіт множаться на коефіцієнт області.`;
+  $("#saveBase").hidden=!(CAP.canEdit&&CAP.db);
+  const PR=effPrices(cur);const groups={};for(const k in PR)(groups[PR[k].g]=groups[PR[k].g]||[]).push(k);
+  $("#priceList").innerHTML=Object.entries(groups).map(([g,keys])=>`<div class="pgroup"><div class="label">${g}</div><div class="plist">${keys.sort((a,b)=>PR[a].work-PR[b].work).map(k=>{const d=PR[k];
+    return `<div class="prow ${d.src==="local"?"local":d.src==="partner"?"partner":""}"><label class="pn" for="pr_${k}">${d.work?"Роботи: ":""}${esc(d.name)}</label><input id="pr_${k}" data-pk="${k}" type="number" min="0" step="1" value="${d.price}"><span class="pu">/${d.unit}</span></div>`}).join("")}</div></div>`).join("");
+}
+$("#priceList").addEventListener("input",e=>{const k=e.target.dataset.pk;if(!k)return;const v=parseFloat(e.target.value);if(isNaN(v))return;
+  localPrices[k]=v;lsSet(LS_PR,localPrices);e.target.closest(".prow").className="prow local";renderEstimate()});
+$("#resetPrices").onclick=()=>{localPrices={};lsSet(LS_PR,localPrices);renderPrices();renderEstimate();toast("Ваші зміни цін скинуто")};
+$("#priceSource").onchange=e=>{cur.p.priceSource=e.target.value;renderPrices();commit({plan:false})};
+$("#saveBase").onclick=async()=>{if(!CAP.db)return;const PR=effPrices(cur),prices={};for(const k in PR)prices[k]=PR[k].price;
+  try{await CAP.db.doc("config/prices").set({prices,updated:Date.now()});localPrices={};lsSet(LS_PR,localPrices);toast("Базові ціни збережено для всіх")}catch(e){toast("Не вдалося зберегти базові ціни")}};
+
+/* ───────────── partners ───────────── */
+function renderPartnerTab(){
+  const box=$("#partnerBody");
+  if(!CAP.db||!CAP.uid){box.innerHTML=`<p class="info">Профіль партнера можна створити в повній версії застосунку.</p>`;return}
+  const me=partners.find(x=>x.id===CAP.uid)||{};
+  if(document.activeElement&&box.contains(document.activeElement))return;
+  box.innerHTML=`<form id="pform" class="group" style="border:0">
+    <div class="fields">
+      <div class="field"><label for="pf_name">Назва компанії</label><input id="pf_name" required maxlength="80" value="${esc(me.name||"")}"></div>
+      <div class="field"><label for="pf_kind">Хто ви</label><select id="pf_kind">${["Магазин матеріалів","Будівельна бригада","Бригада і матеріали"].map(t=>`<option ${t===me.kind?"selected":""}>${t}</option>`).join("")}</select></div>
+      <div class="field"><label for="pf_region">Область</label><select id="pf_region">${REGIONS.map(r=>`<option value="${r.id}" ${r.id===(me.region||"lviv")?"selected":""}>${r.name}</option>`).join("")}</select></div>
+      <div class="field"><label for="pf_phone">Телефон</label><input id="pf_phone" maxlength="30" value="${esc(me.phone||"")}"></div>
+    </div>
+    <div class="field"><label for="pf_about">Про вас</label><textarea id="pf_about" maxlength="500">${esc(me.about||"")}</textarea></div>
+    <p class="muted">Вкажіть ціни лише на те, що продаєте чи робите. Порожні поля беруться з базових цін.</p>
+    <div>${Object.entries(PRICE_DEFAULTS).map(([k,d])=>`<div class="prow"><label class="pn" for="pp_${k}">${d.work?"Роботи: ":""}${esc(d.name)}</label><input id="pp_${k}" data-pp="${k}" type="number" min="0" step="1" placeholder="${effPrices({p:{}})[k].price}" value="${me.prices&&me.prices[k]!=null?me.prices[k]:""}"><span class="pu">/${d.unit}</span></div>`).join("")}</div>
+    <div class="row"><button class="btn primary" type="submit">Зберегти профіль</button>${me.name?`<button class="btn danger" type="button" id="pf_del">Видалити профіль</button>`:""}</div>
+  </form>`;
+}
+$("#partnerBody").addEventListener("submit",async e=>{e.preventDefault();const prices={};$$("[data-pp]").forEach(i=>{if(i.value!=="")prices[i.dataset.pp]=+i.value});
+  const body={name:$("#pf_name").value.trim(),kind:$("#pf_kind").value,region:$("#pf_region").value,phone:$("#pf_phone").value.trim(),about:$("#pf_about").value.trim(),prices,updated:Date.now()};
+  try{await CAP.db.doc("partners/"+CAP.uid).set(body);document.activeElement.blur();toast("Профіль партнера збережено")}catch(err){toast(err&&err.code==="invalid_argument"?"Немає прав на запис. Попросіть власника дати вам доступ «Учасник» або вище.":"Не вдалося зберегти. Спробуйте ще раз.")}});
+$("#partnerBody").addEventListener("click",async e=>{if(e.target.id!=="pf_del")return;try{await CAP.db.doc("partners/"+CAP.uid).delete();toast("Профіль видалено")}catch(err){toast("Не вдалося видалити профіль")}});
+
+/* ───────────── leads ───────────── */
+function openLead(){
+  const r=lastCalc;if(!r)return toast("Спершу замкніть контур будинку");
+  $("#leadSummary").textContent=`${cur.name}: ${fmt1(r.gross)} м², орієнтовно ${fmt(r.total)} грн.`;
+  $("#lPartner").innerHTML=`<option value="">Будь-якому партнеру в області</option>`+partners.filter(x=>x.name).map(x=>`<option value="${esc(x.id)}">${esc(x.name)} (${esc(x.kind||"")})</option>`).join("");
+  if(partners.some(x=>x.id===fullP(cur).priceSource))$("#lPartner").value=fullP(cur).priceSource;
+  const ok=!!(CAP.db&&CAP.uid);$("#leadNote").hidden=ok;$("#leadSend").disabled=!ok;
+  if(!ok)$("#leadNote").textContent="Це демо: заявки надсилаються в повній версії, зараз можна переглянути форму.";
+  $("#leadModal").hidden=false;$("#lName").focus();
+}
+$("#leadBtn").onclick=openLead;$("#leadClose").onclick=()=>$("#leadModal").hidden=true;
+$("#leadModal").addEventListener("click",e=>{if(e.target.id==="leadModal")$("#leadModal").hidden=true});
+$("#leadForm").addEventListener("submit",async e=>{e.preventDefault();if(!CAP.db||!CAP.uid)return;const r=lastCalc,p=fullP(cur);
+  const lead={id:newId("l"),at:Date.now(),name:$("#lName").value.trim(),phone:$("#lPhone").value.trim(),need:$("#lNeed").value,partner:$("#lPartner").value,comment:$("#lComment").value.trim(),
+    region:p.region,project:cur.name,area:r?Math.round(r.gross*10)/10:0,total:r?Math.round(r.total):0,wall:p.wall,roof:p.roof,found:p.found,status:"new"};
+  const ref=CAP.db.doc("leads/"+CAP.uid);$("#leadSend").disabled=true;
+  try{let items=[];try{const s=await ref.get();if(s.exists)items=(s.data().items||[]).slice()}catch(_){}items.push(lead);items=items.slice(-20);
+    await ref.set({items,updated:Date.now()});$("#leadModal").hidden=true;$("#leadForm").reset();toast("Заявку надіслано. З вами зв'яжуться найближчим часом")}
+  catch(err){toast(err&&err.code==="invalid_argument"?"Немає прав надіслати заявку з цього акаунта.":"Не вдалося надіслати. Спробуйте ще раз.")}
+  finally{$("#leadSend").disabled=false}});
+
+/* ───────────── admin ───────────── */
+function renderAdmin(){
+  $("#tabAdmin").hidden=!CAP.canEdit;
+  if(!CAP.canEdit)return;
+  const all=[];leads.forEach(d=>(d.items||[]).forEach(it=>all.push({...it,doc:d.id})));all.sort((a,b)=>b.at-a.at);
+  const PN=id=>{const x=partners.find(p=>p.id===id);return x?x.name:"будь-якому партнеру"};
+  $("#leadList").innerHTML=all.length?all.map(l=>`<div class="lead ${l.status==="done"?"done":""}"><div class="between"><h3>${esc(l.name)}</h3><span class="pill ${l.status==="done"?"ok":"warn"}">${l.status==="done"?"опрацьовано":"нова"}</span></div>
+    <div class="muted">${new Date(l.at).toLocaleString("uk-UA")} · ${esc(regionOf(l.region).name)} · ${esc(l.need)} · для ${esc(PN(l.partner))}</div>
+    <div>Телефон: <span class="ph">${esc(l.phone)}</span></div>
+    <div class="muted">${esc(l.project)}: ${fmt1(l.area)} м², ${fmt(l.total)} грн</div>${l.comment?`<div>${esc(l.comment)}</div>`:""}
+    <div class="row"><button class="btn sm" data-ld="${esc(l.doc)}" data-li="${esc(l.id)}">${l.status==="done"?"Повернути в нові":"Позначити опрацьованою"}</button></div></div>`).join(""):`<p class="muted">Заявок поки немає. Вони з'являться тут, коли користувачі натиснуть «Отримати пропозицію».</p>`;
+  $("#partnerAdmin").innerHTML=partners.length?partners.map(x=>`<div class="prj" style="grid-template-columns:minmax(0,1fr) auto"><div><b>${esc(x.name||"Без назви")}</b><div class="meta">${esc(x.kind||"")} · ${esc(regionOf(x.region).name)} · ${esc(x.phone||"")} · цін: ${Object.keys(x.prices||{}).length}</div></div><button class="btn sm danger" data-pdel="${esc(x.id)}">Видалити</button></div>`).join(""):`<p class="muted">Партнерів поки немає.</p>`;
+}
+$("#leadList").addEventListener("click",async e=>{const b=e.target.closest("[data-ld]");if(!b)return;const d=leads.find(x=>x.id===b.dataset.ld);if(!d)return;
+  const items=(d.items||[]).map(it=>it.id===b.dataset.li?{...it,status:it.status==="done"?"new":"done"}:it);
+  try{await CAP.db.doc("leads/"+d.id).set({items,updated:Date.now()})}catch(err){toast("Не вдалося оновити заявку")}});
+$("#partnerAdmin").addEventListener("click",async e=>{const id=e.target.dataset.pdel;if(!id)return;try{await CAP.db.doc("partners/"+id).delete();toast("Партнера видалено")}catch(err){toast("Не вдалося видалити")}});
+
+/* ───────────── cloud ───────────── */
+const cloudTimers=new Map(),cloudChains=new Map();
+function setCloud(s){cloudStatus=s;renderAcct();if(activeTab==="projects")renderProjects()}
+function scheduleCloud(pr){if(!CAP.db||!CAP.uid||cloudStatus==="readonly")return;clearTimeout(cloudTimers.get(pr.id));cloudTimers.set(pr.id,setTimeout(()=>pushCloud(pr),1500))}
+function pushCloud(pr){
+  const ref=CAP.db.collection("data/users/"+CAP.uid).doc(pr.id),body={name:pr.name,updated:pr.updated,data:JSON.stringify(pr)};
+  const next=(cloudChains.get(pr.id)||Promise.resolve()).then(()=>ref.set(body)).then(()=>{if(cloudStatus!=="ok")setCloud("ok")}).catch(e=>setCloud(e&&e.code==="invalid_argument"?"readonly":"error"));
+  cloudChains.set(pr.id,next);
+}
+async function cloudDelete(id){if(!CAP.db||!CAP.uid)return;try{await CAP.db.collection("data/users/"+CAP.uid).doc(id).delete()}catch(e){}}
+async function cloudLoad(){
+  setCloud("syncing");
+  try{const snap=await CAP.db.collection("data/users/"+CAP.uid).get();
+    const remote=snap.docs.map(d=>{try{return normalize(JSON.parse(d.data().data))}catch(e){return null}}).filter(Boolean);
+    let changed=false;
+    remote.forEach(r=>{const i=projects.findIndex(x=>x.id===r.id);if(i<0){projects.push(r);changed=true}else if(r.updated>projects[i].updated){projects[i]=r;changed=true;if(cur.id===r.id)cur=r}});
+    const remoteIds=new Set(remote.map(r=>r.id));
+    projects.forEach(pr=>{if(!remoteIds.has(pr.id)||remote.find(r=>r.id===pr.id).updated<pr.updated)pushCloud(pr)});
+    if(changed){saveLocal();switchProject(cur)}
+    setCloud(projects.length&&!remote.length?"syncing":"ok");
+  }catch(e){setCloud("error")}
+}
+function renderAcct(){
+  const a=$("#acct");
+  if(!CAP.user||!CAP.me||!CAP.uid){a.innerHTML=`<span class="pill warn">Лише в цьому браузері</span>`;return}
+  const st={ok:["ok","Збережено в хмарі"],syncing:["","Синхронізація…"],error:["warn","Хмара недоступна"],readonly:["warn","Лише в цьому браузері"],off:["warn","Лише в цьому браузері"]}[cloudStatus]||["",""];
+  a.innerHTML=`<img alt="" src="${esc(CAP.me.avatarUrl)}"><span>${esc(CAP.me.name||"Ви")}</span><span class="pill ${st[0]}">${st[1]}</span>`;
+}
+(async function initCaps(){
+  if(!window.claude||typeof window.claude.use!=="function")return;
+  const [db,user,dl]=await Promise.all([claude.use("db").catch(()=>null),claude.use("user").catch(()=>null),claude.use("downloads").catch(()=>null)]);
+  CAP.db=db;CAP.user=user;CAP.dl=dl;
+  if(dl){$("#pdfBtn").hidden=false;$("#xlsBtn").hidden=false}
+  if(user){CAP.me=await user.me();CAP.uid=CAP.me.id;CAP.canEdit=await user.canEdit()}
+  renderAcct();renderAdmin();
+  if(db){
+    db.doc("config/prices").onSnapshot(s=>{const d=s.exists?s.data():null;cloudBase=(d&&d.prices)||{};baseUpdated=d&&d.updated;renderPrices();renderEstimate()},()=>{});
+    db.collection("partners").onSnapshot(s=>{partners=s.docs.map(d=>({id:d.id,...d.data()}));renderPrices();renderPartnerTab();renderAdmin();renderEstimate()},()=>{});
+    if(CAP.canEdit)db.collection("leads").onSnapshot(s=>{leads=s.docs.map(d=>({id:d.id,...d.data()}));renderAdmin()},()=>{});
+    if(CAP.uid)cloudLoad();
+  }
+  renderPartnerTab();renderProjects();
+})();
+
+/* ───────────── export ───────────── */
+async function saveFile(filename,data){
+  if(!CAP.dl){toast("Експорт доступний у повній версії");return}
+  try{await CAP.dl.save({filename,data});toast("Файл готовий")}
+  catch(e){if(e&&e.code==="declined")return;toast(e&&e.code==="rate_limited"?"Зачекайте кілька секунд і спробуйте ще раз":"Не вдалося зберегти файл")}
+}
+const safeName=s=>(s||"koshtorys").replace(/[\\/:*?"<>|]+/g," ").trim().slice(0,60)||"koshtorys";
+$("#xlsBtn").onclick=async()=>{const r=lastCalc;if(!r)return toast("Спершу замкніть контур");
+  try{await loadScript(URLS.xlsx)}catch(e){return toast("Не вдалося завантажити модуль Excel")}
+  const X=window.XLSX,p=fullP(cur),rows=[["Етап","Позиція","Тип","Кількість","Од.","Ціна, грн","Сума, грн"]];
+  r.stages.forEach(s=>{s.items.forEach(i=>rows.push([s.name,i.name,i.work?"Роботи":"Матеріали",r2(i.qty),i.unit,r2(i.price),Math.round(i.sum)]));rows.push(["","Разом за етапом «"+s.name+"»","","","","",Math.round(s.sum)])});
+  rows.push([]);rows.push(["","Матеріали","","","","",Math.round(r.mat)]);rows.push(["","Роботи","","","","",Math.round(r.wrk)]);rows.push(["","РАЗОМ","","","","",Math.round(r.total)]);
+  const ws=X.utils.aoa_to_sheet(rows);ws["!cols"]=[{wch:24},{wch:52},{wch:11},{wch:11},{wch:7},{wch:11},{wch:13}];
+  const info=[["Проєкт",cur.name],["Дата",new Date().toLocaleDateString("uk-UA")],["Загальна площа, м²",r2(r.gross)],["Область",regionOf(p.region).name],["Ґрунт",SOILS[p.soil].name],["Закладання фундаменту, м",r.depth],["Коефіцієнт робіт",r.coef],["Запас на відходи, %",p.waste]];
+  cur.floors.forEach((f,i)=>{const g=geomOf(f);info.push([floorLabel(i),`${fmt1(g.A)} м², висота ${f.h} м`])});
+  const ws2=X.utils.aoa_to_sheet(info);ws2["!cols"]=[{wch:28},{wch:36}];
+  const wb=X.utils.book_new();X.utils.book_append_sheet(wb,ws,"Кошторис");X.utils.book_append_sheet(wb,ws2,"Параметри");
+  const out=X.write(wb,{bookType:"xlsx",type:"array"});await saveFile(safeName(cur.name)+".xlsx",new Uint8Array(out))};
+
+function planSVGString(f){
+  const pts=f.pts;if(pts.length<2)return "";const xs=pts.map(q=>q[0]),ys=pts.map(q=>q[1]),x0=Math.min(...xs)-1.2,y0=Math.min(...ys)-1.2,w=Math.max(...xs)-x0+1.2,h=Math.max(...ys)-y0+1.2;
+  const th=THICK[fullP(cur).wall]||.3,fs=Math.max(w,h)/45;let s=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="${x0} ${y0} ${w} ${h}" width="700" height="${Math.round(700*h/w)}">`;
+  s+=`<rect x="${x0}" y="${y0}" width="${w}" height="${h}" fill="#ffffff"/>`;
+  if(f.closed)s+=`<polygon points="${pts.map(q=>q.join(",")).join(" ")}" fill="#e6eef4"/>`;
+  f.parts.forEach(l=>s+=`<line x1="${l[0][0]}" y1="${l[0][1]}" x2="${l[1][0]}" y2="${l[1][1]}" stroke="#6b7672" stroke-width="0.1"/>`);
+  s+=`<${f.closed?"polygon":"polyline"} points="${pts.map(q=>q.join(",")).join(" ")}" fill="none" stroke="#16201d" stroke-width="${th}"/>`;
+  opsGeom(f).forEach(r=>{const ang=Math.atan2(r.uy,r.ux)*180/Math.PI,t=r.o.on==="c"?th:0.1;s+=`<g transform="translate(${r.cx} ${r.cy}) rotate(${ang})"><rect x="${-r.w/2}" y="${-t/2-0.01}" width="${r.w}" height="${t+0.02}" fill="#ffffff" stroke="#16201d" stroke-width="0.02"/>${r.o.kind==="win"?`<line x1="${-r.w/2}" y1="0" x2="${r.w/2}" y2="0" stroke="#1F5A87" stroke-width="0.05"/>`:""}</g>`});
+  const sg=sArea(pts)>0?-1:1;const n=f.closed?pts.length:pts.length-1;
+  for(let i=0;i<n;i++){const a=pts[i],b=pts[(i+1)%pts.length],len=dist(a,b);if(len<0.5)continue;const nx=(b[1]-a[1])/len*sg,ny=-(b[0]-a[0])/len*sg;s+=`<text x="${(a[0]+b[0])/2+nx*0.55}" y="${(a[1]+b[1])/2+ny*0.55+fs*0.35}" font-size="${fs}" text-anchor="middle" fill="#1F5A87" font-family="monospace">${fmt2(len)}</text>`}
+  f.rooms.forEach(r=>{const m=roomMeasure(f,r.x,r.y);s+=`<text x="${r.x}" y="${r.y}" font-size="${fs}" text-anchor="middle" fill="#16201d" font-family="sans-serif" font-weight="700">${esc(r.type)}</text><text x="${r.x}" y="${r.y+fs*1.2}" font-size="${fs*0.9}" text-anchor="middle" fill="#4a5450" font-family="monospace">${m?fmt1(m.area)+" м²":""}</text>`});
+  const fIdx=cur.floors.indexOf(f);
+  ["el","pl","ht"].forEach(sys=>{if(!layersPlan[sys])return;const ds=f.eng.filter(d=>d.sys===sys&&DEV[sys][d.t]);if(!ds.length)return;const hub=hubFor(cur,fIdx,sys),c=SYSHEX[sys];
+    if(hub)ds.forEach(d=>{if(!isHub(d))s+=`<polyline points="${d.x},${d.y} ${hub.x},${d.y} ${hub.x},${hub.y}" fill="none" stroke="${c}" stroke-width="0.03" opacity="0.8"${sys==="el"?' stroke-dasharray="0.12 0.08"':""}/>`});
+    ds.forEach(d=>{const def=DEV[sys][d.t],r=fs*0.55;s+=`<circle cx="${d.x}" cy="${d.y}" r="${r}" fill="${c}"/><text x="${d.x}" y="${d.y+r*0.38}" font-size="${r*1.05}" text-anchor="middle" fill="#fff" font-family="sans-serif" font-weight="700">${def.l||"Р"}</text>`})});
+  return s+"</svg>";
+}
+$("#pdfBtn").onclick=async()=>{const r=lastCalc;if(!r)return toast("Спершу замкніть контур");
+  const btn=$("#pdfBtn");btn.disabled=true;btn.textContent="Готую PDF…";
+  try{await loadScript(URLS.h2c);await loadScript(URLS.jspdf)}catch(e){btn.disabled=false;btn.textContent="PDF";return toast("Не вдалося завантажити модуль PDF")}
+  const p=fullP(cur),node=document.createElement("div");node.className="report";
+  const WN={gas:"Газоблок D500 300 мм",cer:"Керамоблок 380 мм",brick:"Цегла 380 мм",frame:"Каркас 150 мм"},FN={strip:"Стрічковий",slab:"Монолітна плита",piles:"Палі з ростверком"},RN={gable:"Двосхилий",hip:"Чотирисхилий",flat:"Плоский"};
+  node.innerHTML=`<div data-brk><h1>Буд<span>кошторис</span></h1><div style="font-size:16px;font-weight:700;margin-top:6px">${esc(cur.name)}</div>
+    <div style="color:#4a5450;margin-top:2px">${new Date().toLocaleDateString("uk-UA")} · ${esc(regionOf(p.region).name)} обл. · ${fmt1(r.gross)} м²</div>
+    <div style="font-size:28px;font-weight:700;margin:14px 0 2px;font-family:Unbounded,sans-serif">${fmt(r.total)} грн</div>
+    <div style="color:#4a5450">Матеріали ${fmt(r.mat)} грн · роботи ${fmt(r.wrk)} грн · ${fmt(r.total/r.gross)} грн/м²</div>
+    <table style="margin-top:14px"><tbody>
+      <tr><td>Фундамент</td><td>${FN[p.found]}, закладання ${fmt1(r.depth)} м</td></tr><tr><td>Стіни</td><td>${WN[p.wall]}</td></tr>
+      <tr><td>Дах</td><td>${RN[p.roof]}${p.roof!=="flat"?`, ${p.pitch}°, скати ${fmt1(r.rg.slope)} м²`:""}</td></tr>
+      <tr><td>Поверхи</td><td>${cur.floors.map((f,i)=>floorLabel(i)+" "+fmt1(geomOf(f).A)+" м²").join(" · ")}</td></tr></tbody></table></div>
+    ${cur.floors.filter(f=>f.pts.length>2).map(f=>`<div data-brk style="margin-top:18px"><div style="font-weight:700;margin-bottom:6px">${floorLabel(cur.floors.indexOf(f))}</div><img style="width:100%;border:1px solid #d5dbd8" src="data:image/svg+xml;charset=utf-8,${encodeURIComponent(planSVGString(f))}"></div>`).join("")}
+    <div data-brk style="margin-top:18px;font-weight:700;font-size:15px">Кошторис по етапах</div>
+    ${r.stages.map(s=>`<table style="margin-top:10px"><thead><tr data-brk><th>${s.name}</th><th>К-сть</th><th>Ціна</th><th>Сума</th></tr></thead><tbody>
+      ${s.items.map(i=>`<tr data-brk><td>${i.work?"Роботи: ":""}${esc(i.name)}</td><td>${qtyFmt(i.qty,i.unit)} ${i.unit}</td><td>${fmt2(i.price)}</td><td>${fmt(i.sum)}</td></tr>`).join("")}
+      <tr data-brk><td><b>Разом</b></td><td></td><td></td><td><b>${fmt(s.sum)}</b></td></tr></tbody></table>`).join("")}
+    <p data-brk style="margin-top:16px;color:#4a5450">Розрахунок орієнтовний. Точну вартість визначає проєкт і комерційна пропозиція підрядника.</p>`;
+  document.body.appendChild(node);
+  try{
+    await Promise.all([...node.querySelectorAll("img")].map(i=>i.complete?0:new Promise(res=>{i.onload=i.onerror=res})));
+    if(document.fonts&&document.fonts.ready)await document.fonts.ready;
+    const scale=2,nr=node.getBoundingClientRect();
+    const brks=[...node.querySelectorAll("[data-brk]")].map(e=>Math.round((e.getBoundingClientRect().bottom-nr.top)*scale)).sort((a,b)=>a-b);
+    const canvas=await html2canvas(node,{scale,backgroundColor:"#ffffff"});
+    const {jsPDF}=window.jspdf,pdf=new jsPDF({unit:"mm",format:"a4"}),m=10,imgW=190,pxmm=canvas.width/imgW,pageH=Math.floor(277*pxmm);
+    let y=0,first=true;
+    while(y<canvas.height-2){let end=Math.min(canvas.height,y+pageH);if(end<canvas.height){const c=brks.filter(b=>b>y+50&&b<=end).pop();if(c)end=c}
+      const h=end-y,c=document.createElement("canvas");c.width=canvas.width;c.height=h;c.getContext("2d").drawImage(canvas,0,y,canvas.width,h,0,0,canvas.width,h);
+      if(!first)pdf.addPage();pdf.addImage(c.toDataURL("image/jpeg",0.9),"JPEG",m,m,imgW,h/pxmm);first=false;y=end}
+    await saveFile(safeName(cur.name)+".pdf",pdf.output("arraybuffer"));
+  }catch(e){toast("Не вдалося створити PDF")}
+  finally{node.remove();btn.disabled=false;btn.textContent="PDF"}
+};
+
+/* ───────────── tabs & init ───────────── */
+let activeTab="plan";
+const tabs=$$(".tab");
+function showTab(t){activeTab=t;tabs.forEach(b=>b.setAttribute("aria-selected",b.dataset.tab===t));
+  ["plan","build","d3","projects","prices","partners","admin","est"].forEach(n=>$("#panel-"+n).classList.toggle("off",n!==t));
+  if(t==="plan")renderPlan();if(t==="d3")show3D();if(t==="projects")renderProjects();if(t==="prices")renderPrices();if(t==="partners")renderPartnerTab();if(t==="admin")renderAdmin()}
+tabs.forEach(b=>b.onclick=()=>showTab(b.dataset.tab));
+$("#bottombar").onclick=()=>{showTab("est");window.scrollTo({top:0,behavior:"smooth"})};
+matchMedia("(min-width:1020px)").addEventListener("change",m=>{if(m.matches&&activeTab==="est")showTab("plan")});
+window.addEventListener("resize",()=>{if(activeTab==="plan")renderPlan()});
+
+syncLayers();renderEngBar();renderFloors();syncForm();fitView();renderSel();renderPlan();renderEstimate();renderPrices();renderProjects();renderPartnerTab();
+requestAnimationFrame(()=>renderPlan());
+</script>
+
+</body></html>
