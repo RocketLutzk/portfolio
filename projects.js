@@ -155,34 +155,7 @@ const P = [
        f:['Стратегії: EMA, MACD, Дончіан, RSI та інші','Бектест на історії й віртуальний депозит','Дашборд на GitHub Pages']},
    en:{t:'TradeSim — trading strategy tester', c:'Own project',
        d:'Backtesting and paper trading on crypto, US stocks, gold, oil and FX using hourly candles, to prove profitability before real money.',
-       f:['Strategies: EMA, MACD, Donchian, RSI and more','Backtests and a virtual account','Dashboard on GitHub Pages']}},
-  {id:'media', cat:'docs', st:'done', m:'dash', h:['#E8EEF9','#FFFFFF','#EEF3FC','#2F6BFF','#14213D','#C3D0EA'],
-   L:[],
-   tags:['Meta Ads','TikTok Ads','Google Ads','CPM'],
-   uk:{t:'Медіаплан і брифи відділів', c:'Маркетинг для виробника напоїв',
-       d:'Місячний медіаплан з охопленнями та CPM по каналах і брифи для кожного відділу компанії, щоб зібрати вимоги до сайту й систем.',
-       f:['Охоплення й CPM по каналах','Брифи по відділах','Вимоги до сайту й ERP']},
-   en:{t:'Media plan and department briefs', c:'Marketing for a beverage producer',
-       d:'A monthly media plan with reach and CPM per channel, plus briefs for each department to gather site and system requirements.',
-       f:['Reach and CPM per channel','Department briefs','Site and ERP requirements']}},
-  {id:'cafe', cat:'docs', st:'done', m:'sheet', h:['#E7F2EC','#FFFFFF','#2E8B57','#2E8B57','#173B28','#BFD9C9'],
-   L:[],
-   tags:['Excel','Financial model','Grants'],
-   uk:{t:'Бізнес-план кав\'ярні на винос', c:'Пустомити, під грант «Власна справа»',
-       d:'Фінансова модель у таблиці: стартові витрати, виручка, собівартість, окупність, а також аналіз грантів «Власна справа» та Startup EDGE.',
-       f:['Стартові витрати й окупність','Прогноз виручки','Аналіз грантових програм']},
-   en:{t:'Takeaway café business plan', c:'Pustomyty, for a state small-business grant',
-       d:'A spreadsheet financial model: startup costs, revenue, cost of goods and payback, plus a review of Ukrainian and international grant programs.',
-       f:['Startup costs and payback','Revenue forecast','Grant program review']}},
-  {id:'school', cat:'docs', st:'done', m:'sheet', h:['#FFF4DA','#FFFFFF','#E9A100','#E9A100','#3A2A00','#F1DDA8'],
-   L:[],
-   tags:['Excel','Curriculum','Python course'],
-   uk:{t:'Календарно-тематичне планування з інформатики', c:'Для власних 10–11 класів',
-       d:'Річний план за профільною програмою інформатики з окремими вкладками на кожен клас, імпортом у HUMAN і семестром Python в 11 класі.',
-       f:['Окрема вкладка на кожен клас','Імпорт у платформу HUMAN','Програма факультативу «Інформатика»']},
-   en:{t:'Informatics curriculum planner', c:'For my grade 10–11 classes',
-       d:'A full-year plan for the Ukrainian profile-level informatics program, one tab per class, imported into the HUMAN school platform, with a Python semester.',
-       f:['One tab per class','Import into the HUMAN platform','Elective course syllabus']}}
+       f:['Strategies: EMA, MACD, Donchian, RSI and more','Backtests and a virtual account','Dashboard on GitHub Pages']}}
 ];
 
 
@@ -221,13 +194,7 @@ const EXTRA = {
   poly:{uk:{prob:'Невідомо, чи стратегія ставок прибуткова, а ризикувати реальними грошима не хочеться.',who:'Власне дослідження',res:'Бот безкоштовно працює на GitHub і щодня збирає статистику.'},
         en:{prob:'It\'s unclear whether a betting strategy is profitable, and real money is not worth the risk.',who:'Personal research',res:'The bot runs free on GitHub and collects stats every day.'}},
   trade:{uk:{prob:'Перш ніж доручати боту гроші, треба довести, що стратегія заробляє.',who:'Власне дослідження',res:'Бектести й віртуальна торгівля працюють на GitHub Actions.'},
-         en:{prob:'Before trusting a bot with money, the strategy has to prove it earns.',who:'Personal research',res:'Backtests and virtual trading run on GitHub Actions.'}},
-  media:{uk:{prob:'Рекламний бюджет треба розподілити між каналами, а вимоги відділів зібрати в одному місці.',who:'Керівництво й маркетинг',res:'Медіаплан на місяць і брифи для старту робіт.'},
-         en:{prob:'The ad budget must be split across channels and department requirements gathered in one place.',who:'Management and marketing',res:'A monthly media plan and briefs to kick off the work.'}},
-  cafe:{uk:{prob:'Перед подачею на грант треба порахувати, чи окупиться кав\'ярня.',who:'Грантова комісія, власник',res:'Готова фінансова модель.'},
-        en:{prob:'Before applying for a grant, the café\'s payback has to be calculated.',who:'Grant committee, owner',res:'A finished financial model.'}},
-  school:{uk:{prob:'Річне планування для шести класів забирає багато часу.',who:'Вчитель, адміністрація школи',res:'Готовий план на рік, імпортований у HUMAN.'},
-          en:{prob:'Annual planning for six classes takes a lot of time.',who:'Teacher, school administration',res:'A finished year plan imported into HUMAN.'}}
+         en:{prob:'Before trusting a bot with money, the strategy has to prove it earns.',who:'Personal research',res:'Backtests and virtual trading run on GitHub Actions.'}}
 };
 
 function mock(p){

@@ -25,7 +25,7 @@ Portfolio of a web developer and digital marketer from Lviv, Ukraine: websites, 
 | Polysim | Симулятор ставок Polymarket | [Дашборд](https://rocketlutzk.github.io/polysim/) · [Код](https://github.com/RocketLutzk/polysim) |
 | TradeSim | Тестування торгових стратегій | [Дашборд](https://rocketlutzk.github.io/tradesim/) · [Код](https://github.com/RocketLutzk/tradesim) |
 
-Повний список (20 проєктів) — на сайті. До кожного проєкту є коротка презентація: `case.html#<id>`, наприклад [case.html#arkada](https://rocketlutzk.github.io/portfolio/case.html#arkada).
+Повний список (17 проєктів) — на сайті. До кожного проєкту є коротка презентація: `case.html#<id>`, наприклад [case.html#arkada](https://rocketlutzk.github.io/portfolio/case.html#arkada).
 
 ## Файли
 

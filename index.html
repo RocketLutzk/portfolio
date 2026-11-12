@@ -225,7 +225,7 @@ function render(){
   document.getElementById('services').innerHTML = t.services.map(([h,p])=>`<div class="svc"><h3>${h}</h3><p>${p}</p></div>`).join('');
 
   const counts = P.reduce((a,p)=>(a[p.cat]=(a[p.cat]||0)+1,a),{});
-  const fl = [['all',t.all,P.length], ...Object.keys(t.cats).map(k=>[k,t.cats[k],counts[k]||0])];
+  const fl = [['all',t.all,P.length], ...Object.keys(t.cats).filter(k=>counts[k]).map(k=>[k,t.cats[k],counts[k]])];
   document.getElementById('filters').innerHTML = fl.map(([k,l,n])=>`<button type="button" id="f-${k}" data-f="${k}" aria-pressed="${filter===k}">${l}<span>${n}</span></button>`).join('');
 
   document.getElementById('grid').innerHTML = P.filter(p=>filter==='all'||p.cat===filter).map(p=>{
