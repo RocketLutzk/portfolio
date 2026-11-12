@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Roman Stanevych — Portfolio</title>
+<meta name="description" content="Roman Stanevych — web developer and digital marketer from Lviv, Ukraine. Websites, admin panels, CRM/ERP prototypes and dashboards.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+/* Layout: left-aligned editorial header, filter bar, 2-col project grid with per-project mini mockups */
+:root{
+  --bg:#F2F3EF; --surface:#FFFFFF; --ink:#121417; --muted:#5D626A; --line:#DCDFD8; --accent:#2944E0; --accent-ink:#FFFFFF;
+  --display:"Unbounded", "Arial Black", system-ui, sans-serif;
+  --body:"Manrope", "Segoe UI", system-ui, sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){ --bg:#0F1114; --surface:#171A1F; --ink:#ECEEF0; --muted:#9AA0A8; --line:#2A2E35; --accent:#7F95FF; --accent-ink:#0F1114; color-scheme: dark; }
+}
+:root[data-theme="dark"]{ --bg:#0F1114; --surface:#171A1F; --ink:#ECEEF0; --muted:#9AA0A8; --line:#2A2E35; --accent:#7F95FF; --accent-ink:#0F1114; color-scheme: dark; }
+
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+.wrap{max-width:1180px;margin:0 auto;padding:0 20px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;letter-spacing:-.01em}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+
+/* top bar */
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:20px 0;border-bottom:1px solid var(--line)}
+.logo{font-family:var(--display);font-weight:700;font-size:15px;display:flex;align-items:center;gap:10px}
+.logo i{width:26px;height:26px;border-radius:7px;background:var(--accent);display:inline-grid;place-items:center;color:var(--accent-ink);font-style:normal;font-size:12px}
+.lang{display:flex;border:1px solid var(--line);border-radius:999px;padding:3px;background:var(--surface)}
+.lang button{border:0;background:none;font:600 13px var(--body);color:var(--muted);padding:6px 12px;border-radius:999px;cursor:pointer}
+.lang button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+
+/* hero */
+.hero{display:grid;grid-template-columns:1.5fr 1fr;gap:40px;padding:48px 0 36px;align-items:end}
+.hero h1{font-size:clamp(30px,4.6vw,52px);line-height:1.08;font-weight:700}
+.hero h1 span{color:var(--accent)}
+.hero p{color:var(--muted);max-width:60ch;margin:18px 0 0;font-size:17px}
+.cta{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:11px 18px;border-radius:10px;font-weight:700;font-size:14px;text-decoration:none;border:1px solid var(--line);background:var(--surface)}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--line);border-radius:14px;background:var(--surface);overflow:hidden}
+.stats div{padding:18px 16px;border-right:1px solid var(--line)}
+.stats div:last-child{border-right:0}
+.stats b{display:block;font-family:var(--display);font-size:28px;font-variant-numeric:tabular-nums}
+.stats small{color:var(--muted);font-size:12.5px;line-height:1.3;display:block;margin-top:4px}
+
+/* services */
+.services{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:8px 0 40px}
+.svc{border-top:2px solid var(--ink);padding-top:12px}
+.svc h3{font-size:14px;font-weight:500;margin-bottom:6px}
+.svc p{margin:0;color:var(--muted);font-size:14px}
+
+/* filters */
+.bar{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:14px;padding:22px 0 18px;border-top:1px solid var(--line)}
+.bar h2{font-size:22px}
+.filters{display:flex;flex-wrap:wrap;gap:6px}
+.filters button{border:1px solid var(--line);background:var(--surface);color:var(--ink);font:600 13px var(--body);padding:7px 13px;border-radius:999px;cursor:pointer}
+.filters button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.filters button span{color:var(--muted);font-family:var(--mono);font-size:11px;margin-left:4px}
+.filters button[aria-pressed="true"] span{color:inherit;opacity:.65}
+
+/* grid */
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;padding-bottom:56px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden;display:flex;flex-direction:column}
+.thumb{aspect-ratio:16/8.5;background:var(--h-bg);position:relative;overflow:hidden;padding:22px 26px 0}
+.body{padding:18px 20px 20px;display:flex;flex-direction:column;gap:10px;flex:1}
+.meta{display:flex;justify-content:space-between;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.status{display:inline-flex;align-items:center;gap:6px;padding:3px 9px;border-radius:999px;border:1px solid var(--line);text-transform:none;letter-spacing:0;font-family:var(--body);font-weight:600;font-size:12px;color:var(--ink)}
+.status::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--dot)}
+.card h3{font-size:18px;font-weight:500}
+.card .client{color:var(--muted);font-size:13.5px;margin-top:-6px}
+.card p{margin:0;font-size:14.5px}
+.feat{margin:0;padding:0;list-style:none;display:grid;gap:4px;font-size:13.5px;color:var(--muted)}
+.feat li{padding-left:16px;position:relative}
+.feat li::before{content:"";position:absolute;left:2px;top:.62em;width:6px;height:2px;background:var(--accent)}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:auto;padding-top:6px}
+.links-row{display:flex;flex-wrap:wrap;gap:8px;padding-top:4px}
+.lnk{display:inline-flex;align-items:center;gap:6px;padding:8px 13px;border-radius:9px;font-weight:700;font-size:13px;text-decoration:none;border:1px solid var(--line);color:var(--ink);background:var(--surface)}
+.lnk.main{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.lnk:hover{border-color:var(--ink)}
+.lnk.deck:not(.main){border-color:var(--accent);color:var(--accent)}
+.nolink{font-size:12.5px;color:var(--muted);padding-top:4px}
+.tags span{font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:6px;background:var(--bg);color:var(--muted);border:1px solid var(--line)}
+
+/* contact */
+.contact{border-top:1px solid var(--line);padding:40px 0 56px;display:grid;grid-template-columns:1.3fr 1fr;gap:30px;align-items:start}
+.contact h2{font-size:clamp(22px,3vw,32px)}
+.contact p{color:var(--muted);max-width:56ch}
+.links{display:grid;gap:10px}
+.links a,.links div{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border:1px solid var(--line);border-radius:12px;background:var(--surface);text-decoration:none;font-weight:600}
+.links small{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:500}
+footer{color:var(--muted);font-size:12.5px;padding:0 0 30px}
+
+@media (max-width:900px){
+  .hero,.contact{grid-template-columns:1fr}
+  .services{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:640px){
+  .grid{grid-template-columns:1fr}
+  .services{grid-template-columns:1fr}
+  .stats b{font-size:22px}
+  .thumb{padding:16px 16px 0}
+}
+@media (prefers-reduced-motion:no-preference){
+  .card{transition:transform .2s ease, box-shadow .2s ease}
+  .card:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(0,0,0,.08)}
+}
+</style>
+<link rel="stylesheet" href="mock.css">
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="logo"><i>RS</i>Roman Stanevych</div>
+    <div class="lang" role="group" aria-label="Language">
+      <button type="button" id="lang-uk" data-lang="uk" aria-pressed="true">UA</button>
+      <button type="button" id="lang-en" data-lang="en" aria-pressed="false">EN</button>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div>
+      <h1 data-i18n="heroTitle"></h1>
+      <p data-i18n="heroText"></p>
+      <div class="cta">
+        <a class="btn primary" href="https://www.fiverr.com/romanstanevych" target="_blank" rel="noopener" data-i18n="ctaFiverr"></a>
+        <a class="btn" href="#projects" data-i18n="ctaProjects"></a>
+      </div>
+    </div>
+    <div class="stats" id="stats"></div>
+  </section>
+
+  <section class="services" id="services"></section>
+
+  <section id="projects">
+    <div class="bar">
+      <h2 data-i18n="projectsTitle"></h2>
+      <div class="filters" id="filters" role="group" aria-label="Filter"></div>
+    </div>
+    <div class="grid" id="grid"></div>
+  </section>
+
+  <section class="contact">
+    <div>
+      <h2 data-i18n="contactTitle"></h2>
+      <p data-i18n="contactText"></p>
+    </div>
+    <div class="links">
+      <a href="https://www.fiverr.com/romanstanevych" target="_blank" rel="noopener">Fiverr <small>@romanstanevych</small></a>
+      <a href="https://github.com/RocketLutzk" target="_blank" rel="noopener">GitHub <small>RocketLutzk</small></a>
+      <div>Upwork <small>Roman Stanevych</small></div>
+      <div><span data-i18n="langsLabel"></span> <small data-i18n="langsValue"></small></div>
+    </div>
+  </section>
+  <footer data-i18n="footer"></footer>
+</div>
+
+<script src="projects.js"></script>
+<script>
+const T = {
+  uk:{
+    heroTitle:'Сайти, адмінки та веб-застосунки <span>для бізнесу</span>, які продають',
+    heroText:'Я Роман: веб-розробник і digital-маркетолог зі Львівщини. Роблю сайти, CRM/ERP-прототипи та дашборди, а досвід у Meta, TikTok і Google Ads допомагає будувати їх під заявки та продажі.',
+    ctaFiverr:'Замовити на Fiverr', ctaProjects:'Дивитись проєкти ↓',
+    projectsTitle:'Проєкти', contactTitle:'Потрібен сайт або веб-застосунок?',
+    contactText:'Напишіть на Fiverr чи Upwork: коротко опишіть бізнес і задачу, і я запропоную формат, терміни та ціну. Можу почати з клікабельного прототипу, щоб ви побачили результат до старту розробки.',
+    langsLabel:'Мови', langsValue:'UA · PL · EN',
+    footer:'Більшість робіт показано як прототипи й концепти, зроблені для реальних компаній або власних продуктів. На кожній картці вказано статус і, де є, посилання на живе демо чи код.',
+    stats:[['projects','проєктів у портфоліо'],['live','живих демо, які можна відкрити'],['brands','компаній, для яких зроблено концепти']],
+    all:'Усі',
+    cats:{web:'Сайти', app:'Веб-застосунки', erp:'CRM / ERP', data:'Дані та боти', docs:'Плани й маркетинг'},
+    status:{live:'Демо онлайн', proto:'Прототип', pitch:'Пропозиція клієнту', wip:'У роботі', concept:'Концепт', done:'Готово'},
+    links:{deck:'Презентація', demo:'Відкрити демо ↗', concept:'Дизайн-концепт ↗', code:'Код на GitHub ↗', dash:'Дашборд ↗'}, nolink:'Демо на запит',
+    services:[
+      ['Сайти й лендинги','Корпоративні сайти, каталоги, інтернет-магазини, промосторінки з 3D.'],
+      ['Адмін-панелі та CMS','Товари, блог, заявки, SEO і маркетингові налаштування без програміста.'],
+      ['CRM / ERP і дашборди','Склад, виробництво, продажі, облік; React, Django, PostgreSQL.'],
+      ['Маркетинг','Запуск реклами в Meta, TikTok, Google Ads і структура сайту під конверсію.']
+    ]
+  },
+  en:{
+    heroTitle:'Websites, admin panels and web apps <span>that sell</span>',
+    heroText:'I\'m Roman, a web developer and digital marketer from Lviv, Ukraine. I build websites, CRM/ERP prototypes and dashboards, and my Meta, TikTok and Google Ads background helps me design them around leads and sales.',
+    ctaFiverr:'Hire me on Fiverr', ctaProjects:'See projects ↓',
+    projectsTitle:'Projects', contactTitle:'Need a website or a web app?',
+    contactText:'Message me on Fiverr or Upwork with a short note about your business and the task. I\'ll suggest a format, timeline and price, and I can start with a clickable prototype so you see the result before development begins.',
+    langsLabel:'Languages', langsValue:'UA · PL · EN',
+    footer:'Most work is shown as prototypes and concepts built for real companies or my own products. Each card shows its status and links to a live demo or code where available.',
+    stats:[['projects','projects in this portfolio'],['live','live demos you can open'],['brands','companies I built concepts for']],
+    all:'All',
+    cats:{web:'Websites', app:'Web apps', erp:'CRM / ERP', data:'Data & bots', docs:'Planning & marketing'},
+    status:{live:'Live demo', proto:'Prototype', pitch:'Client pitch', wip:'In progress', concept:'Concept', done:'Done'},
+    links:{deck:'Presentation', demo:'Open demo ↗', concept:'Design concept ↗', code:'Code on GitHub ↗', dash:'Dashboard ↗'}, nolink:'Demo on request',
+    services:[
+      ['Websites & landing pages','Company sites, catalogs, online stores, 3D promo pages.'],
+      ['Admin panels & CMS','Products, blog, leads, SEO and marketing settings, no developer needed.'],
+      ['CRM / ERP & dashboards','Warehouse, production, sales, accounting; React, Django, PostgreSQL.'],
+      ['Marketing','Meta, TikTok and Google Ads campaigns, and site structure built for conversion.']
+    ]
+  }
+};
+
+
+/* h: [thumb bg, window, hero, accent, text, dim] ; m: mockup type */
+let lang = 'uk', filter = 'all';
+try{ const s = localStorage.getItem('pf-lang'); if(s==='en'||s==='uk') lang = s; }catch(e){}
+
+function render(){
+  const t = T[lang];
+  document.documentElement.lang = lang==='uk'?'uk':'en';
+  document.querySelectorAll('[data-i18n]').forEach(el=>{ el.innerHTML = t[el.dataset.i18n]; });
+  document.querySelectorAll('.lang button').forEach(b=>b.setAttribute('aria-pressed', b.dataset.lang===lang));
+
+  const brands = 7; // Hetman, Kyiv Premium, eko_modda, RMauto, Global Auto Logistic, Leoplyt, Lyceum
+  const nums = {projects:P.length, brands:brands, live:P.filter(p=>p.L.length).length};
+  document.getElementById('stats').innerHTML = t.stats.map(([k,l])=>`<div><b>${nums[k]}</b><small>${l}</small></div>`).join('');
+  document.getElementById('services').innerHTML = t.services.map(([h,p])=>`<div class="svc"><h3>${h}</h3><p>${p}</p></div>`).join('');
+
+  const counts = P.reduce((a,p)=>(a[p.cat]=(a[p.cat]||0)+1,a),{});
+  const fl = [['all',t.all,P.length], ...Object.keys(t.cats).map(k=>[k,t.cats[k],counts[k]||0])];
+  document.getElementById('filters').innerHTML = fl.map(([k,l,n])=>`<button type="button" id="f-${k}" data-f="${k}" aria-pressed="${filter===k}">${l}<span>${n}</span></button>`).join('');
+
+  document.getElementById('grid').innerHTML = P.filter(p=>filter==='all'||p.cat===filter).map(p=>{
+    const c = p[lang];
+    return `<article class="card">${mock(p)}<div class="body">
+      <div class="meta"><span>${t.cats[p.cat]}</span><span class="status" style="--dot:${dots[p.st]}">${t.status[p.st]}</span></div>
+      <h3>${c.t}</h3><div class="client">${c.c}</div>
+      <p>${c.d}</p>
+      <ul class="feat">${c.f.map(x=>`<li>${x}</li>`).join('')}</ul>
+      <div class="tags">${p.tags.map(x=>`<span>${x}</span>`).join('')}</div>
+      <div class="links-row">${[...p.L, ['deck','case.html#'+p.id]].map(([k,u],i)=>`<a class="lnk${i===0?' main':''}${k==='deck'?' deck':''}" href="${u}"${k==='deck'?'':' target="_blank" rel="noopener"'}>${k==='deck'?'▶ ':''}${t.links[k]}</a>`).join('')}</div>
+    </div></article>`;
+  }).join('');
+}
+
+document.querySelector('.lang').addEventListener('click',e=>{
+  const b = e.target.closest('button'); if(!b) return;
+  lang = b.dataset.lang; try{ localStorage.setItem('pf-lang',lang); }catch(err){}
+  render();
+});
+document.getElementById('filters').addEventListener('click',e=>{
+  const b = e.target.closest('button'); if(!b) return;
+  filter = b.dataset.f; render();
+});
+render();
+</script>
+</body>
+</html>
